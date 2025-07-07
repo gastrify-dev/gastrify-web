@@ -20,6 +20,7 @@ export const user = pgTable("user", {
   banReason: text("ban_reason"),
   banExpires: timestamp("ban_expires"),
   identificationNumber: text("identification_number").notNull().unique(),
+  language: text("language").default("es").notNull(),
 });
 
 export const account = pgTable("account", {

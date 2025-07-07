@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 
 import { useSession } from "@/shared/hooks/use-session";
 
@@ -9,7 +10,7 @@ export const useUserAppointments = () => {
 
   const { data, isLoading, isError, refetch, isRefetching } = useQuery({
     enabled: !!session?.user.id,
-    queryKey: ["appointments", "list", "user", session?.user.id],
+    queryKey: ["appointment", "list", "user", session?.user.id],
     queryFn: async () => {
       const { data, error } = await getUserAppointments(session!.user.id);
 
@@ -19,11 +20,14 @@ export const useUserAppointments = () => {
     },
   });
 
+  const t = useTranslations("features.appointments.user-appointments");
+
   return {
     data,
     isLoading,
     isError,
     refetch,
     isRefetching,
+    t,
   };
 };

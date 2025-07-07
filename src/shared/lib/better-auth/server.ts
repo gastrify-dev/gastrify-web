@@ -81,6 +81,11 @@ export const auth = betterAuth({
         required: true,
         unique: true,
       },
+      language: {
+        type: "string",
+        required: true,
+        defaultValue: "es",
+      },
     },
     changeEmail: {
       enabled: true,

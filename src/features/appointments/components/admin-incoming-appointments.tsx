@@ -9,7 +9,7 @@ import { AdminIncomingAppointmentCardSkeleton } from "@/features/appointments/co
 import { useAdminIncomingAppointments } from "@/features/appointments/hooks/use-admin-incoming-appointments";
 
 export function AdminIncomingAppointments() {
-  const { data, isLoading, isError, refetch, isRefetching } =
+  const { data, isLoading, isError, refetch, isRefetching, t } =
     useAdminIncomingAppointments();
 
   if (isLoading) return <AdminIncomingAppointmentCardSkeleton />;
@@ -17,14 +17,14 @@ export function AdminIncomingAppointments() {
   if (isError)
     return (
       <div className="flex flex-col items-center justify-center gap-2">
-        Error fetching incoming appointments 😢
+        {t("error-message")}
         <Button
           disabled={isRefetching}
           variant="destructive"
           onClick={() => refetch()}
         >
           {isRefetching && <LoaderIcon className="animate-spin" />}
-          Refetch
+          {t("refetch-button")}
         </Button>
       </div>
     );
@@ -32,7 +32,7 @@ export function AdminIncomingAppointments() {
   if (!data || data.length === 0)
     return (
       <div className="flex flex-col items-center justify-center gap-2">
-        No incoming appointments 😢
+        {t("no-appointments-message")}
       </div>
     );
 

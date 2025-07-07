@@ -6,10 +6,13 @@ import {
   CalendarIcon,
   BellIcon,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { useSession } from "@/shared/hooks/use-session";
 
 export const useAppSidebar = () => {
+  const t = useTranslations("shared.app-sidebar");
+
   const {
     data: session,
     isSuccess: isSessionSuccess,
@@ -21,29 +24,29 @@ export const useAppSidebar = () => {
 
   const links = useMemo(
     () => [
-      { href: "/home", label: "Home", icon: <HomeIcon /> },
+      { href: "/home", label: t("home"), icon: <HomeIcon /> },
       {
         href: "/appointments",
-        label: "Appointments",
+        label: t("appointments"),
         icon: <CalendarIcon />,
       },
       {
         href: "/notifications",
-        label: "Notifications",
+        label: t("notifications"),
         icon: <BellIcon />,
       },
       {
         href: `/${session?.user.identificationNumber}`,
-        label: "Profile",
+        label: t("profile"),
         icon: <UserRoundIcon />,
       },
       {
         href: "/settings",
-        label: "Settings",
+        label: t("settings"),
         icon: <SettingsIcon />,
       },
     ],
-    [session?.user.identificationNumber],
+    [session?.user.identificationNumber, t],
   );
 
   return {
@@ -54,5 +57,6 @@ export const useAppSidebar = () => {
     isSessionError,
     refetchSession,
     isSessionRefetching,
+    t,
   };
 };

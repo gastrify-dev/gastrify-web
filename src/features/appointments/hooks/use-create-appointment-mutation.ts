@@ -1,5 +1,6 @@
 import { UseFormReturn } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import type { ActionError } from "@/shared/types";
@@ -9,21 +10,25 @@ import {
   type CreateAppointmentErrorCode,
 } from "@/features/appointments/actions/create-appointment";
 import type {
-  CreateAppointmentValues,
+  CreateAppointmentVariables,
   CalendarEvent,
   IncomingAppointment,
 } from "@/features/appointments/types";
 import { optimisticAdd } from "@/features/appointments/utils/optimistic-helpers";
 
 interface Props {
-  form: UseFormReturn<CreateAppointmentValues>;
+  form: UseFormReturn<CreateAppointmentVariables>;
 }
 
 export const useCreateAppointmentMutation = ({ form }: Props) => {
   const queryClient = useQueryClient();
 
+  const t = useTranslations(
+    "features.appointments.use-create-appointment-mutation",
+  );
+
   return useMutation({
-    mutationFn: async (variables: CreateAppointmentValues) => {
+    mutationFn: async (variables: CreateAppointmentVariables) => {
       const { data, error } = await createAppointment(variables);
 
       if (error) return Promise.reject(error);
@@ -39,7 +44,7 @@ export const useCreateAppointmentMutation = ({ form }: Props) => {
       ) {
         optimisticAdd<IncomingAppointment>(
           queryClient,
-          ["appointments", "list", "incoming"],
+          ["appointment", "list", "incoming"],
           {
             appointment: data.appointment,
             patient: data.patient,
@@ -48,7 +53,7 @@ export const useCreateAppointmentMutation = ({ form }: Props) => {
 
         optimisticAdd<CalendarEvent>(
           queryClient,
-          ["appointments", "list", "calendar"],
+          ["appointment", "list", "calendar"],
           {
             id: data.appointment.id,
             title: "booked",
@@ -63,7 +68,7 @@ export const useCreateAppointmentMutation = ({ form }: Props) => {
       if ("id" in data && variables.status === "available") {
         optimisticAdd<CalendarEvent>(
           queryClient,
-          ["appointments", "list", "calendar"],
+          ["appointment", "list", "calendar"],
           {
             id: data.id,
             title: "available",
@@ -74,41 +79,38 @@ export const useCreateAppointmentMutation = ({ form }: Props) => {
         );
       }
 
-      toast.success("Appointment created successfully 🎉");
+      toast.success(t("success-toast"));
     },
     onError: (error: ActionError<CreateAppointmentErrorCode>) => {
       switch (error.code) {
         case "CONFLICT":
           form.setError("start", {
-            message:
-              "An appointment already exists for this time. Please try a different one.",
+            message: t("error-conflict-message"),
           });
           form.setError("end", {
-            message:
-              "An appointment already exists for this time. Please try a different one.",
+            message: t("error-conflict-message"),
           });
           break;
 
         case "USER_NOT_FOUND":
           form.setError("patientIdentificationNumber", {
-            message:
-              "User not found, please try a different identification number",
+            message: t("error-user-not-found-message"),
           });
           break;
 
         default:
-          toast.error("Something went wrong creating appointment 😢", {
-            description: "Please try again later",
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
           });
       }
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "incoming"],
+        queryKey: ["appointment", "list", "incoming"],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "calendar"],
+        queryKey: ["appointment", "list", "calendar"],
       });
     },
   });

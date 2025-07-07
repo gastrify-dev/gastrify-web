@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import {
@@ -10,24 +11,29 @@ import { SettingsSidebar } from "@/features/settings/components/settings-sidebar
 import { PageWrapper } from "@/features/settings/components/page-wrapper";
 import { MobileWrapper } from "@/features/settings/components/mobile-wrapper";
 
-export const metadata: Metadata = {
-  title: "Gastrify | Settings",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.settings-layout");
 
-export default function SettingsLayout({
+  return {
+    title: t("meta-title"),
+    description: t("meta-description"),
+  };
+}
+
+export default async function SettingsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const t = await getTranslations("app.settings-layout");
+
   return (
     <div className="flex h-full flex-col space-y-8">
       <MobileWrapper>
         <div className="space-y-2">
-          <TypographyH1>Settings</TypographyH1>
+          <TypographyH1>{t("title")}</TypographyH1>
 
-          <TypographyMuted>
-            Manage your account settings and set e-mail preferences.
-          </TypographyMuted>
+          <TypographyMuted>{t("description")}</TypographyMuted>
         </div>
       </MobileWrapper>
 

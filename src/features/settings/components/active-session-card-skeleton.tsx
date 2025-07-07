@@ -10,7 +10,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 
 export const ActiveSessionCardSkeleton = () => {
   return (
-    <Card>
+    <Card className="w-fit">
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <Skeleton className="h-6 w-24" />

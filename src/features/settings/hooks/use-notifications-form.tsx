@@ -4,11 +4,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { notificationsFormSchema } from "@/features/settings/schemas/notifications-form-schema";
-import type { NotificationsFormValues } from "@/features/settings/types";
+import { updateNotificationsSchema } from "@/features/settings/schemas/update-notifications";
+import type { UpdateNotificationsVariables } from "@/features/settings/types";
 
 // This can come from your database or API.
-const defaultValues: Partial<NotificationsFormValues> = {
+const defaultValues: Partial<UpdateNotificationsVariables> = {
   communication_emails: false,
   marketing_emails: false,
   social_emails: true,
@@ -16,12 +16,12 @@ const defaultValues: Partial<NotificationsFormValues> = {
 };
 
 export const useNotificationsForm = () => {
-  const form = useForm<NotificationsFormValues>({
-    resolver: zodResolver(notificationsFormSchema),
+  const form = useForm<UpdateNotificationsVariables>({
+    resolver: zodResolver(updateNotificationsSchema),
     defaultValues,
   });
 
-  function onSubmit(data: NotificationsFormValues) {
+  function onSubmit(data: UpdateNotificationsVariables) {
     toast("You submitted the following values:", {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">

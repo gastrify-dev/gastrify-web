@@ -1,25 +1,29 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
-import { notificationsFormSchema } from "@/features/settings/schemas/notifications-form-schema";
+import { updateNotificationsSchema } from "@/features/settings/schemas/update-notifications";
 
-import { changeNameFormSchema } from "@/features/settings/schemas/change-name-form-schema";
-import { changeIdentificationNumberFormSchema } from "@/features/settings/schemas/change-identification-number-form-schema";
-import { changeEmailFormSchema } from "@/features/settings/schemas/change-email-form-schema";
+import { updateNameSchema } from "@/features/settings/schemas/update-name";
+import { updateIdentificationNumberSchema } from "@/features/settings/schemas/update-identification-number";
+import { updateEmailSchema } from "@/features/settings/schemas/update-email";
+import { updateLanguageSchema } from "@/features/settings/schemas/update-language";
 
-import { changePasswordFormSchema } from "@/features/settings/schemas/change-password-form-schema";
-import { toggle2FAFormSchema } from "@/features/settings/schemas/toggle-2fa-form-schema";
-import { generateBackupCodesFormSchema } from "@/features/settings/schemas/generate-backup-codes-form-schema";
+import { updatePasswordSchema } from "@/features/settings/schemas/update-password";
+import { updateTwoFactorSchema } from "@/features/settings/schemas/update-two-factor";
+import { generateBackupCodesSchema } from "@/features/settings/schemas/generate-backup-codes";
 
-export type NotificationsFormValues = z.infer<typeof notificationsFormSchema>;
-
-export type ChangeNameFormValues = z.infer<typeof changeNameFormSchema>;
-export type ChangeIdentificationNumberFormValues = z.infer<
-  typeof changeIdentificationNumberFormSchema
+export type UpdateNotificationsVariables = z.infer<
+  typeof updateNotificationsSchema
 >;
-export type ChangeEmailFormValues = z.infer<typeof changeEmailFormSchema>;
 
-export type ChangePasswordFormValues = z.infer<typeof changePasswordFormSchema>;
-export type Toggle2FAFormValues = z.infer<typeof toggle2FAFormSchema>;
-export type GenerateBackupCodesFormValues = z.infer<
-  typeof generateBackupCodesFormSchema
+export type UpdateNameVariables = z.infer<typeof updateNameSchema>;
+export type UpdateIdentificationNumberVariables = z.infer<
+  typeof updateIdentificationNumberSchema
+>;
+export type UpdateEmailVariables = z.infer<typeof updateEmailSchema>;
+export type UpdateLanguageVariables = z.infer<typeof updateLanguageSchema>;
+
+export type UpdatePasswordVariables = z.infer<typeof updatePasswordSchema>;
+export type UpdateTwoFactorVariables = z.infer<typeof updateTwoFactorSchema>;
+export type GenerateBackupCodesVariables = z.infer<
+  typeof generateBackupCodesSchema
 >;

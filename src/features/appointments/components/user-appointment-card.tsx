@@ -25,30 +25,33 @@ export function UserAppointmentCard({ appointment }: Props) {
     isCancelAppointmentPending,
     isCancelAppointmentError,
     handleCancelAppointment,
+    t,
   } = useAppointmentCard();
 
   return (
     <Card className="flex flex-col gap-2">
       <CardHeader>
         <CardTitle>
-          {appointment.type === "in-person"
-            ? "In-Person Appointment"
-            : "Virtual Appointment"}
+          {t(
+            appointment.type === "in-person"
+              ? "in-person-title"
+              : "virtual-title",
+          )}
         </CardTitle>
 
         <CardDescription className="flex flex-col">
           <TypographyP className="!mt-2 leading-normal">
-            <span className="font-bold">Start:</span>{" "}
+            <span className="font-bold">{t("start-label")}</span>{" "}
             {format(appointment.start, "PPp")}
           </TypographyP>
 
           <TypographyP className="!m-0 leading-normal">
-            <span className="font-bold">End:</span>{" "}
+            <span className="font-bold">{t("end-label")}</span>{" "}
             {format(appointment.end, "PPp")}
           </TypographyP>
 
           <TypographyP className="!m-0 leading-normal">
-            <span className="font-bold">Duration:</span>{" "}
+            <span className="font-bold">{t("duration-label")}</span>{" "}
             {formatDuration(
               intervalToDuration({
                 start: appointment.start,
@@ -59,14 +62,14 @@ export function UserAppointmentCard({ appointment }: Props) {
 
           {appointment.location && (
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">Location:</span>{" "}
+              <span className="font-bold">{t("location-label")}</span>{" "}
               {appointment.location}
             </TypographyP>
           )}
 
           {appointment.meetingLink && (
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">Meeting Link:</span>{" "}
+              <span className="font-bold">{t("meeting-link-label")}</span>{" "}
               {appointment.meetingLink}
             </TypographyP>
           )}
@@ -82,7 +85,7 @@ export function UserAppointmentCard({ appointment }: Props) {
               <LoaderIcon className="animate-spin" />
             )}
             {isCancelAppointmentError && <RotateCcwIcon />}
-            Cancel
+            {t("cancel-button")}
           </Button>
         </CardAction>
       </CardHeader>

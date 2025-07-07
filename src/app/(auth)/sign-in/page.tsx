@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { SignInForm } from "@/features/auth/components/sign-in-form";
 
-export const metadata: Metadata = {
-  title: "Gastrify | Sign In",
-  description: "Sign in to Gastrify",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.sign-in-page");
+
+  return {
+    title: t("meta-title"),
+    description: t("meta-description"),
+  };
+}
 
 export default function SignInPage() {
   return (

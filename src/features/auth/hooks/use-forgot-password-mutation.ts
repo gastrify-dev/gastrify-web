@@ -1,25 +1,28 @@
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { RATE_LIMIT_ERROR_CODE } from "@/shared/constants";
 import { authClient } from "@/shared/lib/better-auth/client";
 import type { AuthClientError } from "@/shared/types";
 
-import type { ForgotPasswordFormValues } from "@/features/auth/types";
+import type { ForgotPasswordVariables } from "@/features/auth/types";
 
 export const useForgotPasswordMutation = () => {
+  const t = useTranslations("features.auth.use-forgot-password-mutation");
+
   return useMutation({
-    mutationFn: async (values: ForgotPasswordFormValues) => {
+    mutationFn: async (variables: ForgotPasswordVariables) => {
       const { error } = await authClient.forgetPassword({
-        email: values.email,
+        email: variables.email,
         redirectTo: "/reset-password",
       });
 
       if (error) return Promise.reject(error);
     },
     onSuccess: () => {
-      toast.success("Reset link sent successfully 🎉", {
-        description: "Check your inbox (or spam folder) for the link.",
+      toast.success(t("success-toast"), {
+        description: t("success-toast-description"),
         duration: 10_000,
       });
     },
@@ -28,15 +31,17 @@ export const useForgotPasswordMutation = () => {
 
       switch (error.code) {
         case "FAILED_TO_SEND_RESET_PASSWORD_EMAIL":
-          toast.error("Failed to send reset password email 😢", {
-            description: "Please try again later",
+          toast.error(t("error-failed-to-send-reset-password-email-message"), {
+            description: t(
+              "error-failed-to-send-reset-password-email-description",
+            ),
             duration: 10_000,
           });
           return;
 
         default:
-          toast.error("Something went wrong 😢", {
-            description: "Please try again later",
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
             duration: 10_000,
           });
           return;

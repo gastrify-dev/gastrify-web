@@ -28,6 +28,7 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
     isDeleteAppointmentPending,
     isDeleteAppointmentError,
     handleDeleteAppointment,
+    t,
   } = useAdminIncomingAppointmentCard();
 
   return (
@@ -35,8 +36,8 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
       <CardHeader>
         <CardTitle>
           {incomingAppointment.appointment.type === "in-person"
-            ? "In-Person"
-            : "Virtual"}{" "}
+            ? t("in-person")
+            : t("virtual")}{" "}
           (
           {formatDistanceToNow(incomingAppointment.appointment.start, {
             addSuffix: true,
@@ -44,20 +45,20 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
           )
         </CardTitle>
 
-        <CardDescription className="flex items-center">
-          <div className="flex flex-1 flex-col">
+        <CardDescription className="flex flex-col gap-6">
+          <div className="flex flex-col">
             <TypographyP className="!mt-2 leading-normal">
-              <span className="font-bold">Start:</span>{" "}
+              <span className="font-bold">{t("start")}:</span>{" "}
               {format(incomingAppointment.appointment.start, "PPp")}
             </TypographyP>
 
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">End:</span>{" "}
+              <span className="font-bold">{t("end")}:</span>{" "}
               {format(incomingAppointment.appointment.end, "PPp")}
             </TypographyP>
 
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">Duration:</span>{" "}
+              <span className="font-bold">{t("duration")}:</span>{" "}
               {formatDuration(
                 intervalToDuration({
                   start: incomingAppointment.appointment.start,
@@ -67,21 +68,21 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
             </TypographyP>
           </div>
 
-          <div className="flex flex-1 flex-col">
+          <div className="flex flex-col">
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">Patient:</span>{" "}
+              <span className="font-bold">{t("patient")}:</span>{" "}
               {incomingAppointment.patient.name}
             </TypographyP>
 
             <TypographyP className="!m-0 leading-normal">
               <span className="font-bold">
-                Patient&apos;s identification number:
+                {t("patient-identification-number")}:
               </span>{" "}
               {incomingAppointment.patient.identificationNumber}
             </TypographyP>
 
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">Patient&apos;s email:</span>{" "}
+              <span className="font-bold">{t("patient-email")}:</span>{" "}
               {incomingAppointment.patient.email}
             </TypographyP>
           </div>
@@ -99,7 +100,7 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
               <LoaderIcon className="animate-spin" />
             )}
             {isDeleteAppointmentError && <RotateCcwIcon />}
-            Delete
+            {t("delete")}
           </Button>
         </CardAction>
       </CardHeader>

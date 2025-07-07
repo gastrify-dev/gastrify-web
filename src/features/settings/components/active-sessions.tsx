@@ -19,12 +19,13 @@ export const ActiveSessions = () => {
     refetchSessions,
     isSessionsRefetching,
     session,
+    t,
   } = useActiveSessions();
 
   return (
     <div className="flex flex-col gap-4">
       <TypographyH4 className="mb-4 flex items-center gap-2">
-        Active sessions {isSessionsSuccess && `(${sessions?.length})`}{" "}
+        {t("title")} {isSessionsSuccess && `(${sessions?.length})`}{" "}
         {isSessionsFetching && (
           <LoaderIcon className="animate-spin" size={18} />
         )}
@@ -38,7 +39,7 @@ export const ActiveSessions = () => {
           type="button"
           onClick={() => refetchSessions()}
         >
-          Retry
+          {t("retry-button")}
           {isSessionsRefetching ? (
             <LoaderIcon className="animate-spin" />
           ) : (
@@ -47,15 +48,18 @@ export const ActiveSessions = () => {
         </Button>
       )}
 
-      {isSessionsSuccess &&
-        sessions!.map((sessionData) => (
-          <ActiveSessionCard
-            key={sessionData.token}
-            session={sessionData}
-            isCurrentSession={session?.session.token === sessionData.token}
-            isSessionsFetching={isSessionsFetching}
-          />
-        ))}
+      {isSessionsSuccess && (
+        <div className="flex flex-wrap items-start gap-4">
+          {sessions!.map((sessionData) => (
+            <ActiveSessionCard
+              key={sessionData.token}
+              session={sessionData}
+              isCurrentSession={session?.session.token === sessionData.token}
+              isSessionsFetching={isSessionsFetching}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

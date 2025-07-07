@@ -1,10 +1,10 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
-import { twoFactorSchema } from "@/shared/schemas/two-factor-schema";
+import { twoFactorSchema } from "@/shared/schemas/two-factor";
 import { authClient } from "@/shared/lib/better-auth/client";
 import { user } from "@/shared/lib/drizzle/schema";
 
-export type TwoFactorFormValues = z.infer<typeof twoFactorSchema>;
+export type TwoFactorVariables = z.infer<typeof twoFactorSchema>;
 
 export type Session = typeof authClient.$Infer.Session;
 export interface AuthClientError {

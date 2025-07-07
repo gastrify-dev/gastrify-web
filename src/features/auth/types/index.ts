@@ -1,15 +1,15 @@
-import { z } from "zod";
+import { z } from "zod/v4";
 
-import { credentialsFormSchema } from "@/features/auth/schemas/credentials-form-schema";
-import { forgotPasswordFormSchema } from "@/features/auth/schemas/forgot-password-form-schema";
-import { magicLinkFormSchema } from "@/features/auth/schemas/magic-link-form-schema";
-import { recoveryFormSchema } from "@/features/auth/schemas/recovery-form-schema";
-import { resetPasswordFormSchema } from "@/features/auth/schemas/reset-password-form-schema";
-import { signUpFormSchema } from "@/features/auth/schemas/sign-up-form-schema";
+import { credentialsSchema } from "@/features/auth/schemas/credentials";
+import { forgotPasswordSchema } from "@/features/auth/schemas/forgot-password";
+import { magicLinkSchema } from "@/features/auth/schemas/magic-link";
+import { recoverySchema } from "@/features/auth/schemas/recovery";
+import { resetPasswordSchema } from "@/features/auth/schemas/reset-password";
+import { signUpSchema } from "@/features/auth/schemas/sign-up";
 
-export type CredentialsFormValues = z.infer<typeof credentialsFormSchema>;
-export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordFormSchema>;
-export type MagicLinkFormValues = z.infer<typeof magicLinkFormSchema>;
-export type RecoveryFormValues = z.infer<typeof recoveryFormSchema>;
-export type ResetPasswordFormValues = z.infer<typeof resetPasswordFormSchema>;
-export type SignUpFormValues = z.infer<typeof signUpFormSchema>;
+export type CredentialsVariables = z.infer<typeof credentialsSchema>;
+export type ForgotPasswordVariables = z.infer<typeof forgotPasswordSchema>;
+export type MagicLinkVariables = z.infer<typeof magicLinkSchema>;
+export type RecoveryVariables = z.infer<typeof recoverySchema>;
+export type ResetPasswordVariables = z.infer<typeof resetPasswordSchema>;
+export type SignUpVariables = z.infer<typeof signUpSchema>;

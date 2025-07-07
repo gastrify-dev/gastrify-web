@@ -1,27 +1,30 @@
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { RATE_LIMIT_ERROR_CODE } from "@/shared/constants";
 import { authClient } from "@/shared/lib/better-auth/client";
 import type { AuthClientError } from "@/shared/types";
 
-import type { CredentialsFormValues } from "@/features/auth/types";
+import type { CredentialsVariables } from "@/features/auth/types";
 
 interface Props {
-  form: UseFormReturn<CredentialsFormValues>;
+  form: UseFormReturn<CredentialsVariables>;
 }
 
 export const useCredentialsMutation = ({ form }: Props) => {
   const router = useRouter();
 
+  const t = useTranslations("features.auth.use-credentials-mutation");
+
   return useMutation({
-    mutationFn: async (values: CredentialsFormValues) => {
+    mutationFn: async (variables: CredentialsVariables) => {
       const { error } = await authClient.signIn.email(
         {
-          email: values.email,
-          password: values.password,
+          email: variables.email,
+          password: variables.password,
         },
         {
           async onSuccess(context) {
@@ -42,23 +45,24 @@ export const useCredentialsMutation = ({ form }: Props) => {
       switch (error.code) {
         case "INVALID_EMAIL_OR_PASSWORD":
           form.setError("email", {
-            message: "Invalid email or password.",
+            message: t("error-invalid-email-or-password-message"),
           });
           form.setError("password", {
-            message: "Invalid email or password.",
+            message: t("error-invalid-email-or-password-message"),
           });
           return;
 
         case "EMAIL_NOT_VERIFIED":
-          toast.error("Verify your email to sign in 📧", {
-            description:
-              "Check your inbox (or spam folder) for the verification email.",
+          toast.error(t("error-email-not-verified-message"), {
+            description: t("error-email-not-verified-description"),
             duration: 10000,
           });
           return;
 
         default:
-          toast.error("Something went wrong, please try again later 😢");
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
+          });
           return;
       }
     },

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { format, isSameDay } from "date-fns";
 import { XIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { EventItem } from "@/features/appointments/components/event-item";
 import type { CalendarEvent } from "@/features/appointments/types";
@@ -22,6 +23,7 @@ export function EventsPopup({
   onClose,
   onEventSelect,
 }: EventsPopupProps) {
+  const t = useTranslations("features.appointments.event-popup");
   const popupRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close popup
@@ -98,7 +100,7 @@ export function EventsPopup({
         <button
           onClick={onClose}
           className="hover:bg-muted rounded-full p-1"
-          aria-label="Close"
+          aria-label={t("close-button-label")}
         >
           <XIcon className="h-4 w-4" />
         </button>
@@ -106,7 +108,9 @@ export function EventsPopup({
 
       <div className="space-y-2 p-3">
         {events.length === 0 ? (
-          <div className="text-muted-foreground py-2 text-sm">No events</div>
+          <div className="text-muted-foreground py-2 text-sm">
+            {t("no-events-message")}
+          </div>
         ) : (
           events.map((event) => {
             const eventStart = new Date(event.start);

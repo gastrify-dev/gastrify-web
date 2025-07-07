@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { RecoveryForm } from "@/features/auth/components/recovery-form";
 
-export const metadata: Metadata = {
-  title: "Gastrify | Recovery",
-  description: "Use recovery code to access your account.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.recovery-page");
+
+  return {
+    title: t("meta-title"),
+    description: t("meta-description"),
+  };
+}
 
 export default function RecoveryPage() {
   return (

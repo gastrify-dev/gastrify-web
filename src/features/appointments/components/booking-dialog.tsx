@@ -4,6 +4,7 @@ import { format, formatDuration, intervalToDuration, isBefore } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -27,9 +28,9 @@ import { TypographyP } from "@/shared/components/ui/typography";
 import { useSession } from "@/shared/hooks/use-session";
 
 import { useBookAppointmentMutation } from "@/features/appointments/hooks/use-book-appointment-mutation";
-import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment-schema";
+import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type {
-  BookAppointmentValues,
+  BookAppointmentVariables,
   CalendarEvent,
 } from "@/features/appointments/types";
 
@@ -40,9 +41,10 @@ interface BookingDialogProps {
 }
 
 export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
+  const t = useTranslations("features.appointments.booking-dialog");
   const { data: session } = useSession();
 
-  const form = useForm<BookAppointmentValues>({
+  const form = useForm<BookAppointmentVariables>({
     resolver: zodResolver(bookAppointmentSchema),
     values: {
       appointmentId: event.id,
@@ -53,8 +55,8 @@ export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
 
   const { mutate, isPending } = useBookAppointmentMutation();
 
-  const onSubmit = (values: BookAppointmentValues) => {
-    mutate(values);
+  const onSubmit = (variables: BookAppointmentVariables) => {
+    mutate(variables);
     onClose();
   };
 
@@ -66,21 +68,21 @@ export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Book Appointment</DialogTitle>
+              <DialogTitle>{t("title")}</DialogTitle>
               <DialogDescription className="sr-only">
-                Book an appointment for this date
+                {t("description")}
               </DialogDescription>
             </DialogHeader>
 
             <div className="flex gap-4">
               <div className="flex flex-1 flex-col gap-2">
-                <span className="text-sm font-medium">Date</span>
+                <span className="text-sm font-medium">{t("date")}</span>
                 <TypographyP className="!m-0 text-sm leading-normal font-normal">
                   {format(event.start, "PPp")}
                 </TypographyP>
               </div>
               <div className="flex flex-1 flex-col gap-2">
-                <span className="text-sm font-medium">Duration</span>
+                <span className="text-sm font-medium">{t("duration")}</span>
                 <TypographyP className="!m-0 text-sm leading-normal font-normal">
                   {formatDuration(
                     intervalToDuration({
@@ -97,7 +99,7 @@ export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
               name="appointmentType"
               render={({ field }) => (
                 <FormItem className="flex flex-col gap-4">
-                  <FormLabel>Appointment Method</FormLabel>
+                  <FormLabel>{t("appointment-method")}</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
@@ -108,13 +110,17 @@ export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
                         <FormControl>
                           <RadioGroupItem value="in-person" />
                         </FormControl>
-                        <FormLabel className="font-normal">In-person</FormLabel>
+                        <FormLabel className="font-normal">
+                          {t("in-person")}
+                        </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center gap-3">
                         <FormControl>
                           <RadioGroupItem value="virtual" />
                         </FormControl>
-                        <FormLabel className="font-normal">Virtual</FormLabel>
+                        <FormLabel className="font-normal">
+                          {t("virtual")}
+                        </FormLabel>
                       </FormItem>
                     </RadioGroup>
                   </FormControl>
@@ -126,7 +132,7 @@ export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
             <DialogFooter className="flex-row sm:justify-between">
               <div className="flex flex-1 justify-end gap-2">
                 <Button type="button" variant="outline" onClick={onClose}>
-                  Cancel
+                  {t("cancel-button")}
                 </Button>
                 {!isPast && (
                   <Button
@@ -135,7 +141,7 @@ export function BookingDialog({ event, isOpen, onClose }: BookingDialogProps) {
                     disabled={isPending}
                   >
                     {isPending && <LoaderIcon className="animate-spin" />}
-                    Book Appointment
+                    {t("submit-button")}
                   </Button>
                 )}
               </div>

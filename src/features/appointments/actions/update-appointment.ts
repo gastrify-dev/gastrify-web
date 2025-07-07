@@ -13,21 +13,21 @@ import { tryCatch } from "@/shared/utils/try-catch";
 import type {
   Appointment,
   IncomingAppointment,
-  UpdateAppointmentValues,
+  UpdateAppointmentVariables,
 } from "@/features/appointments/types";
-import { updateAppointmentSchema } from "@/features/appointments/schemas/update-appointment-schema";
+import { updateAppointmentSchema } from "@/features/appointments/schemas/update-appointment";
 
 export type UpdateAppointmentErrorCode =
-  | "UNAUTHENTICATED"
+  | "UNAUTHORIZED"
   | "FORBIDDEN"
-  | "INVALID_INPUT"
+  | "BAD_REQUEST"
   | "CONFLICT"
   | "INTERNAL_SERVER_ERROR"
   | "USER_NOT_FOUND"
   | "APPOINTMENT_NOT_FOUND";
 
 export async function updateAppointment(
-  values: UpdateAppointmentValues,
+  variables: UpdateAppointmentVariables,
 ): Promise<
   ActionResponse<IncomingAppointment | Appointment, UpdateAppointmentErrorCode>
 > {
@@ -40,7 +40,10 @@ export async function updateAppointment(
   if (!session) {
     return {
       data: null,
-      error: { code: "UNAUTHENTICATED", message: "User not authenticated" },
+      error: {
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to update an appointment",
+      },
     };
   }
 
@@ -58,27 +61,27 @@ export async function updateAppointment(
 
   //validate the values
 
-  const parsedValues = updateAppointmentSchema
+  const parsedVariables = updateAppointmentSchema
     .transform((data) => ({
       ...data,
       patientIdentificationNumber:
         data.status === "booked" ? data.patientIdentificationNumber : undefined,
       type: data.status === "booked" ? data.type : undefined,
     }))
-    .safeParse(values);
+    .safeParse(variables);
 
-  if (!parsedValues.success) {
+  if (!parsedVariables.success) {
     return {
       data: null,
       error: {
-        code: "INVALID_INPUT",
-        message: `Invalid data: ${parsedValues.error.errors.map((e) => e.message).join(", ")}`,
+        code: "BAD_REQUEST",
+        message: `Invalid data: ${parsedVariables.error.message}`,
       },
     };
   }
 
   const { id, start, end, status, patientIdentificationNumber, type } =
-    parsedValues.data;
+    parsedVariables.data;
 
   //check if the appointment exists
 

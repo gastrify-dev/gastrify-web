@@ -11,7 +11,7 @@ import { tryCatch } from "@/shared/utils/try-catch";
 
 import type { CalendarEvent, EventColor } from "@/features/appointments/types";
 
-type ErrorCode = "UNAUTHENTICATED" | "SERVER_ERROR" | "NOT_FOUND";
+type ErrorCode = "UNAUTHORIZED" | "INTERNAL_SERVER_ERROR";
 
 export async function getAllAppointments(): Promise<
   ActionResponse<CalendarEvent[], ErrorCode>
@@ -23,7 +23,10 @@ export async function getAllAppointments(): Promise<
   if (!session) {
     return {
       data: null,
-      error: { code: "UNAUTHENTICATED", message: "User not authenticated" },
+      error: {
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to get all appointments",
+      },
     };
   }
 
@@ -53,7 +56,10 @@ export async function getAllAppointments(): Promise<
 
     return {
       data: null,
-      error: { code: "SERVER_ERROR", message: "Error getting appointments" },
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error getting appointments",
+      },
     };
   }
 

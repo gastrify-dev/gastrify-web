@@ -1,20 +1,23 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 
 import { useSession } from "@/shared/hooks/use-session";
 
 import { useGenerateBackupCodesMutation } from "@/features/settings/hooks/use-generate-backup-codes-mutation";
-import { generateBackupCodesFormSchema } from "@/features/settings/schemas/generate-backup-codes-form-schema";
-import type { GenerateBackupCodesFormValues } from "@/features/settings/types";
+import { generateBackupCodesSchema } from "@/features/settings/schemas/generate-backup-codes";
+import type { GenerateBackupCodesVariables } from "@/features/settings/types";
 
 export const useGenerateBackupCodesForm = () => {
   const { data: session } = useSession();
 
-  const form = useForm<GenerateBackupCodesFormValues>({
-    resolver: zodResolver(generateBackupCodesFormSchema),
+  const t = useTranslations("features.settings.generate-backup-codes-form");
+
+  const form = useForm<GenerateBackupCodesVariables>({
+    resolver: zodResolver(generateBackupCodesSchema),
     defaultValues: {
       generateBackupCodes: false,
-      currentPassword: "",
+      password: "",
     },
   });
 
@@ -22,9 +25,9 @@ export const useGenerateBackupCodesForm = () => {
     form,
   });
 
-  const onSubmit = (values: GenerateBackupCodesFormValues) =>
+  const onSubmit = (variables: GenerateBackupCodesVariables) =>
     mutate({
-      password: values.currentPassword,
+      password: variables.password,
     });
 
   return {
@@ -33,5 +36,6 @@ export const useGenerateBackupCodesForm = () => {
     isPending,
     isError,
     isTwoFactorEnabled: !!session?.user.twoFactorEnabled,
+    t,
   };
 };

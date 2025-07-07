@@ -12,7 +12,7 @@ import { tryCatch } from "@/shared/utils/try-catch";
 import type { Appointment } from "@/features/appointments/types";
 
 export type UserAppointmentsErrorCode =
-  | "UNAUTHENTICATED"
+  | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "INTERNAL_SERVER_ERROR";
 
@@ -27,8 +27,8 @@ export const getUserAppointments = async (
     return {
       data: null,
       error: {
-        code: "UNAUTHENTICATED",
-        message: "User is not authenticated",
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to get user appointments",
       },
     };
 

@@ -1,13 +1,18 @@
+import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { GalleryVerticalEnd } from "lucide-react";
 
 import { TwoFactorForm } from "@/features/auth/components/two-factor-form";
 
-export const metadata: Metadata = {
-  title: "Gastrify | 2FA",
-  description: "2FA for your account",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.two-factor-page");
+
+  return {
+    title: "Gastrify | 2FA",
+    description: t("meta-description"),
+  };
+}
 
 export default function TwoFactorPage() {
   return (

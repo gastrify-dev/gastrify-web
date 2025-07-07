@@ -39,7 +39,7 @@ interface Props {
 }
 
 export const NavUser = ({ user }: Props) => {
-  const { isMobile, handleSignOut, handleThemeChange, isSigningOut, theme } =
+  const { isMobile, handleSignOut, handleThemeChange, isSigningOut, theme, t } =
     useNavUser();
 
   if (isMobile) {
@@ -59,30 +59,30 @@ export const NavUser = ({ user }: Props) => {
             </Avatar>
 
             <span className="border-background absolute -end-0.5 -bottom-0.5 size-3 rounded-full border-2 bg-emerald-500">
-              <span className="sr-only">Online</span>
+              <span className="sr-only">{t("online")}</span>
             </span>
           </div>
         </DrawerTrigger>
 
         <DrawerContent className="pb-4">
           <DrawerHeader>
-            <DrawerTitle>My account</DrawerTitle>
+            <DrawerTitle>{t("my-account")}</DrawerTitle>
 
             <DrawerDescription className="sr-only">
-              Your account settings and preferences.
+              {t("drawer-description")}
             </DrawerDescription>
           </DrawerHeader>
 
           <div className="flex flex-col gap-2 px-4">
             <Button
-              title="Toggle theme"
-              aria-label="Toggle theme"
+              title={t("toggle-theme")}
+              aria-label={t("toggle-theme")}
               variant="ghost"
               className="w-full justify-start !p-0"
               onClick={() => handleThemeChange()}
             >
               {theme === "dark" ? <MoonIcon /> : <SunIcon />}
-              Toggle theme
+              {t("toggle-theme")}
             </Button>
 
             <Button
@@ -95,7 +95,7 @@ export const NavUser = ({ user }: Props) => {
               ) : (
                 <LogOutIcon />
               )}
-              Sign out
+              {t("sign-out")}
             </Button>
           </div>
         </DrawerContent>
@@ -116,7 +116,7 @@ export const NavUser = ({ user }: Props) => {
           </AvatarFallback>
         </Avatar>
         <span className="border-background absolute -end-0.5 -bottom-0.5 size-3 rounded-full border-2 bg-emerald-500">
-          <span className="sr-only">Online</span>
+          <span className="sr-only">{t("online")}</span>
         </span>
       </div>
 
@@ -135,12 +135,12 @@ export const NavUser = ({ user }: Props) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("my-account")}</DropdownMenuLabel>
           <DropdownMenuSeparator />
 
           <DropdownMenuItem onSelect={handleThemeChange}>
             {theme === "dark" ? <MoonIcon size={18} /> : <SunIcon size={18} />}
-            Toggle theme
+            {t("toggle-theme")}
             <DropdownMenuShortcut>⌘⇧T</DropdownMenuShortcut>
           </DropdownMenuItem>
 
@@ -150,7 +150,7 @@ export const NavUser = ({ user }: Props) => {
             ) : (
               <LogOutIcon size={18} />
             )}
-            Sign out
+            {t("sign-out")}
             <DropdownMenuShortcut>⌘O</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>

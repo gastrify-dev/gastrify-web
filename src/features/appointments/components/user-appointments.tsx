@@ -11,7 +11,7 @@ import { UserAppointmentCard } from "@/features/appointments/components/user-app
 import { UserAppointmentsSkeleton } from "@/features/appointments/components/user-appointments-skeleton";
 
 export function UserAppointments() {
-  const { data, isLoading, isError, refetch, isRefetching } =
+  const { data, isLoading, isError, refetch, isRefetching, t } =
     useUserAppointments();
 
   if (isLoading) return <UserAppointmentsSkeleton />;
@@ -19,14 +19,14 @@ export function UserAppointments() {
   if (isError)
     return (
       <div className="flex flex-col items-center justify-center gap-2">
-        Error fetching appointments 😢
+        {t("error-message")}
         <Button
           disabled={isRefetching}
           variant="destructive"
           onClick={() => refetch()}
         >
           {isRefetching && <LoaderIcon className="animate-spin" />}
-          Refetch
+          {t("refetch-button")}
         </Button>
       </div>
     );
@@ -34,7 +34,7 @@ export function UserAppointments() {
   if (!data || data.length === 0)
     return (
       <TypographyP className="!m-0 text-center leading-normal">
-        You have no appointments yet 😢
+        {t("no-appointments-message")}
       </TypographyP>
     );
 

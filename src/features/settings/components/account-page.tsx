@@ -1,19 +1,22 @@
+import { getTranslations } from "next-intl/server";
+
 import { SettingsPageHeader } from "@/features/settings/components/settings-page-header";
-import { ChangeEmailForm } from "@/features/settings/components/change-email-form";
-import { ChangeNameForm } from "@/features/settings/components/change-name-form";
-import { ChangeIdentificationNumberForm } from "@/features/settings/components/change-identification-number-form";
+import { UpdateEmailForm } from "@/features/settings/components/update-email-form";
+import { UpdateNameForm } from "@/features/settings/components/update-name-form";
+import { UpdateIdentificationNumberForm } from "@/features/settings/components/update-identification-number-form";
+import { UpdateLanguageForm } from "@/features/settings/components/update-language-form";
 
 export async function SettingsAccountPage() {
+  const t = await getTranslations("features.settings.account-page");
+
   return (
     <>
-      <SettingsPageHeader
-        title="Account"
-        description="Update your account settings."
-      />
+      <SettingsPageHeader title={t("title")} description={t("description")} />
 
-      <ChangeNameForm />
-      <ChangeIdentificationNumberForm />
-      <ChangeEmailForm />
+      <UpdateNameForm />
+      <UpdateIdentificationNumberForm />
+      <UpdateEmailForm />
+      <UpdateLanguageForm />
     </>
   );
 }

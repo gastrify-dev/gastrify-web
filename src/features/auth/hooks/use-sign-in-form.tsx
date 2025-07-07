@@ -2,21 +2,16 @@
 
 import { useState } from "react";
 import { IdCardIcon, WandSparklesIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { CredentialsForm } from "@/features/auth/components/credentials-form";
 import { MagicLinkForm } from "@/features/auth/components/magic-link-form";
-import { useSignInSocialMutation } from "@/features/auth/hooks/use-sign-in-social-mutation";
 
 export const useSignInForm = () => {
+  const t = useTranslations("features.auth.sign-in-form");
   const [signInMethod, setSignInMethod] = useState<"credentials" | "magicLink">(
     "credentials",
   );
-
-  const { mutate, isPending } = useSignInSocialMutation();
-
-  const handleSignInWithSocial = (provider: "google") => mutate({ provider });
-
-  const handleSignInWithGoogle = () => handleSignInWithSocial("google");
 
   const toggleSignInMethod = () =>
     setSignInMethod(
@@ -29,21 +24,20 @@ export const useSignInForm = () => {
   const toggleSignInMethodButtonContent =
     signInMethod === "credentials" ? (
       <>
-        <WandSparklesIcon /> Magic Link
+        <WandSparklesIcon /> {t("magic-link-button")}
       </>
     ) : (
       <>
-        <IdCardIcon /> Credentials
+        <IdCardIcon /> {t("credentials-button")}
       </>
     );
 
   return {
     form,
-    isPending,
     signInMethod,
     setSignInMethod,
     toggleSignInMethod,
     toggleSignInMethodButtonContent,
-    handleSignInWithGoogle,
+    t,
   };
 };

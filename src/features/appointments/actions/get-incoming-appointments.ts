@@ -13,8 +13,8 @@ import { tryCatch } from "@/shared/utils/try-catch";
 import type { IncomingAppointment } from "@/features/appointments/types";
 
 export type IncomingAppointmentsErrorCode =
-  | "UNAUTHENTICATED"
   | "UNAUTHORIZED"
+  | "FORBIDDEN"
   | "INTERNAL_SERVER_ERROR";
 
 export const getIncomingAppointments = async (): Promise<
@@ -30,7 +30,7 @@ export const getIncomingAppointments = async (): Promise<
     return {
       data: null,
       error: {
-        code: "UNAUTHENTICATED",
+        code: "UNAUTHORIZED",
         message: "You must be logged in to view incoming appointments",
       },
     };
@@ -41,7 +41,7 @@ export const getIncomingAppointments = async (): Promise<
     return {
       data: null,
       error: {
-        code: "UNAUTHORIZED",
+        code: "FORBIDDEN",
         message: "You must be an admin to view incoming appointments",
       },
     };

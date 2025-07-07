@@ -10,14 +10,18 @@ import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 
+import { deleteAppointmentSchema } from "@/features/appointments/schemas/delete-appointment";
+import type { DeleteAppointmentVariables } from "@/features/appointments/types";
+
 export type DeleteAppointmentErrorCode =
-  | "UNAUTHENTICATED"
+  | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "NOT_FOUND"
+  | "BAD_REQUEST"
   | "INTERNAL_SERVER_ERROR";
 
 export async function deleteAppointment(
-  appointmentId: string,
+  variables: DeleteAppointmentVariables,
 ): Promise<ActionResponse<{ id: string }, DeleteAppointmentErrorCode>> {
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -27,10 +31,26 @@ export async function deleteAppointment(
     return {
       data: null,
       error: {
-        code: "UNAUTHENTICATED",
+        code: "UNAUTHORIZED",
         message: "You must be logged in to delete an appointment",
       },
     };
+
+  //parse variables
+
+  const parsedVariables = deleteAppointmentSchema.safeParse(variables);
+
+  if (!parsedVariables.success) {
+    return {
+      data: null,
+      error: {
+        code: "BAD_REQUEST",
+        message: `Invalid input: ${parsedVariables.error.message}`,
+      },
+    };
+  }
+
+  const { appointmentId } = parsedVariables.data;
 
   if (!isAdmin(session.user))
     return {

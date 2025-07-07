@@ -1,12 +1,12 @@
 "use client";
 
+import { LoaderIcon, RotateCcwIcon } from "lucide-react";
+
+import { Button } from "@/shared/components/ui/button";
 import { NavLink } from "@/shared/components/nav-link";
 import { NavUser } from "@/shared/components/nav-user";
+import { NavUserSkeleton } from "@/shared/components/nav-user-skeleton";
 import { useAppSidebar } from "@/shared/hooks/use-app-sidebar";
-import { NavUserSkeleton } from "./nav-user-skeleton";
-import { Button } from "./ui/button";
-import { LoaderIcon } from "lucide-react";
-import { RotateCcwIcon } from "lucide-react";
 
 export const AppSidebar = () => {
   const {
@@ -17,6 +17,7 @@ export const AppSidebar = () => {
     isSessionError,
     refetchSession,
     isSessionRefetching,
+    t,
   } = useAppSidebar();
 
   return (
@@ -45,7 +46,7 @@ export const AppSidebar = () => {
             className="w-full"
             onClick={() => refetchSession()}
           >
-            Retry{" "}
+            {t("retryButton")}{" "}
             {isSessionRefetching ? (
               <LoaderIcon className="animate-spin" />
             ) : (

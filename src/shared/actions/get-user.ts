@@ -6,6 +6,8 @@ import { db } from "@/shared/lib/drizzle/server";
 import { user } from "@/shared/lib/drizzle/schema";
 import { tryCatch } from "@/shared/utils/try-catch";
 import type { ActionResponse, User } from "@/shared/types";
+import { auth } from "../lib/better-auth/server";
+import { headers } from "next/headers";
 
 interface Props {
   id?: string;
@@ -13,19 +15,34 @@ interface Props {
 }
 
 type ErrorCode =
-  | "USER_NOT_FOUND"
-  | "MISSING_ID_OR_IDENTIFICATION_NUMBER"
-  | "DATABASE_ERROR";
+  | "UNAUTHORIZED"
+  | "NOT_FOUND"
+  | "BAD_REQUEST"
+  | "INTERNAL_SERVER_ERROR";
 
 export const getUser = async ({
   id,
   identificationNumber,
 }: Props): Promise<ActionResponse<User, ErrorCode>> => {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    return {
+      data: null,
+      error: {
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to access this resource",
+      },
+    };
+  }
+
   if (!id && !identificationNumber)
     return {
       data: null,
       error: {
-        code: "MISSING_ID_OR_IDENTIFICATION_NUMBER",
+        code: "BAD_REQUEST",
         message: "Either id or identification number is required",
       },
     };
@@ -49,7 +66,7 @@ export const getUser = async ({
     return {
       data: null,
       error: {
-        code: "DATABASE_ERROR",
+        code: "INTERNAL_SERVER_ERROR",
         message: "Something went wrong while fetching the user data 😢",
       },
     };
@@ -59,7 +76,7 @@ export const getUser = async ({
     return {
       data: null,
       error: {
-        code: "USER_NOT_FOUND",
+        code: "NOT_FOUND",
         message: "User not found",
       },
     };

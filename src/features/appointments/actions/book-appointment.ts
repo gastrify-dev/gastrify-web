@@ -9,20 +9,20 @@ import { tryCatch } from "@/shared/utils/try-catch";
 import { ActionResponse } from "@/shared/types";
 import { auth } from "@/shared/lib/better-auth/server";
 
-import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment-schema";
-import type { BookAppointmentValues } from "@/features/appointments/types";
+import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
+import type { BookAppointmentVariables } from "@/features/appointments/types";
 
 export type BookAppointmentErrorCode =
-  | "UNAUTHENTICATED"
+  | "UNAUTHORIZED"
   | "FORBIDDEN"
-  | "INVALID_INPUT"
+  | "BAD_REQUEST"
   | "NOT_FOUND"
   | "ALREADY_BOOKED"
   | "PAST_APPOINTMENT"
-  | "SERVER_ERROR";
+  | "INTERNAL_SERVER_ERROR";
 
 export const bookAppointment = async (
-  values: BookAppointmentValues,
+  variables: BookAppointmentVariables,
 ): Promise<ActionResponse<null, BookAppointmentErrorCode>> => {
   // check if user is authenticated
 
@@ -34,7 +34,7 @@ export const bookAppointment = async (
     return {
       data: null,
       error: {
-        code: "UNAUTHENTICATED",
+        code: "UNAUTHORIZED",
         message: "You must be logged in to book an appointment",
       },
     };
@@ -42,19 +42,19 @@ export const bookAppointment = async (
 
   // parse values
 
-  const parsedValues = bookAppointmentSchema.safeParse(values);
+  const parsedVariables = bookAppointmentSchema.safeParse(variables);
 
-  if (!parsedValues.success) {
+  if (!parsedVariables.success) {
     return {
       data: null,
       error: {
-        code: "INVALID_INPUT",
+        code: "BAD_REQUEST",
         message: "Invalid input",
       },
     };
   }
 
-  const { appointmentId, patientId, appointmentType } = parsedValues.data;
+  const { appointmentId, patientId, appointmentType } = parsedVariables.data;
 
   // check if patient is the same as the one who is booking the appointment
 
@@ -85,7 +85,7 @@ export const bookAppointment = async (
     return {
       data: null,
       error: {
-        code: "SERVER_ERROR",
+        code: "INTERNAL_SERVER_ERROR",
         message: "An unexpected error occurred",
       },
     };
@@ -144,7 +144,7 @@ export const bookAppointment = async (
     return {
       data: null,
       error: {
-        code: "SERVER_ERROR",
+        code: "INTERNAL_SERVER_ERROR",
         message: "An unexpected error occurred",
       },
     };

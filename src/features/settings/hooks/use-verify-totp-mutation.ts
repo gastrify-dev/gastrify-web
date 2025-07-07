@@ -2,16 +2,14 @@ import { Dispatch, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { RATE_LIMIT_ERROR_CODE } from "@/shared/constants";
 import { authClient } from "@/shared/lib/better-auth/client";
-import { SESSION_QUERY_KEY } from "@/shared/lib/react-query/query-key-factory";
-import type { AuthClientError, TwoFactorFormValues } from "@/shared/types";
-
-import { SESSIONS_QUERY_KEY } from "@/features/settings/lib/react-query/query-keys";
+import type { AuthClientError, TwoFactorVariables } from "@/shared/types";
 
 interface Props {
-  form: UseFormReturn<TwoFactorFormValues>;
+  form: UseFormReturn<TwoFactorVariables>;
   setTotpURI: Dispatch<SetStateAction<string>>;
   setShowBackupCodes: Dispatch<SetStateAction<boolean>>;
 }
@@ -23,6 +21,8 @@ export const useVerifyTotpMutation = ({
 }: Props) => {
   const queryClient = useQueryClient();
 
+  const t = useTranslations("features.settings.use-verify-totp-mutation");
+
   return useMutation({
     mutationFn: async ({ code }: { code: string }) => {
       const { error } = await authClient.twoFactor.verifyTotp({
@@ -32,7 +32,7 @@ export const useVerifyTotpMutation = ({
       if (error) return Promise.reject(error);
     },
     onSuccess: () => {
-      toast.success("Two-factor authentication enabled successfully 🎉", {
+      toast.success(t("success-toast"), {
         duration: 10_000,
       });
 
@@ -46,13 +46,13 @@ export const useVerifyTotpMutation = ({
       switch (error.code) {
         case "INVALID_TWO_FACTOR_AUTHENTICATION":
           form.setError("code", {
-            message: "Invalid one-time password",
+            message: t("invalid-one-time-password-message"),
           });
           return;
 
         default:
-          toast.error("An error occurred 😢", {
-            description: "Please try again later",
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
             duration: 10_000,
           });
           return;
@@ -60,8 +60,8 @@ export const useVerifyTotpMutation = ({
     },
     onSettled: () => {
       Promise.all([
-        queryClient.invalidateQueries({ queryKey: [SESSION_QUERY_KEY] }),
-        queryClient.invalidateQueries({ queryKey: [SESSIONS_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: ["session", "details"] }),
+        queryClient.invalidateQueries({ queryKey: ["session", "list"] }),
       ]);
     },
   });

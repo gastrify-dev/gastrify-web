@@ -1,12 +1,13 @@
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { RATE_LIMIT_ERROR_CODE } from "@/shared/constants";
 import { authClient } from "@/shared/lib/better-auth/client";
 import type { AuthClientError } from "@/shared/types";
 
-import type { ResetPasswordFormValues } from "@/features/auth/types";
+import type { ResetPasswordVariables } from "@/features/auth/types";
 
 interface Props {
   token: string;
@@ -15,18 +16,20 @@ interface Props {
 export const useResetPasswordMutation = ({ token }: Props) => {
   const router = useRouter();
 
+  const t = useTranslations("features.auth.use-reset-password-mutation");
+
   return useMutation({
-    mutationFn: async (values: ResetPasswordFormValues) => {
+    mutationFn: async (variables: ResetPasswordVariables) => {
       const { error } = await authClient.resetPassword({
-        newPassword: values.password,
+        newPassword: variables.password,
         token,
       });
 
       if (error) return Promise.reject(error);
     },
     onSuccess: () => {
-      toast.success("Password reset successfully 🎉", {
-        description: "You can now sign in with your new password.",
+      toast.success(t("success-toast"), {
+        description: t("success-toast-description"),
         duration: 10_000,
       });
 
@@ -37,19 +40,19 @@ export const useResetPasswordMutation = ({ token }: Props) => {
 
       switch (error.code) {
         case "INVALID_TOKEN":
-          toast.error("Invalid token 😢", {
-            description: "Please request a new password reset link.",
+          toast.error(t("error-invalid-token-message"), {
+            description: t("error-invalid-token-description"),
             duration: 10_000,
             action: {
-              label: "Request new link",
+              label: t("error-invalid-token-action-label"),
               onClick: () => router.push("/forgot-password"),
             },
           });
           return;
 
         default:
-          toast.error("Something went wrong 😢", {
-            description: "Please try again later",
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
             duration: 10_000,
           });
           return;

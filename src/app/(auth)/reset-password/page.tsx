@@ -3,13 +3,18 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense, use } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
 
-export const metadata: Metadata = {
-  title: "Gastrify | Reset Password",
-  description: "Reset your password",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.reset-password-page");
+
+  return {
+    title: t("meta-title"),
+    description: t("meta-description"),
+  };
+}
 
 //TODO: Implement ResetPasswordFormFallback, this shi is for search params
 function ResetPasswordFormFallback() {

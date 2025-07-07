@@ -30,19 +30,19 @@ export function ResetPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, onSubmit, isPending } = useResetPasswordForm();
+  const { form, onSubmit, isPending, t } = useResetPasswordForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="bg-background border-none shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <TypographyH1>Reset password</TypographyH1>
+            <TypographyH1>{t("title")}</TypographyH1>
           </CardTitle>
 
           <CardDescription>
             <TypographyP className="leading-normal">
-              Please enter your new password 🔐.
+              {t("description")}
             </TypographyP>
           </CardDescription>
         </CardHeader>
@@ -55,7 +55,7 @@ export function ResetPasswordForm({
                 name="password"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t("password-label")}</FormLabel>
 
                     <div className="relative">
                       <FormControl>
@@ -64,7 +64,9 @@ export function ResetPasswordForm({
                           disabled={isPending}
                           type="password"
                           placeholder={
-                            fieldState.invalid ? undefined : "••••••••"
+                            fieldState.invalid
+                              ? undefined
+                              : t("password-placeholder")
                           }
                           {...field}
                         />
@@ -97,7 +99,7 @@ export function ResetPasswordForm({
                 name="confirmPassword"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Confirm password</FormLabel>
+                    <FormLabel>{t("confirm-password-label")}</FormLabel>
 
                     <div className="relative">
                       <FormControl>
@@ -106,7 +108,9 @@ export function ResetPasswordForm({
                           disabled={isPending}
                           type="password"
                           placeholder={
-                            fieldState.invalid ? undefined : "••••••••"
+                            fieldState.invalid
+                              ? undefined
+                              : t("password-placeholder")
                           }
                           {...field}
                         />
@@ -132,15 +136,15 @@ export function ResetPasswordForm({
 
               <Button disabled={isPending} type="submit" className="w-full">
                 {isPending && <LoaderIcon className="animate-spin" />}
-                Reset password
+                {t("submit-button")}
               </Button>
             </form>
           </Form>
 
           <div className="text-center text-sm">
-            Do you remember now?{" "}
+            {t("sign-in-prompt")}{" "}
             <Link href="/sign-in" className="underline underline-offset-4">
-              Sign in
+              {t("sign-in-link")}
             </Link>
           </div>
         </CardContent>

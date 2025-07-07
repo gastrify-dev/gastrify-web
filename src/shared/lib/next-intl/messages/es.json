@@ -1,0 +1,542 @@
+{
+  "app": {
+    "two-factor-page": {
+      "meta-description": "Autenticación de dos factores para tu cuenta"
+    },
+    "forgot-password-page": {
+      "meta-title": "Gastrify | Olvidé mi contraseña",
+      "meta-description": "Restablece tu contraseña"
+    },
+    "recovery-page": {
+      "meta-title": "Gastrify | Recuperación de cuenta",
+      "meta-description": "Recupera tu cuenta"
+    },
+    "reset-password-page": {
+      "meta-title": "Gastrify | Restablecer contraseña",
+      "meta-description": "Restablece tu contraseña"
+    },
+    "sign-in-page": {
+      "meta-title": "Gastrify | Iniciar sesión",
+      "meta-description": "Inicia sesión en tu cuenta"
+    },
+    "sign-up-page": {
+      "meta-title": "Gastrify | Registrarse",
+      "meta-description": "Regístrate en Gastrify"
+    },
+    "profile-page": {
+      "meta-title": "Gastrify | Perfil",
+      "meta-description": "Perfil de tu cuenta"
+    },
+    "appointments-page": {
+      "meta-title": "Gastrify | Citas",
+      "meta-description": "Gestiona tus citas"
+    },
+    "home-page": {
+      "meta-title": "Gastrify | Inicio",
+      "meta-description": "Bienvenido a Gastrify"
+    },
+    "notifications-page": {
+      "meta-title": "Gastrify | Notificaciones",
+      "meta-description": "Gestiona tus notificaciones"
+    },
+    "settings-layout": {
+      "meta-title": "Gastrify | Configuración",
+      "meta-description": "Configuración de tu cuenta",
+      "title": "Configuración",
+      "description": "Configuración de tu cuenta"
+    },
+    "settings-notifications-page": {
+      "title": "Notificaciones",
+      "description": "Configura cómo recibes notificaciones"
+    },
+    "settings-security-page": {
+      "title": "Seguridad",
+      "description": "Actualiza la seguridad de tu cuenta"
+    }
+  },
+  "features": {
+    "appointments": {
+      "admin-appointments-page": {
+        "title": "Citas",
+        "incoming-appointments-title": "Citas Pendientes",
+        "manage-appointments-title": "Gestionar Citas"
+      },
+      "admin-incoming-appointment-card": {
+        "in-person": "Presencial",
+        "virtual": "Virtual",
+        "start": "Inicio",
+        "end": "Fin",
+        "duration": "Duración",
+        "patient": "Paciente",
+        "patient-identification-number": "Número de cédula",
+        "patient-email": "Correo electrónico",
+        "delete": "Eliminar"
+      },
+      "admin-incoming-appointments": {
+        "error-message": "Error al obtener las citas entrantes 😢",
+        "refetch-button": "Reintentar",
+        "no-appointments-message": "No hay citas entrantes 😢"
+      },
+      "agenda-view": {
+        "no-events-title": "No se encontraron eventos",
+        "no-events-description": "No hay eventos programados para este período de tiempo."
+      },
+      "appointments": {
+        "error-toast": "Algo salió mal al obtener las citas",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "booking-dialog": {
+        "title": "Reservar cita",
+        "description": "Reservar una cita para esta fecha",
+        "date": "Fecha",
+        "duration": "Duración",
+        "appointment-method": "Método de la cita",
+        "in-person": "Presencial",
+        "virtual": "Virtual",
+        "cancel-button": "Cancelar",
+        "submit-button": "Reservar cita"
+      },
+      "create-event-dialog": {
+        "title": "Crear cita",
+        "description": "Añadir una nueva cita a tu agenda",
+        "start-date-label": "Fecha de inicio",
+        "pick-date-placeholder": "Elige una fecha",
+        "start-time-label": "Hora de inicio",
+        "select-time-placeholder": "Elige una hora",
+        "end-date-label": "Fecha de fin",
+        "end-time-label": "Hora de fin",
+        "status-label": "Estado",
+        "status-available": "Disponible",
+        "status-booked": "Reservada",
+        "patient-identification-number-label": "Número de cédula del paciente",
+        "type-label": "Tipo",
+        "type-in-person": "Presencial",
+        "type-virtual": "Virtual",
+        "cancel-button": "Cancelar",
+        "submit-button": "Crear"
+      },
+      "day-view": {
+        "all-day": "Todo el día"
+      },
+      "event-calendar": {
+        "event-moved-toast": "Evento \"{title}\" movido",
+        "today-button": "Hoy",
+        "month": "Mes",
+        "week": "Semana",
+        "day": "Día",
+        "agenda": "Agenda",
+        "new-button": "Nueva cita"
+      },
+      "event-popup": {
+        "close-button-label": "Cerrar",
+        "no-events-message": "No hay eventos"
+      },
+      "month-view": {
+        "more-label": "más"
+      },
+      "update-event-dialog": {
+        "title": "Actualizar cita",
+        "description": "Actualizar una cita en tu agenda",
+        "start-date-label": "Fecha de inicio",
+        "pick-date-placeholder": "Elige una fecha",
+        "start-time-label": "Hora de inicio",
+        "select-time-placeholder": "Elige una hora",
+        "end-date-label": "Fecha de fin",
+        "end-time-label": "Hora de fin",
+        "status-label": "Estado",
+        "status-placeholder": "Elige un estado",
+        "status-available": "Disponible",
+        "status-booked": "Reservada",
+        "status-canceled": "Cancelada",
+        "patient-identification-number-label": "Número de cédula del paciente",
+        "type-label": "Tipo",
+        "type-in-person": "Presencial",
+        "type-virtual": "Virtual",
+        "cancel-button": "Cancelar",
+        "submit-button": "Actualizar"
+      },
+      "user-appointment-card": {
+        "in-person-title": "Cita presencial",
+        "virtual-title": "Cita virtual",
+        "start-label": "Inicio:",
+        "end-label": "Fin:",
+        "duration-label": "Duración:",
+        "location-label": "Ubicación:",
+        "meeting-link-label": "Enlace de la reunión:",
+        "cancel-button": "Cancelar"
+      },
+      "user-appointments-page": {
+        "title": "Citas",
+        "my-appointments-title": "Mis citas",
+        "book-appointment-title": "Reservar una cita"
+      },
+      "user-appointments": {
+        "error-message": "Error al obtener las citas 😢",
+        "refetch-button": "Reintentar",
+        "no-appointments-message": "No hay citas entrantes 😢"
+      },
+      "week-view": {
+        "all-day": "Todo el día"
+      },
+      "use-book-appointment-mutation": {
+        "error-toast": "Algo salió mal al reservar la cita 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-cancel-appointment-mutation": {
+        "error-toast": "Algo salió mal al cancelar la cita 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-create-appointment-mutation": {
+        "success-toast": "Cita creada correctamente 🎉",
+        "error-conflict-message": "Ya existe una cita para este tiempo. Por favor, intenta con una diferente.",
+        "error-user-not-found-message": "Usuario no encontrado, por favor, intenta con un número de cédula diferente.",
+        "error-toast": "Algo salió mal al crear la cita 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-delete-appointment-mutation": {
+        "error-toast": "Algo salió mal al eliminar la cita 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-appointment-mutation": {
+        "success-toast": "Cita actualizada correctamente 🎉",
+        "error-conflict-message": "Ya existe una cita para este tiempo. Por favor, intenta con una diferente.",
+        "error-user-not-found-message": "Usuario no encontrado, por favor, intenta con un número de cédula diferente.",
+        "error-toast": "Algo salió mal al actualizar la cita 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      }
+    },
+    "auth": {
+      "credentials-form": {
+        "email-label": "Correo electrónico",
+        "email-placeholder": "david@aragundy.com",
+        "password-label": "Contraseña",
+        "forgot-password-link": "¿Olvidaste tu contraseña?",
+        "password-placeholder": "••••••••",
+        "submit-button": "Iniciar sesión"
+      },
+      "forgot-password-form": {
+        "title": "Olvidé mi contraseña",
+        "description": "Por favor, introduce tu dirección de correo electrónico para recibir un enlace de restablecimiento de contraseña 🔒.",
+        "email-label": "Correo electrónico",
+        "email-placeholder": "david@aragundy.com",
+        "submit-button": "Enviar enlace de restablecimiento",
+        "sign-in-prompt": "¿Ya te acordaste?",
+        "sign-in-link": "Iniciar sesión"
+      },
+      "magic-link-form": {
+        "email-label": "Correo electrónico",
+        "email-placeholder": "david@aragundy.com",
+        "submit-button": "Enviar enlace mágico"
+      },
+      "recovery-form": {
+        "title": "Código de recuperación 🔐",
+        "description": "Introduce el código de tu lista de códigos de recuperación. Recuerda que cada código solo se puede usar una vez.",
+        "code-placeholder": "abcde-fghij",
+        "submit-button": "Verificar",
+        "sign-in-prompt": "¿Recordaste tus credenciales?",
+        "sign-in-link": "Iniciar sesión"
+      },
+      "reset-password-form": {
+        "title": "Restablecer contraseña",
+        "description": "Por favor, introduce tu nueva contraseña 🔐.",
+        "password-label": "Contraseña",
+        "password-placeholder": "••••••••",
+        "confirm-password-label": "Confirmar contraseña",
+        "submit-button": "Restablecer contraseña",
+        "sign-in-prompt": "¿Ya te acordaste?",
+        "sign-in-link": "Iniciar sesión"
+      },
+      "sign-in-form": {
+        "title": "Iniciar sesión",
+        "description": "Bienvenido de vuelta 👋",
+        "magic-link-button": "Enlace mágico",
+        "credentials-button": "Credenciales",
+        "continue-with": "O continuar con",
+        "sign-up-prompt": "¿No tienes una cuenta?",
+        "sign-up-link": "Regístrate"
+      },
+      "sign-up-form": {
+        "title": "Regístrate",
+        "description": "Crea tu cuenta para empezar 🎉",
+        "full-name-label": "Nombre completo",
+        "full-name-placeholder": "Walter David Aragundy Yánez",
+        "identification-number-label": "Número de cédula",
+        "identification-number-placeholder": "1234567890",
+        "email-label": "Correo electrónico",
+        "email-placeholder": "david@aragundy.com",
+        "password-label": "Contraseña",
+        "password-placeholder": "••••••••",
+        "submit-button": "Regístrate",
+        "sign-in-prompt": "¿Ya tienes una cuenta?",
+        "sign-in-link": "Iniciar sesión"
+      },
+      "two-factor-form": {
+        "title": "Autenticación de dos factores 💂",
+        "description": "Introduce tu contraseña de un solo uso para continuar.",
+        "submit-button": "Verificar",
+        "recovery-prompt": "¿No tienes acceso a tu aplicación de autenticación?",
+        "recovery-link": "Usar código de recuperación"
+      },
+      "use-credentials-mutation": {
+        "error-toast": "Algo salió mal al iniciar sesión 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde",
+        "error-invalid-email-or-password-message": "Correo electrónico o contraseña incorrectos.",
+        "error-email-not-verified-message": "Verifica tu correo electrónico para iniciar sesión 📧",
+        "error-email-not-verified-description": "Revisa tu correo electrónico (o carpeta de spam) para el correo de verificación."
+      },
+      "use-forgot-password-mutation": {
+        "success-toast": "Enlace de restablecimiento de contraseña enviado correctamente 🎉",
+        "success-toast-description": "Revisa tu correo electrónico (o carpeta de spam) para el enlace de restablecimiento de contraseña.",
+        "error-toast": "Algo salió mal al enviar el enlace de restablecimiento de contraseña 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde",
+        "error-failed-to-send-reset-password-email-message": "No se pudo enviar el enlace de restablecimiento de contraseña 😢",
+        "error-failed-to-send-reset-password-email-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-magic-link-mutation": {
+        "success-toast": "Enlace mágico enviado correctamente 🎉",
+        "success-toast-description": "Revisa tu correo electrónico (o carpeta de spam) para el enlace mágico.",
+        "error-toast": "Algo salió mal al enviar el enlace mágico 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde",
+        "error-user-not-found-message": "Email no encontrado, por favor, intenta con un email diferente.",
+        "error-failed-to-send-magic-link-message": "No se pudo enviar el enlace mágico 😢",
+        "error-failed-to-send-magic-link-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-recovery-mutation": {
+        "info-toast": "Por favor, ten en cuenta que cada código de recuperación solo se puede usar una vez. Si has usado todos tus códigos de recuperación, puedes generar nuevos en tu configuración de cuenta. Si no recuerdas tu contraseña, este es un buen momento para restablecerla.",
+        "info-toast-action-label": "Ir a la configuración",
+        "error-invalid-code-message": "Código de recuperación inválido",
+        "error-toast": "Algo salió mal al verificar el código de recuperación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-reset-password-mutation": {
+        "success-toast": "Contraseña restablecida correctamente 🎉",
+        "success-toast-description": "Tu contraseña ha sido restablecida correctamente. Por favor, inicia sesión con tu nueva contraseña.",
+        "error-invalid-token-message": "Token inválido 😢",
+        "error-invalid-token-description": "Por favor, solicita un nuevo enlace de restablecimiento de contraseña.",
+        "error-invalid-token-action-label": "Solicitar nuevo enlace",
+        "error-toast": "Algo salió mal al restablecer la contraseña 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-sign-up-mutation": {
+        "success-toast": "Cuenta creada correctamente 🎉",
+        "success-toast-description": "Revisa tu correo electrónico (o carpeta de spam) para el enlace de verificación.",
+        "error-identification-number-already-taken-message": "El número de cédula ya está en uso. Por favor, intenta con uno diferente.",
+        "error-user-already-exists-message": "Ya existe una cuenta con ese email.",
+        "error-password-compromised-message": "La contraseña está comprometida. Por favor, elige una contraseña más segura.",
+        "error-failed-to-send-verification-email-message": "No se pudo enviar el correo de verificación 😢",
+        "error-failed-to-send-verification-email-action-label": "Reenviar correo de verificación",
+        "error-failed-to-send-verification-email-loading-message": "Reenviando correo de verificación...",
+        "error-toast": "Algo salió mal al crear la cuenta 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-two-factor-mutation": {
+        "error-invalid-one-time-password-message": "Código de verificación inválido",
+        "error-toast": "Algo salió mal al verificar el código de verificación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      }
+    },
+    "settings": {
+      "account-page": {
+        "title": "Cuenta",
+        "description": "Actualiza la configuración de tu cuenta."
+      },
+      "active-session-card": {
+        "user-agent-label": "User Agent",
+        "current-badge": "Actual",
+        "ip-address-label": "Dirección IP:",
+        "created-at-label": "Creado en:",
+        "updated-at-label": "Actualizado en:",
+        "expires-at-label": "Expira en:",
+        "revoke-button": "Revocar"
+      },
+      "active-sessions": {
+        "title": "Sesiones activas",
+        "retry-button": "Reintentar"
+      },
+      "generate-backup-codes-form": {
+        "title": "Códigos de respaldo",
+        "label": "Generar códigos de respaldo",
+        "generate-button": "Generar",
+        "description": "Genera un conjunto de códigos de respaldo para usar si pierdes tu aplicación de autenticación. Si ya tienes códigos de respaldo, esto generará un nuevo conjunto e invalidará el anterior.",
+        "password-label": "Contraseña",
+        "password-description": "Para generar códigos de respaldo, por favor introduce tu contraseña.",
+        "password-placeholder": "••••••••",
+        "submit-button": "Generar códigos de respaldo"
+      },
+      "qr-code-dialog": {
+        "backup-codes-title": "Descargar códigos de respaldo",
+        "qr-code-title": "Escanea el QR en tu aplicación de autenticación",
+        "backup-codes-description": "Por favor, descarga tus códigos de respaldo y guárdalos en un lugar seguro.",
+        "qr-code-description": "O introduce tu clave secreta manualmente:",
+        "download-backup-codes-button": "Descargar códigos de respaldo",
+        "otp-label": "Contraseña de un solo uso",
+        "otp-description": "Por favor, introduce la contraseña de un solo uso de tu aplicación de autenticación.",
+        "verify-button": "Verificar"
+      },
+      "settings-sidebar": {
+        "account": "Cuenta",
+        "security": "Seguridad",
+        "notifications": "Notificaciones"
+      },
+      "update-email-form": {
+        "label": "Correo electrónico",
+        "retry-button": "Reintentar",
+        "placeholder": "david@aragundy.com",
+        "description": "Esta es la dirección de correo electrónico que usaremos para contactarte. No será visible públicamente."
+      },
+      "update-identification-number-form": {
+        "label": "Número de cédula",
+        "retry-button": "Reintentar",
+        "placeholder": "1234567890",
+        "description": "Este es tu número de cédula. No será visible públicamente."
+      },
+      "update-language-form": {
+        "label": "Idioma",
+        "retry-button": "Reintentar",
+        "placeholder": "Selecciona un idioma",
+        "es-language": "Español (es)",
+        "en-language": "Inglés (en)",
+        "description": "Este es el idioma en el que se mostrará la aplicación."
+      },
+      "update-name-form": {
+        "label": "Nombre",
+        "retry-button": "Reintentar",
+        "placeholder": "David Aragundy",
+        "description": "Este es tu nombre público. Puede ser tu nombre real o un seudónimo."
+      },
+      "update-notifications-form": {
+        "coming-soon-alt": "Próximamente",
+        "coming-soon-text": "Próximamente...",
+        "notify-me-about-label": "Notificarme sobre...",
+        "all-new-messages-label": "Todos los mensajes nuevos",
+        "direct-messages-and-mentions-label": "Mensajes directos y menciones",
+        "nothing-label": "Nada",
+        "email-notifications-title": "Notificaciones por correo electrónico",
+        "communication-emails-label": "Correos de comunicación",
+        "communication-emails-description": "Recibir correos sobre la actividad de tu cuenta.",
+        "marketing-emails-label": "Correos de marketing",
+        "marketing-emails-description": "Recibir correos sobre nuevos productos, características y más.",
+        "social-emails-label": "Correos sociales",
+        "social-emails-description": "Recibir correos por solicitudes de amistad, seguimientos y más.",
+        "security-emails-label": "Correos de seguridad",
+        "security-emails-description": "Recibir correos sobre la actividad y seguridad de tu cuenta.",
+        "mobile-settings-label": "Usar configuraciones diferentes para mis dispositivos móviles",
+        "mobile-settings-description": "Puedes gestionar tus notificaciones móviles en la página de <link>configuración móvil</link>.",
+        "submit-button": "Actualizar notificaciones"
+      },
+      "update-password-form": {
+        "title": "Cambiar contraseña",
+        "new-password-label": "Nueva contraseña",
+        "password-placeholder": "••••••••",
+        "new-password-description": "Si cambias tu contraseña, todas tus sesiones activas se cerrarán.",
+        "current-password-label": "Contraseña actual",
+        "current-password-description": "Para cambiar tu contraseña, por favor introduce tu contraseña actual.",
+        "submit-button": "Cambiar contraseña"
+      },
+      "update-two-factor-form": {
+        "title": "Autenticación de dos factores",
+        "label": "Habilitar 2FA",
+        "description": "Añade una capa extra de seguridad a tu cuenta.",
+        "retry-button": "Reintentar",
+        "password-label": "Contraseña",
+        "password-description": "Para {action} 2FA, por favor introduce tu contraseña.",
+        "password-placeholder": "••••••••",
+        "submit-button": "{action} 2FA",
+        "enable": "Habilitar",
+        "disable": "Deshabilitar"
+      },
+      "use-disable-2fa-mutation": {
+        "success-toast": "2FA ha sido deshabilitado correctamente 🎉",
+        "invalid-password-error": "Contraseña incorrecta",
+        "error-toast": "Algo salió mal al deshabilitar 2FA 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-enable-2fa-mutation": {
+        "success-toast": "2FA ha sido habilitado correctamente 🎉",
+        "invalid-password-error": "Contraseña incorrecta",
+        "error-toast": "Algo salió mal al habilitar 2FA 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-generate-backup-codes-mutation": {
+        "success-toast": "Códigos de respaldo generados correctamente 🎉",
+        "error-toast": "Algo salió mal al generar los códigos de respaldo 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-revoke-session-mutation": {
+        "session-not-found-error": "La sesión que intentaste revocar ya ha sido cerrada 🤓",
+        "error-toast": "Algo salió mal al revocar la sesión 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-email-mutation": {
+        "success-toast": "Correo electrónico de verificación enviado 💂",
+        "success-toast-description": "Hemos enviado un correo de verificación a tu nuevo correo electrónico. Por favor, revisa tu correo electrónico (o carpeta de spam) para aprobar los cambios y actualizarlo.",
+        "error-user-already-exists-message": "Ya existe una cuenta con ese email.",
+        "error-toast": "Algo salió mal al actualizar el correo electrónico 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-identification-number-mutation": {
+        "success-toast": "Número de cédula actualizado correctamente 🎉",
+        "error-identification-number-already-taken-message": "El número de cédula ya está en uso. Por favor, intenta con uno diferente.",
+        "error-toast": "Algo salió mal al actualizar el número de cédula 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-language-mutation": {
+        "success-toast": "Idioma actualizado correctamente 🎉",
+        "error-toast": "Algo salió mal al actualizar el idioma 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-name-mutation": {
+        "success-toast": "Nombre actualizado correctamente 🎉",
+        "error-toast": "Algo salió mal al actualizar el nombre 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-password-mutation": {
+        "success-toast": "Contraseña actualizada correctamente 🎉",
+        "invalid-password-error": "Contraseña incorrecta",
+        "password-compromised-error": "La contraseña que introdujiste está comprometida. Por favor, elige una contraseña más segura.",
+        "error-toast": "Algo salió mal al actualizar la contraseña 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-verify-totp-mutation": {
+        "success-toast": "Autenticación de dos factores habilitada correctamente 🎉",
+        "invalid-one-time-password-message": "Código de verificación inválido",
+        "error-toast": "Algo salió mal al habilitar la autenticación de dos factores 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      }
+    }
+  },
+  "shared": {
+    "app-sidebar": {
+      "retryButton": "Reintentar",
+      "home": "Inicio",
+      "appointments": "Citas",
+      "notifications": "Notificaciones",
+      "profile": "Perfil",
+      "settings": "Configuración"
+    },
+    "nav-user": {
+      "online": "Conectado",
+      "my-account": "Mi cuenta",
+      "drawer-description": "Configuración y preferencias de tu cuenta.",
+      "toggle-theme": "Cambiar tema",
+      "sign-out": "Cerrar sesión"
+    },
+    "password-strength-indicator": {
+      "8-characters": "Al menos 8 caracteres",
+      "1-number": "Al menos 1 número",
+      "1-lowercase": "Al menos 1 letra minúscula",
+      "1-uppercase": "Al menos 1 letra mayúscula",
+      "1-special": "Al menos 1 caracter especial",
+      "enter-password": "Introduce una contraseña",
+      "weak-password": "Contraseña débil",
+      "medium-password": "Contraseña media",
+      "strong-password": "Contraseña fuerte",
+      "very-strong-password": "Contraseña muy fuerte",
+      "aria-label": "Indicador de fortaleza de la contraseña",
+      "must-contain": "Debe contener:",
+      "requirements-aria-label": "Requisitos de la contraseña",
+      "requirement-met": " - Requisito cumplido",
+      "requirement-not-met": " - Requisito no cumplido"
+    }
+  }
+}

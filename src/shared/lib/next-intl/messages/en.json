@@ -1,0 +1,542 @@
+{
+  "app": {
+    "two-factor-page": {
+      "meta-description": "Two-factor authentication for your account"
+    },
+    "forgot-password-page": {
+      "meta-title": "Gastrify | Forgot my password",
+      "meta-description": "Reset your password"
+    },
+    "recovery-page": {
+      "meta-title": "Gastrify | Account recovery",
+      "meta-description": "Recover your account"
+    },
+    "reset-password-page": {
+      "meta-title": "Gastrify | Reset password",
+      "meta-description": "Reset your password"
+    },
+    "sign-in-page": {
+      "meta-title": "Gastrify | Sign in",
+      "meta-description": "Sign in to your account"
+    },
+    "sign-up-page": {
+      "meta-title": "Gastrify | Sign up",
+      "meta-description": "Sign up for Gastrify"
+    },
+    "profile-page": {
+      "meta-title": "Gastrify | Profile",
+      "meta-description": "Your account profile"
+    },
+    "appointments-page": {
+      "meta-title": "Gastrify | Appointments",
+      "meta-description": "Manage your appointments"
+    },
+    "home-page": {
+      "meta-title": "Gastrify | Home",
+      "meta-description": "Welcome to Gastrify"
+    },
+    "notifications-page": {
+      "meta-title": "Gastrify | Notifications",
+      "meta-description": "Manage your notifications"
+    },
+    "settings-layout": {
+      "meta-title": "Gastrify | Settings",
+      "meta-description": "Your account settings",
+      "title": "Settings",
+      "description": "Your account settings"
+    },
+    "settings-notifications-page": {
+      "title": "Notifications",
+      "description": "Configure how you receive notifications"
+    },
+    "settings-security-page": {
+      "title": "Security",
+      "description": "Update your account security"
+    }
+  },
+  "features": {
+    "appointments": {
+      "admin-appointments-page": {
+        "title": "Appointments",
+        "incoming-appointments-title": "Pending Appointments",
+        "manage-appointments-title": "Manage Appointments"
+      },
+      "admin-incoming-appointment-card": {
+        "in-person": "In-person",
+        "virtual": "Virtual",
+        "start": "Start",
+        "end": "End",
+        "duration": "Duration",
+        "patient": "Patient",
+        "patient-identification-number": "Identification number",
+        "patient-email": "Email address",
+        "delete": "Delete"
+      },
+      "admin-incoming-appointments": {
+        "error-message": "Error getting incoming appointments 😢",
+        "refetch-button": "Retry",
+        "no-appointments-message": "No incoming appointments 😢"
+      },
+      "agenda-view": {
+        "no-events-title": "No events found",
+        "no-events-description": "There are no events scheduled for this time period."
+      },
+      "appointments": {
+        "error-toast": "Something went wrong getting appointments",
+        "error-toast-description": "Please try again later"
+      },
+      "booking-dialog": {
+        "title": "Book appointment",
+        "description": "Book an appointment for this date",
+        "date": "Date",
+        "duration": "Duration",
+        "appointment-method": "Appointment method",
+        "in-person": "In-person",
+        "virtual": "Virtual",
+        "cancel-button": "Cancel",
+        "submit-button": "Book appointment"
+      },
+      "create-event-dialog": {
+        "title": "Create appointment",
+        "description": "Add a new appointment to your calendar",
+        "start-date-label": "Start date",
+        "pick-date-placeholder": "Pick a date",
+        "start-time-label": "Start time",
+        "select-time-placeholder": "Select a time",
+        "end-date-label": "End date",
+        "end-time-label": "End time",
+        "status-label": "Status",
+        "status-available": "Available",
+        "status-booked": "Booked",
+        "patient-identification-number-label": "Patient identification number",
+        "type-label": "Type",
+        "type-in-person": "In-person",
+        "type-virtual": "Virtual",
+        "cancel-button": "Cancel",
+        "submit-button": "Create"
+      },
+      "day-view": {
+        "all-day": "All day"
+      },
+      "event-calendar": {
+        "event-moved-toast": "Event \"{title}\" moved",
+        "today-button": "Today",
+        "month": "Month",
+        "week": "Week",
+        "day": "Day",
+        "agenda": "Agenda",
+        "new-button": "New appointment"
+      },
+      "event-popup": {
+        "close-button-label": "Close",
+        "no-events-message": "No events"
+      },
+      "month-view": {
+        "more-label": "more"
+      },
+      "update-event-dialog": {
+        "title": "Update appointment",
+        "description": "Update an appointment in your calendar",
+        "start-date-label": "Start date",
+        "pick-date-placeholder": "Pick a date",
+        "start-time-label": "Start time",
+        "select-time-placeholder": "Select a time",
+        "end-date-label": "End date",
+        "end-time-label": "End time",
+        "status-label": "Status",
+        "status-placeholder": "Select a status",
+        "status-available": "Available",
+        "status-booked": "Booked",
+        "status-canceled": "Canceled",
+        "patient-identification-number-label": "Patient identification number",
+        "type-label": "Type",
+        "type-in-person": "In-person",
+        "type-virtual": "Virtual",
+        "cancel-button": "Cancel",
+        "submit-button": "Update"
+      },
+      "user-appointment-card": {
+        "in-person-title": "In-person appointment",
+        "virtual-title": "Virtual appointment",
+        "start-label": "Start:",
+        "end-label": "End:",
+        "duration-label": "Duration:",
+        "location-label": "Location:",
+        "meeting-link-label": "Meeting link:",
+        "cancel-button": "Cancel"
+      },
+      "user-appointments-page": {
+        "title": "Appointments",
+        "my-appointments-title": "My appointments",
+        "book-appointment-title": "Book an appointment"
+      },
+      "user-appointments": {
+        "error-message": "Error getting appointments 😢",
+        "refetch-button": "Retry",
+        "no-appointments-message": "No incoming appointments 😢"
+      },
+      "week-view": {
+        "all-day": "All day"
+      },
+      "use-book-appointment-mutation": {
+        "error-toast": "Something went wrong booking the appointment 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-cancel-appointment-mutation": {
+        "error-toast": "Something went wrong canceling the appointment 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-create-appointment-mutation": {
+        "success-toast": "Appointment created successfully 🎉",
+        "error-conflict-message": "An appointment already exists for this time. Please try a different one.",
+        "error-user-not-found-message": "User not found, please try with a different identification number.",
+        "error-toast": "Something went wrong creating the appointment 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-delete-appointment-mutation": {
+        "error-toast": "Something went wrong deleting the appointment 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-appointment-mutation": {
+        "success-toast": "Appointment updated successfully 🎉",
+        "error-conflict-message": "An appointment already exists for this time. Please try a different one.",
+        "error-user-not-found-message": "User not found, please try with a different identification number.",
+        "error-toast": "Something went wrong updating the appointment 😢",
+        "error-toast-description": "Please try again later"
+      }
+    },
+    "auth": {
+      "credentials-form": {
+        "email-label": "Email",
+        "email-placeholder": "david@aragundy.com",
+        "password-label": "Password",
+        "forgot-password-link": "Forgot your password?",
+        "password-placeholder": "••••••••",
+        "submit-button": "Sign in"
+      },
+      "forgot-password-form": {
+        "title": "Forgot my password",
+        "description": "Please enter your email address to receive a password reset link 🔒.",
+        "email-label": "Email",
+        "email-placeholder": "david@aragundy.com",
+        "submit-button": "Send reset link",
+        "sign-in-prompt": "Did you remember?",
+        "sign-in-link": "Sign in"
+      },
+      "magic-link-form": {
+        "email-label": "Email",
+        "email-placeholder": "david@aragundy.com",
+        "submit-button": "Send magic link"
+      },
+      "recovery-form": {
+        "title": "Recovery code 🔐",
+        "description": "Enter the code from your recovery codes list. Remember that each code can only be used once.",
+        "code-placeholder": "abcde-fghij",
+        "submit-button": "Verify",
+        "sign-in-prompt": "Did you remember your credentials?",
+        "sign-in-link": "Sign in"
+      },
+      "reset-password-form": {
+        "title": "Reset password",
+        "description": "Please enter your new password 🔐.",
+        "password-label": "Password",
+        "password-placeholder": "••••••••",
+        "confirm-password-label": "Confirm password",
+        "submit-button": "Reset password",
+        "sign-in-prompt": "Did you remember?",
+        "sign-in-link": "Sign in"
+      },
+      "sign-in-form": {
+        "title": "Sign in",
+        "description": "Welcome back 👋",
+        "magic-link-button": "Magic link",
+        "credentials-button": "Credentials",
+        "continue-with": "Or continue with",
+        "sign-up-prompt": "Don't have an account?",
+        "sign-up-link": "Sign up"
+      },
+      "sign-up-form": {
+        "title": "Sign up",
+        "description": "Create your account to get started 🎉",
+        "full-name-label": "Full name",
+        "full-name-placeholder": "Walter David Aragundy Yánez",
+        "identification-number-label": "Identification number",
+        "identification-number-placeholder": "1234567890",
+        "email-label": "Email",
+        "email-placeholder": "david@aragundy.com",
+        "password-label": "Password",
+        "password-placeholder": "••••••••",
+        "submit-button": "Sign up",
+        "sign-in-prompt": "Already have an account?",
+        "sign-in-link": "Sign in"
+      },
+      "two-factor-form": {
+        "title": "Two-factor authentication 💂",
+        "description": "Enter your one-time password to continue.",
+        "submit-button": "Verify",
+        "recovery-prompt": "Don't have access to your authentication app?",
+        "recovery-link": "Use recovery code"
+      },
+      "use-credentials-mutation": {
+        "error-toast": "Something went wrong signing in 😢",
+        "error-toast-description": "Please try again later",
+        "error-invalid-email-or-password-message": "Incorrect email or password.",
+        "error-email-not-verified-message": "Verify your email to sign in 📧",
+        "error-email-not-verified-description": "Check your email (or spam folder) for the verification email."
+      },
+      "use-forgot-password-mutation": {
+        "success-toast": "Password reset link sent successfully 🎉",
+        "success-toast-description": "Check your email (or spam folder) for the password reset link.",
+        "error-toast": "Something went wrong sending the password reset link 😢",
+        "error-toast-description": "Please try again later",
+        "error-failed-to-send-reset-password-email-message": "Failed to send password reset link 😢",
+        "error-failed-to-send-reset-password-email-description": "Please try again later"
+      },
+      "use-magic-link-mutation": {
+        "success-toast": "Magic link sent successfully 🎉",
+        "success-toast-description": "Check your email (or spam folder) for the magic link.",
+        "error-toast": "Something went wrong sending the magic link 😢",
+        "error-toast-description": "Please try again later",
+        "error-user-not-found-message": "Email not found, please try with a different email.",
+        "error-failed-to-send-magic-link-message": "Failed to send magic link 😢",
+        "error-failed-to-send-magic-link-description": "Please try again later"
+      },
+      "use-recovery-mutation": {
+        "info-toast": "Please note that each recovery code can only be used once. If you've used all your recovery codes, you can generate new ones in your account settings. If you don't remember your password, this is a good time to reset it.",
+        "info-toast-action-label": "Go to settings",
+        "error-invalid-code-message": "Invalid recovery code",
+        "error-toast": "Something went wrong verifying the recovery code 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-reset-password-mutation": {
+        "success-toast": "Password reset successfully 🎉",
+        "success-toast-description": "Your password has been reset successfully. Please sign in with your new password.",
+        "error-invalid-token-message": "Invalid token 😢",
+        "error-invalid-token-description": "Please request a new password reset link.",
+        "error-invalid-token-action-label": "Request new link",
+        "error-toast": "Something went wrong resetting the password 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-sign-up-mutation": {
+        "success-toast": "Account created successfully 🎉",
+        "success-toast-description": "Check your email (or spam folder) for the verification link.",
+        "error-identification-number-already-taken-message": "The identification number is already in use. Please try with a different one.",
+        "error-user-already-exists-message": "An account with that email already exists.",
+        "error-password-compromised-message": "The password is compromised. Please choose a more secure password.",
+        "error-failed-to-send-verification-email-message": "Failed to send verification email 😢",
+        "error-failed-to-send-verification-email-action-label": "Resend verification email",
+        "error-failed-to-send-verification-email-loading-message": "Resending verification email...",
+        "error-toast": "Something went wrong creating the account 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-two-factor-mutation": {
+        "error-invalid-one-time-password-message": "Invalid verification code",
+        "error-toast": "Something went wrong verifying the verification code 😢",
+        "error-toast-description": "Please try again later"
+      }
+    },
+    "settings": {
+      "account-page": {
+        "title": "Account",
+        "description": "Update your account settings."
+      },
+      "active-session-card": {
+        "user-agent-label": "User Agent",
+        "current-badge": "Current",
+        "ip-address-label": "IP Address:",
+        "created-at-label": "Created at:",
+        "updated-at-label": "Updated at:",
+        "expires-at-label": "Expires at:",
+        "revoke-button": "Revoke"
+      },
+      "active-sessions": {
+        "title": "Active sessions",
+        "retry-button": "Retry"
+      },
+      "generate-backup-codes-form": {
+        "title": "Backup codes",
+        "label": "Generate backup codes",
+        "generate-button": "Generate",
+        "description": "Generate a set of backup codes to use if you lose your authentication app. If you already have backup codes, this will generate a new set and invalidate the previous one.",
+        "password-label": "Password",
+        "password-description": "To generate backup codes, please enter your password.",
+        "password-placeholder": "••••••••",
+        "submit-button": "Generate backup codes"
+      },
+      "qr-code-dialog": {
+        "backup-codes-title": "Download backup codes",
+        "qr-code-title": "Scan the QR in your authentication app",
+        "backup-codes-description": "Please download your backup codes and store them in a safe place.",
+        "qr-code-description": "Or enter your secret key manually:",
+        "download-backup-codes-button": "Download backup codes",
+        "otp-label": "One-time password",
+        "otp-description": "Please enter the one-time password from your authentication app.",
+        "verify-button": "Verify"
+      },
+      "settings-sidebar": {
+        "account": "Account",
+        "security": "Security",
+        "notifications": "Notifications"
+      },
+      "update-email-form": {
+        "label": "Email",
+        "retry-button": "Retry",
+        "placeholder": "david@aragundy.com",
+        "description": "This is the email address we'll use to contact you. It will not be publicly visible."
+      },
+      "update-identification-number-form": {
+        "label": "Identification number",
+        "retry-button": "Retry",
+        "placeholder": "1234567890",
+        "description": "This is your identification number. It will not be publicly visible."
+      },
+      "update-language-form": {
+        "label": "Language",
+        "retry-button": "Retry",
+        "placeholder": "Select a language",
+        "es-language": "Spanish (es)",
+        "en-language": "English (en)",
+        "description": "This is the language the application will be displayed in."
+      },
+      "update-name-form": {
+        "label": "Name",
+        "retry-button": "Retry",
+        "placeholder": "David Aragundy",
+        "description": "This is your public name. It can be your real name or a pseudonym."
+      },
+      "update-notifications-form": {
+        "coming-soon-alt": "Coming soon",
+        "coming-soon-text": "Coming soon...",
+        "notify-me-about-label": "Notify me about...",
+        "all-new-messages-label": "All new messages",
+        "direct-messages-and-mentions-label": "Direct messages and mentions",
+        "nothing-label": "Nothing",
+        "email-notifications-title": "Email notifications",
+        "communication-emails-label": "Communication emails",
+        "communication-emails-description": "Receive emails about your account activity.",
+        "marketing-emails-label": "Marketing emails",
+        "marketing-emails-description": "Receive emails about new products, features, and more.",
+        "social-emails-label": "Social emails",
+        "social-emails-description": "Receive emails for friend requests, follows, and more.",
+        "security-emails-label": "Security emails",
+        "security-emails-description": "Receive emails about your account activity and security.",
+        "mobile-settings-label": "Use different settings for my mobile devices",
+        "mobile-settings-description": "You can manage your mobile notifications in the <link>mobile settings</link> page.",
+        "submit-button": "Update notifications"
+      },
+      "update-password-form": {
+        "title": "Change password",
+        "new-password-label": "New password",
+        "password-placeholder": "••••••••",
+        "new-password-description": "If you change your password, all your active sessions will be logged out.",
+        "current-password-label": "Current password",
+        "current-password-description": "To change your password, please enter your current password.",
+        "submit-button": "Change password"
+      },
+      "update-two-factor-form": {
+        "title": "Two-factor authentication",
+        "label": "Enable 2FA",
+        "description": "Add an extra layer of security to your account.",
+        "retry-button": "Retry",
+        "password-label": "Password",
+        "password-description": "To {action} 2FA, please enter your password.",
+        "password-placeholder": "••••••••",
+        "submit-button": "{action} 2FA",
+        "enable": "Enable",
+        "disable": "Disable"
+      },
+      "use-disable-2fa-mutation": {
+        "success-toast": "2FA has been disabled successfully 🎉",
+        "invalid-password-error": "Incorrect password",
+        "error-toast": "Something went wrong disabling 2FA 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-enable-2fa-mutation": {
+        "success-toast": "2FA has been enabled successfully 🎉",
+        "invalid-password-error": "Incorrect password",
+        "error-toast": "Something went wrong enabling 2FA 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-generate-backup-codes-mutation": {
+        "success-toast": "Backup codes generated successfully 🎉",
+        "error-toast": "Something went wrong generating backup codes 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-revoke-session-mutation": {
+        "session-not-found-error": "The session you tried to revoke has already been closed 🤓",
+        "error-toast": "Something went wrong revoking the session 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-email-mutation": {
+        "success-toast": "Verification email sent 💂",
+        "success-toast-description": "We've sent a verification email to your new email address. Please check your email (or spam folder) to approve the changes and update it.",
+        "error-user-already-exists-message": "An account with that email already exists.",
+        "error-toast": "Something went wrong updating the email 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-identification-number-mutation": {
+        "success-toast": "Identification number updated successfully 🎉",
+        "error-identification-number-already-taken-message": "The identification number is already in use. Please try with a different one.",
+        "error-toast": "Something went wrong updating the identification number 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-language-mutation": {
+        "success-toast": "Language updated successfully 🎉",
+        "error-toast": "Something went wrong updating the language 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-name-mutation": {
+        "success-toast": "Name updated successfully 🎉",
+        "error-toast": "Something went wrong updating the name 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-password-mutation": {
+        "success-toast": "Password updated successfully 🎉",
+        "invalid-password-error": "Incorrect password",
+        "password-compromised-error": "The password you entered is compromised. Please choose a more secure password.",
+        "error-toast": "Something went wrong updating the password 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-verify-totp-mutation": {
+        "success-toast": "Two-factor authentication enabled successfully 🎉",
+        "invalid-one-time-password-message": "Invalid verification code",
+        "error-toast": "Something went wrong enabling two-factor authentication 😢",
+        "error-toast-description": "Please try again later"
+      }
+    }
+  },
+  "shared": {
+    "app-sidebar": {
+      "retryButton": "Retry",
+      "home": "Home",
+      "appointments": "Appointments",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "settings": "Settings"
+    },
+    "nav-user": {
+      "online": "Online",
+      "my-account": "My account",
+      "drawer-description": "Your account settings and preferences.",
+      "toggle-theme": "Toggle theme",
+      "sign-out": "Sign out"
+    },
+    "password-strength-indicator": {
+      "8-characters": "At least 8 characters",
+      "1-number": "At least 1 number",
+      "1-lowercase": "At least 1 lowercase letter",
+      "1-uppercase": "At least 1 uppercase letter",
+      "1-special": "At least 1 special character",
+      "enter-password": "Enter a password",
+      "weak-password": "Weak password",
+      "medium-password": "Medium password",
+      "strong-password": "Strong password",
+      "very-strong-password": "Very strong password",
+      "aria-label": "Password strength indicator",
+      "must-contain": "Must contain:",
+      "requirements-aria-label": "Password requirements",
+      "requirement-met": " - Requirement met",
+      "requirement-not-met": " - Requirement not met"
+    }
+  }
+}

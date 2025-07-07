@@ -14,7 +14,7 @@ export const useUser = ({ id, identificationNumber }: Props) => {
     );
 
   return useQuery({
-    queryKey: ["user", "detail", id, identificationNumber],
+    queryKey: ["user", "details", id ?? identificationNumber],
     queryFn: async () => {
       const { data, error } = await getUser({ id, identificationNumber });
 

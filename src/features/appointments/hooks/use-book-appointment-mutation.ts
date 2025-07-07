@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { bookAppointment } from "@/features/appointments/actions/book-appointment";
 import type {
   Appointment,
-  BookAppointmentValues,
+  BookAppointmentVariables,
   CalendarEvent,
 } from "@/features/appointments/types";
 import {
@@ -16,25 +17,29 @@ import {
 export const useBookAppointmentMutation = () => {
   const queryClient = useQueryClient();
 
+  const t = useTranslations(
+    "features.appointments.use-book-appointment-mutation",
+  );
+
   return useMutation({
-    mutationFn: async (variables: BookAppointmentValues) => {
+    mutationFn: async (variables: BookAppointmentVariables) => {
       const { error } = await bookAppointment(variables);
 
       if (error) return Promise.reject(error);
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({
-        queryKey: ["appointments", "list", "calendar"],
+        queryKey: ["appointment", "list", "calendar"],
       });
       await queryClient.cancelQueries({
-        queryKey: ["appointments", "list", "user", variables.patientId],
+        queryKey: ["appointment", "list", "user", variables.patientId],
       });
 
       let bookedCalendarAppointment: CalendarEvent = {} as CalendarEvent;
 
       const previousCalendarAppointments = optimisticSet<CalendarEvent>(
         queryClient,
-        ["appointments", "list", "calendar"],
+        ["appointment", "list", "calendar"],
         (oldCalendarAppointments) =>
           oldCalendarAppointments.map((calendarAppointment) => {
             if (calendarAppointment.id === variables.appointmentId) {
@@ -53,7 +58,7 @@ export const useBookAppointmentMutation = () => {
 
       const previousUserAppointments = optimisticAdd<Appointment>(
         queryClient,
-        ["appointments", "list", "user", variables.patientId],
+        ["appointment", "list", "user", variables.patientId],
         {
           id: variables.appointmentId,
           start: bookedCalendarAppointment.start,
@@ -76,7 +81,7 @@ export const useBookAppointmentMutation = () => {
       if (context?.previousCalendarAppointments) {
         rollback<CalendarEvent>(
           queryClient,
-          ["appointments", "list", "calendar"],
+          ["appointment", "list", "calendar"],
           context.previousCalendarAppointments,
         );
       }
@@ -84,22 +89,22 @@ export const useBookAppointmentMutation = () => {
       if (context?.previousUserAppointments) {
         rollback<Appointment>(
           queryClient,
-          ["appointments", "list", "user", variables.patientId],
+          ["appointment", "list", "user", variables.patientId],
           context.previousUserAppointments,
         );
       }
 
-      toast.error("Failed to book appointment 😢", {
-        description: "Please try again later",
+      toast.error(t("error-toast"), {
+        description: t("error-toast-description"),
       });
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "user", variables.patientId],
+        queryKey: ["appointment", "list", "user", variables.patientId],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "calendar"],
+        queryKey: ["appointment", "list", "calendar"],
       });
     },
   });

@@ -1,28 +1,28 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 
-import { credentialsFormSchema } from "@/features/auth/schemas/credentials-form-schema";
-import type { CredentialsFormValues } from "@/features/auth/types";
+import { credentialsSchema } from "@/features/auth/schemas/credentials";
+import type { CredentialsVariables } from "@/features/auth/types";
 
 import { useCredentialsMutation } from "@/features/auth/hooks/use-credentials-mutation";
-import { tryCatch } from "@/shared/utils/try-catch";
 
 export const useCredentialsForm = () => {
-  const form = useForm<CredentialsFormValues>({
-    resolver: zodResolver(credentialsFormSchema),
+  const form = useForm<CredentialsVariables>({
+    resolver: zodResolver(credentialsSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const { mutateAsync: signIn, isPending } = useCredentialsMutation({
+  const { mutate, isPending } = useCredentialsMutation({
     form,
   });
 
-  const onSubmit = async (values: CredentialsFormValues) => {
-    await tryCatch(signIn(values));
-  };
+  const onSubmit = (variables: CredentialsVariables) => mutate(variables);
 
-  return { form, onSubmit, isPending };
+  const t = useTranslations("features.auth.credentials-form");
+
+  return { form, onSubmit, isPending, t };
 };

@@ -28,20 +28,19 @@ export function RecoveryForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, onSubmit, isPending } = useRecoveryForm();
+  const { form, onSubmit, isPending, t } = useRecoveryForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="bg-background border-none shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <TypographyH1>Recovery code 🔐</TypographyH1>
+            <TypographyH1>{t("title")}</TypographyH1>
           </CardTitle>
 
           <CardDescription>
             <TypographyP className="leading-normal">
-              Enter the code from your recovery code list. Remember that each
-              code can only be used once.
+              {t("description")}
             </TypographyP>
           </CardDescription>
         </CardHeader>
@@ -57,7 +56,7 @@ export function RecoveryForm({
                     <FormControl>
                       <Input
                         disabled={isPending}
-                        placeholder="abcde-fghij"
+                        placeholder={t("code-placeholder")}
                         {...field}
                       />
                     </FormControl>
@@ -68,15 +67,15 @@ export function RecoveryForm({
 
               <Button disabled={isPending} type="submit" className="w-full">
                 {isPending && <LoaderIcon className="animate-spin" />}
-                Verify
+                {t("submit-button")}
               </Button>
             </form>
           </Form>
 
           <div className="text-center text-sm">
-            Remember your credentials?{" "}
+            {t("sign-in-prompt")}{" "}
             <Link href="/sign-in" className="underline underline-offset-4">
-              Sign in
+              {t("sign-in-link")}
             </Link>
           </div>
         </CardContent>

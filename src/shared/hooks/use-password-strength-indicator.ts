@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   password: string;
@@ -7,11 +8,11 @@ interface Props {
 export const usePasswordStrengthIndicator = ({ password }: Props) => {
   const checkStrength = (pass: string) => {
     const requirements = [
-      { regex: /.{8,}/, text: "At least 8 characters" },
-      { regex: /[0-9]/, text: "At least 1 number" },
-      { regex: /[a-z]/, text: "At least 1 lowercase letter" },
-      { regex: /[A-Z]/, text: "At least 1 uppercase letter" },
-      { regex: /[^\w\s]/, text: "At least 1 special character" },
+      { regex: /.{8,}/, text: t("8-characters") },
+      { regex: /[0-9]/, text: t("1-number") },
+      { regex: /[a-z]/, text: t("1-lowercase") },
+      { regex: /[A-Z]/, text: t("1-uppercase") },
+      { regex: /[^\w\s]/, text: t("1-special") },
     ];
 
     return requirements.map((req) => ({
@@ -36,17 +37,20 @@ export const usePasswordStrengthIndicator = ({ password }: Props) => {
   };
 
   const getStrengthText = (score: number) => {
-    if (score === 0) return "Enter a password";
-    if (score <= 2) return "Weak password";
-    if (score <= 3) return "Medium password";
-    if (score <= 4) return "Strong password";
-    return "Very strong password";
+    if (score === 0) return t("enter-password");
+    if (score <= 2) return t("weak-password");
+    if (score <= 3) return t("medium-password");
+    if (score <= 4) return t("strong-password");
+    return t("very-strong-password");
   };
+
+  const t = useTranslations("shared.password-strength-indicator");
 
   return {
     strength,
     strengthScore,
     getStrengthColor,
     getStrengthText,
+    t,
   };
 };

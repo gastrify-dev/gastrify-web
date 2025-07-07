@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 import { useSession } from "@/shared/hooks/use-session";
 
 import { useSessions } from "@/features/settings/hooks/use-sessions";
@@ -15,6 +17,8 @@ export const useActiveSessions = () => {
 
   const { data: session } = useSession();
 
+  const t = useTranslations("features.settings.active-sessions");
+
   return {
     sessions,
     isSessionsSuccess,
@@ -24,5 +28,6 @@ export const useActiveSessions = () => {
     refetchSessions,
     isSessionsRefetching,
     session,
+    t,
   };
 };

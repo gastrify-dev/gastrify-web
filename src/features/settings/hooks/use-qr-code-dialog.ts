@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 
-import { twoFactorSchema } from "@/shared/schemas/two-factor-schema";
-import type { TwoFactorFormValues } from "@/shared/types";
+import { twoFactorSchema } from "@/shared/schemas/two-factor";
+import type { TwoFactorVariables } from "@/shared/types";
 
 import { useVerifyTotpMutation } from "@/features/settings/hooks/use-verify-totp-mutation";
 import { getTxtArrayBuffer } from "@/features/settings/utils/get-txt-array-buffer";
@@ -21,7 +22,7 @@ export const useQrCodeDialog = ({
   backupCodes,
   setBackupCodes,
 }: Props) => {
-  const form = useForm<TwoFactorFormValues>({
+  const form = useForm<TwoFactorVariables>({
     resolver: zodResolver(twoFactorSchema),
     defaultValues: {
       code: "",
@@ -39,9 +40,9 @@ export const useQrCodeDialog = ({
     setShowBackupCodes,
   });
 
-  const onSubmit = (values: TwoFactorFormValues) =>
+  const onSubmit = (variables: TwoFactorVariables) =>
     mutate({
-      code: values.code,
+      code: variables.code,
     });
 
   const handleDownloadBackupCodes = () => {
@@ -52,7 +53,7 @@ export const useQrCodeDialog = ({
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "gastrify-backup-codes.txt";
+    a.download = "stories-backup-codes.txt";
     a.click();
 
     URL.revokeObjectURL(url);
@@ -60,6 +61,8 @@ export const useQrCodeDialog = ({
     setShowBackupCodes(false);
     dialogCloseRef.current?.click();
   };
+
+  const t = useTranslations("features.settings.qr-code-dialog");
 
   return {
     form,
@@ -71,5 +74,6 @@ export const useQrCodeDialog = ({
     setShowBackupCodes,
     handleDownloadBackupCodes,
     dialogCloseRef,
+    t,
   };
 };

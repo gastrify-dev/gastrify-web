@@ -29,20 +29,19 @@ export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, onSubmit, isPending } = useForgotPasswordForm();
+  const { form, onSubmit, isPending, t } = useForgotPasswordForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="bg-background border-none shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <TypographyH1>Forgot password</TypographyH1>
+            <TypographyH1>{t("title")}</TypographyH1>
           </CardTitle>
 
           <CardDescription>
             <TypographyP className="leading-normal">
-              Please enter your email address to receive a password reset link
-              🔒.
+              {t("description")}
             </TypographyP>
           </CardDescription>
         </CardHeader>
@@ -54,7 +53,7 @@ export function ForgotPasswordForm({
                 name="email"
                 render={({ field, fieldState }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("email-label")}</FormLabel>
 
                     <div className="relative">
                       <FormControl>
@@ -65,7 +64,7 @@ export function ForgotPasswordForm({
                           placeholder={
                             fieldState.invalid
                               ? undefined
-                              : "david@aragundy.com"
+                              : t("email-placeholder")
                           }
                           {...field}
                         />
@@ -91,18 +90,18 @@ export function ForgotPasswordForm({
 
               <Button disabled={isPending} type="submit" className="w-full">
                 {isPending && <LoaderIcon className="animate-spin" />}
-                Send reset link
+                {t("submit-button")}
               </Button>
             </form>
           </Form>
 
           <div className="text-center text-sm">
-            Do you remember now?{" "}
+            {t("sign-in-prompt")}{" "}
             <Link
               href="/sign-in"
               className="font-bold hover:underline hover:underline-offset-4"
             >
-              Sign in
+              {t("sign-in-link")}
             </Link>
           </div>
         </CardContent>

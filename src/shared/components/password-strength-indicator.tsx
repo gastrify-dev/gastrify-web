@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const PasswordStrengthIndicator = ({ password }: Props) => {
-  const { strength, strengthScore, getStrengthColor, getStrengthText } =
+  const { strength, strengthScore, getStrengthColor, getStrengthText, t } =
     usePasswordStrengthIndicator({ password });
 
   return (
@@ -21,7 +21,7 @@ export const PasswordStrengthIndicator = ({ password }: Props) => {
         aria-valuenow={strengthScore}
         aria-valuemin={0}
         aria-valuemax={5}
-        aria-label="Password strength"
+        aria-label={t("aria-label")}
       >
         <div
           className={`h-full ${getStrengthColor(strengthScore)} transition-all duration-500 ease-out`}
@@ -31,11 +31,11 @@ export const PasswordStrengthIndicator = ({ password }: Props) => {
 
       {/* Password strength description */}
       <p className="text-foreground mb-2 text-sm font-medium">
-        {getStrengthText(strengthScore)}. Must contain:
+        {getStrengthText(strengthScore)}. {t("must-contain")}
       </p>
 
       {/* Password requirements list */}
-      <ul className="space-y-1.5" aria-label="Password requirements">
+      <ul className="space-y-1.5" aria-label={t("requirements-aria-label")}>
         {strength.map((req, index) => (
           <li key={index} className="flex items-center gap-2">
             {req.met ? (
@@ -56,7 +56,7 @@ export const PasswordStrengthIndicator = ({ password }: Props) => {
             >
               {req.text}
               <span className="sr-only">
-                {req.met ? " - Requirement met" : " - Requirement not met"}
+                {req.met ? t("requirement-met") : t("requirement-not-met")}
               </span>
             </span>
           </li>

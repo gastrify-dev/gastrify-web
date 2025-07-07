@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 import { useRevokeSessionMutation } from "@/features/settings/hooks/use-revoke-session-mutation";
 
 export const useActiveSessionCard = () => {
@@ -5,5 +7,7 @@ export const useActiveSessionCard = () => {
 
   const handleRevokeSession = (token: string) => mutate(token);
 
-  return { handleRevokeSession };
+  const t = useTranslations("features.settings.active-session-card");
+
+  return { handleRevokeSession, t };
 };

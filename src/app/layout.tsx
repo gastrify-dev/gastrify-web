@@ -1,23 +1,33 @@
 import { GeistSans } from "geist/font/sans";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
 
 import { Providers } from "@/shared/components/providers";
 
 import "@/shared/styles/globals.css";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="en" suppressHydrationWarning className={GeistSans.className}>
-      <head>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={GeistSans.className}
+    >
+      {/* <head>
         <script async src="https://unpkg.com/react-scan/dist/auto.global.js" />
-      </head>
+      </head> */}
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </Providers>
 
         <Analytics />
         <SpeedInsights />

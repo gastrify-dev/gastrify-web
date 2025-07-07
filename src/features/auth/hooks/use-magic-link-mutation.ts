@@ -1,30 +1,33 @@
 import { UseFormReturn } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { RATE_LIMIT_ERROR_CODE } from "@/shared/constants";
 import { authClient } from "@/shared/lib/better-auth/client";
 import type { AuthClientError } from "@/shared/types";
 
-import type { MagicLinkFormValues } from "@/features/auth/types";
+import type { MagicLinkVariables } from "@/features/auth/types";
 
 interface Props {
-  form: UseFormReturn<MagicLinkFormValues>;
+  form: UseFormReturn<MagicLinkVariables>;
 }
 
 export const useMagicLinkMutation = ({ form }: Props) => {
+  const t = useTranslations("features.auth.use-magic-link-mutation");
+
   return useMutation({
-    mutationFn: async (values: MagicLinkFormValues) => {
+    mutationFn: async (variables: MagicLinkVariables) => {
       const { error } = await authClient.signIn.magicLink({
-        email: values.email,
+        email: variables.email,
         callbackURL: "/home",
       });
 
       if (error) return Promise.reject(error);
     },
     onSuccess: () => {
-      toast.success("Magic link sent successfully 🎉", {
-        description: "Check your inbox (or spam folder) for the link.",
+      toast.success(t("success-toast"), {
+        description: t("success-toast-description"),
         duration: 10_000,
       });
     },
@@ -34,21 +37,20 @@ export const useMagicLinkMutation = ({ form }: Props) => {
       switch (error.code) {
         case "USER_NOT_FOUND":
           form.setError("email", {
-            message:
-              "Please check your email address or sign up if you don't have an account.",
+            message: t("error-user-not-found-message"),
           });
           return;
 
         case "FAILED_TO_SEND_MAGIC_LINK":
-          toast.error("Failed to send magic link 😢", {
+          toast.error(t("error-failed-to-send-magic-link-message"), {
+            description: t("error-failed-to-send-magic-link-description"),
             duration: 10_000,
-            description: "Try again later or use another method to sign in.",
           });
           return;
 
         default:
-          toast.error("Something went wrong 😢", {
-            description: "Please try again later",
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
             duration: 10_000,
           });
           return;

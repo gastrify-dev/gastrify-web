@@ -1,6 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import type { ActionError } from "@/shared/types";
 
@@ -9,7 +10,7 @@ import {
   type UpdateAppointmentErrorCode,
 } from "@/features/appointments/actions/update-appointment";
 import type {
-  UpdateAppointmentValues,
+  UpdateAppointmentVariables,
   CalendarEvent,
   IncomingAppointment,
 } from "@/features/appointments/types";
@@ -20,14 +21,17 @@ import {
 } from "@/features/appointments/utils/optimistic-helpers";
 
 interface Props {
-  form: UseFormReturn<UpdateAppointmentValues>;
+  form: UseFormReturn<UpdateAppointmentVariables>;
 }
 
 export const useUpdateAppointmentMutation = ({ form }: Props) => {
   const queryClient = useQueryClient();
+  const t = useTranslations(
+    "features.appointments.use-update-appointment-mutation",
+  );
 
   return useMutation({
-    mutationFn: async (variables: UpdateAppointmentValues) => {
+    mutationFn: async (variables: UpdateAppointmentVariables) => {
       const { data, error } = await updateAppointment(variables);
 
       if (error) return Promise.reject(error);
@@ -39,7 +43,7 @@ export const useUpdateAppointmentMutation = ({ form }: Props) => {
       if ("id" in data && variables.status === "available") {
         optimisticUpdate<CalendarEvent>(
           queryClient,
-          ["appointments", "list", "calendar"],
+          ["appointment", "list", "calendar"],
           (calendarAppointment) => calendarAppointment.id === data.id,
           (calendarAppointment) => ({
             ...calendarAppointment,
@@ -50,7 +54,7 @@ export const useUpdateAppointmentMutation = ({ form }: Props) => {
 
         optimisticRemove<IncomingAppointment>(
           queryClient,
-          ["appointments", "list", "incoming"],
+          ["appointment", "list", "incoming"],
           (incomingAppointment) =>
             incomingAppointment.appointment.id === data.id,
         );
@@ -64,7 +68,7 @@ export const useUpdateAppointmentMutation = ({ form }: Props) => {
       ) {
         optimisticUpdate<CalendarEvent>(
           queryClient,
-          ["appointments", "list", "calendar"],
+          ["appointment", "list", "calendar"],
           (calendarAppointment) =>
             calendarAppointment.id === data.appointment.id,
           (calendarAppointment) => ({
@@ -76,7 +80,7 @@ export const useUpdateAppointmentMutation = ({ form }: Props) => {
 
         optimisticAdd<IncomingAppointment>(
           queryClient,
-          ["appointments", "list", "incoming"],
+          ["appointment", "list", "incoming"],
           {
             appointment: data.appointment,
             patient: data.patient,
@@ -84,7 +88,7 @@ export const useUpdateAppointmentMutation = ({ form }: Props) => {
         );
       }
 
-      toast.success("Appointment updated successfully 🎉");
+      toast.success(t("success-toast"));
     },
     onError: (error: ActionError<UpdateAppointmentErrorCode>) => {
       console.log(error);
@@ -92,39 +96,36 @@ export const useUpdateAppointmentMutation = ({ form }: Props) => {
       switch (error.code) {
         case "CONFLICT":
           form.setError("start", {
-            message:
-              "An appointment already exists for this time. Please try a different one.",
+            message: t("error-conflict-message"),
           });
           form.setError("end", {
-            message:
-              "An appointment already exists for this time. Please try a different one.",
+            message: t("error-conflict-message"),
           });
           break;
 
         case "USER_NOT_FOUND":
           form.setError("patientIdentificationNumber", {
-            message:
-              "User not found, please try a different identification number",
+            message: t("error-user-not-found-message"),
           });
           break;
 
         default:
-          toast.error("Something went wrong updating appointment 😢", {
-            description: "Please try again later",
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
           });
       }
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "details", variables.id],
+        queryKey: ["appointment", "details", variables.id],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "incoming"],
+        queryKey: ["appointment", "list", "incoming"],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "calendar"],
+        queryKey: ["appointment", "list", "calendar"],
       });
     },
   });

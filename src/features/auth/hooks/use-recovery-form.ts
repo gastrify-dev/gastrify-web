@@ -1,13 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 
 import { useRecoveryMutation } from "@/features/auth/hooks/use-recovery-mutation";
-import { recoveryFormSchema } from "@/features/auth/schemas/recovery-form-schema";
-import type { RecoveryFormValues } from "@/features/auth/types";
+import { recoverySchema } from "@/features/auth/schemas/recovery";
+import type { RecoveryVariables } from "@/features/auth/types";
 
 export const useRecoveryForm = () => {
-  const form = useForm<RecoveryFormValues>({
-    resolver: zodResolver(recoveryFormSchema),
+  const form = useForm<RecoveryVariables>({
+    resolver: zodResolver(recoverySchema),
     defaultValues: {
       code: "",
     },
@@ -15,7 +16,9 @@ export const useRecoveryForm = () => {
 
   const { mutate, isPending } = useRecoveryMutation({ form });
 
-  const onSubmit = async (values: RecoveryFormValues) => mutate(values);
+  const onSubmit = (variables: RecoveryVariables) => mutate(variables);
 
-  return { form, onSubmit, isPending };
+  const t = useTranslations("features.auth.recovery-form");
+
+  return { form, onSubmit, isPending, t };
 };

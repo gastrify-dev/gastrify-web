@@ -13,21 +13,21 @@ import { tryCatch } from "@/shared/utils/try-catch";
 
 import type {
   Appointment,
-  CreateAppointmentValues,
+  CreateAppointmentVariables,
   IncomingAppointment,
 } from "@/features/appointments/types";
-import { createAppointmentSchema } from "@/features/appointments/schemas/create-appointment-schema";
+import { createAppointmentSchema } from "@/features/appointments/schemas/create-appointment";
 
 export type CreateAppointmentErrorCode =
-  | "UNAUTHENTICATED"
+  | "UNAUTHORIZED"
   | "FORBIDDEN"
-  | "INVALID_INPUT"
+  | "BAD_REQUEST"
   | "CONFLICT"
   | "INTERNAL_SERVER_ERROR"
   | "USER_NOT_FOUND";
 
 export async function createAppointment(
-  values: CreateAppointmentValues,
+  variables: CreateAppointmentVariables,
 ): Promise<
   ActionResponse<IncomingAppointment | Appointment, CreateAppointmentErrorCode>
 > {
@@ -40,7 +40,10 @@ export async function createAppointment(
   if (!session) {
     return {
       data: null,
-      error: { code: "UNAUTHENTICATED", message: "User not authenticated" },
+      error: {
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to create an appointment",
+      },
     };
   }
 
@@ -58,27 +61,27 @@ export async function createAppointment(
 
   //validate the values
 
-  const parsedValues = createAppointmentSchema
+  const parsedVariables = createAppointmentSchema
     .transform((data) => ({
       ...data,
       patientIdentificationNumber:
         data.status === "booked" ? data.patientIdentificationNumber : undefined,
       type: data.status === "booked" ? data.type : undefined,
     }))
-    .safeParse(values);
+    .safeParse(variables);
 
-  if (!parsedValues.success) {
+  if (!parsedVariables.success) {
     return {
       data: null,
       error: {
-        code: "INVALID_INPUT",
-        message: `Invalid data: ${parsedValues.error.errors.map((e) => e.message).join(", ")}`,
+        code: "BAD_REQUEST",
+        message: `Invalid data: ${parsedVariables.error.message}`,
       },
     };
   }
 
   const { start, end, status, patientIdentificationNumber, type } =
-    parsedValues.data;
+    parsedVariables.data;
 
   //if booked, check if the patient exists and get the patient id
 

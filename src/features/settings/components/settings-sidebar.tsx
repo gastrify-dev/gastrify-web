@@ -7,24 +7,24 @@ import { useSettingsInMobile } from "@/features/settings/hooks/use-settings-in-m
 
 const items = [
   {
-    label: "Account",
+    label: "account",
     href: "/settings/account",
     icon: <UserRoundPenIcon />,
   },
   {
-    label: "Security",
+    label: "security",
     href: "/settings/security",
     icon: <KeyRoundIcon />,
   },
   {
-    label: "Notifications",
+    label: "notifications",
     href: "/settings/notifications",
     icon: <BellRingIcon />,
   },
 ];
 
 export function SettingsSidebar() {
-  const { isMobile, isMounted, isSettingsPage } = useSettingsInMobile();
+  const { isMobile, isMounted, isSettingsPage, t } = useSettingsInMobile();
 
   if (!isMounted) return null;
 
@@ -42,7 +42,7 @@ export function SettingsSidebar() {
                 ? ["/settings"]
                 : undefined
             }
-            label={item.label}
+            label={t(item.label as "account" | "security" | "notifications")}
             icon={item.icon}
             includeArrow
             exactMatch

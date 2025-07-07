@@ -18,14 +18,14 @@ import { TypographyH4 } from "@/shared/components/ui/typography";
 import { useGenerateBackupCodesForm } from "@/features/settings/hooks/use-generate-backup-codes-form";
 
 export const GenerateBackupCodesForm = () => {
-  const { form, onSubmit, isPending, isError, isTwoFactorEnabled } =
+  const { form, onSubmit, isPending, isError, isTwoFactorEnabled, t } =
     useGenerateBackupCodesForm();
 
   return (
     isTwoFactorEnabled && (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <TypographyH4>Backup codes</TypographyH4>
+          <TypographyH4>{t("title")}</TypographyH4>
 
           <div className="space-y-4">
             <FormField
@@ -34,7 +34,7 @@ export const GenerateBackupCodesForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex flex-wrap items-center justify-start gap-4">
-                    <FormLabel>Generate backup codes</FormLabel>
+                    <FormLabel>{t("label")}</FormLabel>
 
                     <FormControl>
                       <Button
@@ -44,16 +44,12 @@ export const GenerateBackupCodesForm = () => {
                         variant="outline"
                         onClick={() => field.onChange(true)}
                       >
-                        Generate
+                        {t("generate-button")}
                       </Button>
                     </FormControl>
                   </div>
 
-                  <FormDescription>
-                    Generate a set of backup codes to use if you lose your
-                    authenticator app. If you already have backup codes, this
-                    will generate a new set and invalidate the old.
-                  </FormDescription>
+                  <FormDescription>{t("description")}</FormDescription>
                 </FormItem>
               )}
             />
@@ -63,20 +59,25 @@ export const GenerateBackupCodesForm = () => {
             <FormField
               disabled={isPending}
               control={form.control}
-              name="currentPassword"
+              name="password"
               render={({ field }) => (
                 <FormItem className="bg-destructive/40 flex flex-col items-start gap-4 rounded-lg p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base">Password</FormLabel>
+                    <FormLabel className="text-base">
+                      {t("password-label")}
+                    </FormLabel>
 
                     <FormDescription>
-                      In order to generate backup codes, please enter your
-                      password.
+                      {t("password-description")}
                     </FormDescription>
                   </div>
 
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      placeholder={t("password-placeholder")}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
 
@@ -87,7 +88,7 @@ export const GenerateBackupCodesForm = () => {
                   >
                     {isPending && <LoaderIcon className="animate-spin" />}
                     {isError && <RotateCcwIcon />}
-                    Generate backup codes
+                    {t("submit-button")}
                   </Button>
                 </FormItem>
               )}

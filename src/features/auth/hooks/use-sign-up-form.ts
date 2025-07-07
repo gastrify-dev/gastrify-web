@@ -1,14 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 
-import { useSignUpEmailMutation } from "@/features/auth/hooks/use-sign-up-email-mutation";
-import { useSignUpSocialMutation } from "@/features/auth/hooks/use-sign-up-social-mutation";
-import { signUpFormSchema } from "@/features/auth/schemas/sign-up-form-schema";
-import type { SignUpFormValues } from "@/features/auth/types";
+import { useSignUpMutation } from "@/features/auth/hooks/use-sign-up-mutation";
+import { signUpSchema } from "@/features/auth/schemas/sign-up";
+import type { SignUpVariables } from "@/features/auth/types";
 
 export const useSignUpForm = () => {
-  const form = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpFormSchema),
+  const form = useForm<SignUpVariables>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       identificationNumber: "",
@@ -17,25 +17,18 @@ export const useSignUpForm = () => {
     },
   });
 
-  const { mutate: signUpWithEmail, isPending: isSigningUpWithEmail } =
-    useSignUpEmailMutation({
-      form,
-    });
+  const { mutate, isPending } = useSignUpMutation({
+    form,
+  });
 
-  const { mutate: signUpWithSocial, isPending: isSigningUpWithSocial } =
-    useSignUpSocialMutation();
+  const onSubmit = (variables: SignUpVariables) => mutate(variables);
 
-  const onSubmit = (values: SignUpFormValues) => signUpWithEmail(values);
-
-  const handleSignUpWithSocial = (provider: "google") =>
-    signUpWithSocial({ provider });
-
-  const handleSignUpWithGoogle = () => handleSignUpWithSocial("google");
+  const t = useTranslations("features.auth.sign-up-form");
 
   return {
     form,
     onSubmit,
-    isPending: isSigningUpWithEmail || isSigningUpWithSocial,
-    handleSignUpWithGoogle,
+    isPending,
+    t,
   };
 };

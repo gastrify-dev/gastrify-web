@@ -2,16 +2,16 @@ import { Dispatch, RefObject, SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { RATE_LIMIT_ERROR_CODE } from "@/shared/constants";
 import { authClient } from "@/shared/lib/better-auth/client";
-import { SESSION_QUERY_KEY } from "@/shared/lib/react-query/query-key-factory";
 import type { AuthClientError, Session } from "@/shared/types";
 
-import type { Toggle2FAFormValues } from "@/features/settings/types";
+import type { UpdateTwoFactorVariables } from "@/features/settings/types";
 
 interface Props {
-  form: UseFormReturn<Toggle2FAFormValues>;
+  form: UseFormReturn<UpdateTwoFactorVariables>;
   setTotpURI: Dispatch<SetStateAction<string>>;
   setBackupCodes: Dispatch<SetStateAction<string[]>>;
   dialogTriggerRef: RefObject<HTMLButtonElement | null>;
@@ -25,10 +25,14 @@ export const useEnable2FAMutation = ({
 }: Props) => {
   const queryClient = useQueryClient();
 
+  const t = useTranslations("features.settings.use-enable-2fa-mutation");
+
   return useMutation({
-    mutationFn: async ({ password }: { password: string }) => {
+    mutationFn: async (
+      variables: Pick<UpdateTwoFactorVariables, "password">,
+    ) => {
       const { data, error } = await authClient.twoFactor.enable({
-        password,
+        password: variables.password,
       });
 
       if (error) return Promise.reject(error);
@@ -40,12 +44,15 @@ export const useEnable2FAMutation = ({
       setBackupCodes(data.backupCodes);
       dialogTriggerRef.current?.click();
 
-      queryClient.setQueryData([SESSION_QUERY_KEY], (old: Session): Session => {
-        return {
-          session: old.session,
-          user: { ...old.user, twoFactorEnabled: true },
-        };
-      });
+      queryClient.setQueryData(
+        ["session", "details"],
+        (old: Session): Session => {
+          return {
+            session: old.session,
+            user: { ...old.user, twoFactorEnabled: true },
+          };
+        },
+      );
 
       form.reset({ enable2FA: true });
     },
@@ -54,13 +61,14 @@ export const useEnable2FAMutation = ({
 
       switch (error.code) {
         case "INVALID_PASSWORD":
-          form.setError("currentPassword", {
-            message: "Invalid password",
+          form.setError("password", {
+            message: t("invalid-password-error"),
           });
           return;
 
         default:
-          toast.error("Failed to enable 2FA, please try again later 😢", {
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
             duration: 10_000,
           });
           return;

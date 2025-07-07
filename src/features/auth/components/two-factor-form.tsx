@@ -33,19 +33,19 @@ export function TwoFactorForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { form, onSubmit, isPending } = useTwoFactorForm();
+  const { form, onSubmit, isPending, t } = useTwoFactorForm();
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="bg-background border-none shadow-none">
         <CardHeader className="text-center">
           <CardTitle>
-            <TypographyH1>Two-factor authentication 💂</TypographyH1>
+            <TypographyH1>{t("title")}</TypographyH1>
           </CardTitle>
 
           <CardDescription>
             <TypographyP className="leading-normal">
-              Enter your one-time password to continue.
+              {t("description")}
             </TypographyP>
           </CardDescription>
         </CardHeader>
@@ -100,15 +100,15 @@ export function TwoFactorForm({
 
               <Button disabled={isPending} type="submit" className="w-full">
                 {isPending && <LoaderIcon className="animate-spin" />}
-                Verify
+                {t("submit-button")}
               </Button>
             </form>
           </Form>
 
           <div className="text-center text-sm">
-            Don&apos;t have access to your authenticator app?{" "}
+            {t("recovery-prompt")}{" "}
             <Link href="/recovery" className="underline underline-offset-4">
-              Use recovery code
+              {t("recovery-link")}
             </Link>
           </div>
         </CardContent>

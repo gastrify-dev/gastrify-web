@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 import {
   TypographyH1,
   TypographyMuted,
 } from "@/shared/components/ui/typography";
 
-export const metadata: Metadata = {
-  title: "Gastrify | Profile",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.profile-page");
+
+  return {
+    title: t("meta-title"),
+    description: t("meta-description"),
+  };
+}
 
 export default async function ProfilePage({}: {
   params: Promise<{ identificationNumber: string }>;

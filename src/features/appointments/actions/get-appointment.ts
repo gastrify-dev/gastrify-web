@@ -13,10 +13,10 @@ import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 type ErrorCode =
-  | "UNAUTHENTICATED"
+  | "UNAUTHORIZED"
   | "FORBIDDEN"
-  | "INTERNAL_SERVER_ERROR"
-  | "NOT_FOUND";
+  | "NOT_FOUND"
+  | "INTERNAL_SERVER_ERROR";
 
 type CreatedAppointment = Omit<
   Appointment,
@@ -33,7 +33,10 @@ export async function getAppointment(
   if (!session) {
     return {
       data: null,
-      error: { code: "UNAUTHENTICATED", message: "User not authenticated" },
+      error: {
+        code: "UNAUTHORIZED",
+        message: "You must be logged in to get an appointment",
+      },
     };
   }
 

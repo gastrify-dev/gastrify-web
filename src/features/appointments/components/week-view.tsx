@@ -17,6 +17,7 @@ import {
   startOfDay,
   startOfWeek,
 } from "date-fns";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/shared/utils/cn";
 
@@ -54,6 +55,8 @@ export const WeekView = memo(function WeekView({
   onEventSelect,
   onEventCreate,
 }: WeekViewProps) {
+  const t = useTranslations("features.appointments.week-view");
+
   const days = useMemo(() => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
@@ -150,7 +153,7 @@ export const WeekView = memo(function WeekView({
           <div className="grid grid-cols-8">
             <div className="border-border/70 relative border-r">
               <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">
-                All day
+                {t("all-day")}
               </span>
             </div>
             {days.map((day, dayIndex) => {

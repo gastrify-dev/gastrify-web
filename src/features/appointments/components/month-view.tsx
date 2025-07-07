@@ -13,6 +13,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { useTranslations } from "next-intl";
 
 import {
   Popover,
@@ -48,6 +49,8 @@ export const MonthView = memo(function MonthView({
   onEventSelect,
   onEventCreate,
 }: MonthViewProps) {
+  const t = useTranslations("features.appointments.month-view");
+
   const days = useMemo(() => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(monthStart);
@@ -255,7 +258,9 @@ export const MonthView = memo(function MonthView({
                             >
                               <span>
                                 + {remainingCount}{" "}
-                                <span className="max-sm:sr-only">more</span>
+                                <span className="max-sm:sr-only">
+                                  {t("more-label")}
+                                </span>
                               </span>
                             </button>
                           </PopoverTrigger>

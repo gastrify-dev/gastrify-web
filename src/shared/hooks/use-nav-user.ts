@@ -2,6 +2,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { useIsMobile } from "@/shared/hooks/use-mobile";
 import { authClient } from "@/shared/lib/better-auth/client";
@@ -66,11 +67,14 @@ export const useNavUser = () => {
     return () => document.removeEventListener("keydown", down);
   }, [handleSignOut, handleThemeChange]);
 
+  const t = useTranslations("shared.nav-user");
+
   return {
     isMobile,
     isSigningOut,
     handleSignOut,
     handleThemeChange,
     theme,
+    t,
   };
 };

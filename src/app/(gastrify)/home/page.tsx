@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { TypographyH1, TypographyP } from "@/shared/components/ui/typography";
-import { getUser } from "@/shared/actions/get-user";
 
-export const metadata: Metadata = {
-  title: "Gastrify | Home",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("app.home-page");
 
-export default async function HomePage() {
-  await getUser({
-    id: "123",
-  });
+  return {
+    title: t("meta-title"),
+    description: t("meta-description"),
+  };
+}
 
+export default function HomePage() {
   return (
     <div className="flex flex-col gap-6">
       <TypographyH1>Home</TypographyH1>

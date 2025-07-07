@@ -12,6 +12,7 @@ import {
   isSameDay,
   startOfDay,
 } from "date-fns";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/shared/utils/cn";
 
@@ -49,6 +50,8 @@ export function DayView({
   onEventSelect,
   onEventCreate,
 }: DayViewProps) {
+  const t = useTranslations("features.appointments.day-view");
+
   const hours = useMemo(() => {
     const dayStart = startOfDay(currentDate);
     return eachHourOfInterval({
@@ -197,7 +200,7 @@ export function DayView({
           <div className="grid grid-cols-[3rem_1fr] sm:grid-cols-[4rem_1fr]">
             <div className="relative">
               <span className="text-muted-foreground/70 absolute bottom-0 left-0 h-6 w-16 max-w-full pe-2 text-right text-[10px] sm:pe-4 sm:text-xs">
-                All day
+                {t("all-day")}
               </span>
             </div>
             <div className="border-border/70 relative border-r p-1 last:border-r-0">

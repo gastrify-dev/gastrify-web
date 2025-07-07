@@ -1,19 +1,20 @@
+import { useTranslations } from "next-intl";
+
 import { SettingsPageHeader } from "@/features/settings/components/settings-page-header";
-import { ChangePasswordForm } from "@/features/settings/components/change-password-form";
-import { Toggle2FAForm } from "@/features/settings/components/toggle-2fa-form";
+import { UpdatePasswordForm } from "@/features/settings/components/update-password-form";
+import { UpdateTwoFactorForm } from "@/features/settings/components/update-two-factor-form";
 import { GenerateBackupCodesForm } from "@/features/settings/components/generate-backup-codes-form";
 import { ActiveSessions } from "@/features/settings/components/active-sessions";
 
 export default function SettingsSecurityPage() {
+  const t = useTranslations("app.settings-security-page");
+
   return (
     <>
-      <SettingsPageHeader
-        title="Security"
-        description="Update your account's security settings."
-      />
+      <SettingsPageHeader title={t("title")} description={t("description")} />
 
-      <ChangePasswordForm />
-      <Toggle2FAForm />
+      <UpdatePasswordForm />
+      <UpdateTwoFactorForm />
       <GenerateBackupCodesForm />
       <ActiveSessions />
     </>

@@ -19,6 +19,7 @@ import {
   ChevronRightIcon,
   PlusIcon,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { cn } from "@/shared/utils/cn";
@@ -63,6 +64,8 @@ export function EventCalendar({
   className,
   initialView = "month",
 }: EventCalendarProps) {
+  const t = useTranslations("features.appointments.event-calendar");
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>(initialView);
   const [createEventData, setCreateEventData] = useState<{
@@ -157,14 +160,14 @@ export function EventCalendar({
     (startTime: Date) => {
       if (!isAdmin) return;
 
-      // Snap to 15-minute intervals
+      // Snap to 45-minute intervals
       const minutes = startTime.getMinutes();
-      const remainder = minutes % 15;
+      const remainder = minutes % 45;
       if (remainder !== 0) {
-        if (remainder < 7.5) {
+        if (remainder < 22.5) {
           startTime.setMinutes(minutes - remainder);
         } else {
-          startTime.setMinutes(minutes + (15 - remainder));
+          startTime.setMinutes(minutes + (45 - remainder));
         }
         startTime.setSeconds(0);
         startTime.setMilliseconds(0);
@@ -172,7 +175,7 @@ export function EventCalendar({
 
       setCreateEventData({
         start: startTime,
-        end: addMinutesToDate(startTime, 15),
+        end: addMinutesToDate(startTime, 45),
       });
     },
     [isAdmin],
@@ -180,7 +183,7 @@ export function EventCalendar({
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
     // Show toast notification when an event is updated via drag and drop
-    toast.success(`Event "${updatedEvent.title}" moved`, {
+    toast.success(t("event-moved-toast", { title: updatedEvent.title }), {
       description: format(new Date(updatedEvent.start), "MMM d, yyyy"),
     });
   };
@@ -254,7 +257,7 @@ export function EventCalendar({
                 size={16}
                 aria-hidden="true"
               />
-              <span className="max-[479px]:sr-only">Today</span>
+              <span className="max-[479px]:sr-only">{t("today-button")}</span>
             </Button>
             <div className="flex items-center sm:gap-2">
               <Button
@@ -299,16 +302,16 @@ export function EventCalendar({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-32">
                 <DropdownMenuItem onClick={() => setView("month")}>
-                  Month <DropdownMenuShortcut>M</DropdownMenuShortcut>
+                  {t("month")} <DropdownMenuShortcut>M</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setView("week")}>
-                  Week <DropdownMenuShortcut>W</DropdownMenuShortcut>
+                  {t("week")} <DropdownMenuShortcut>W</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setView("day")}>
-                  Day <DropdownMenuShortcut>D</DropdownMenuShortcut>
+                  {t("day")} <DropdownMenuShortcut>D</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setView("agenda")}>
-                  Agenda <DropdownMenuShortcut>A</DropdownMenuShortcut>
+                  {t("agenda")} <DropdownMenuShortcut>A</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -318,14 +321,14 @@ export function EventCalendar({
                 onClick={() => {
                   const today = new Date();
 
-                  // Snap to 15-minute intervals
+                  // Snap to 45-minute intervals
                   const minutes = today.getMinutes();
-                  const remainder = minutes % 15;
+                  const remainder = minutes % 45;
                   if (remainder !== 0) {
-                    if (remainder < 7.5) {
+                    if (remainder < 22.5) {
                       today.setMinutes(minutes - remainder);
                     } else {
-                      today.setMinutes(minutes + (15 - remainder));
+                      today.setMinutes(minutes + (45 - remainder));
                     }
                     today.setSeconds(0);
                     today.setMilliseconds(0);
@@ -333,7 +336,7 @@ export function EventCalendar({
 
                   setCreateEventData({
                     start: today,
-                    end: addMinutesToDate(today, 15),
+                    end: addMinutesToDate(today, 45),
                   });
                 }}
               >
@@ -342,7 +345,7 @@ export function EventCalendar({
                   size={16}
                   aria-hidden="true"
                 />
-                <span className="max-sm:sr-only">New appointment</span>
+                <span className="max-sm:sr-only">{t("new-button")}</span>
               </Button>
             )}
           </div>

@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { authClient } from "@/shared/lib/better-auth/client";
 import type { AuthClientError, Session } from "@/shared/types";
 
-import { SESSIONS_QUERY_KEY } from "@/features/settings/lib/react-query/query-keys";
-
 export const useRevokeSessionMutation = () => {
   const queryClient = useQueryClient();
+
+  const t = useTranslations("features.settings.use-revoke-session-mutation");
 
   return useMutation({
     mutationFn: async (token: string) => {
@@ -21,16 +22,17 @@ export const useRevokeSessionMutation = () => {
     onMutate: async (token) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: [SESSIONS_QUERY_KEY] });
+      await queryClient.cancelQueries({ queryKey: ["session", "list"] });
 
       // Snapshot the previous value
       const previousSessions = queryClient.getQueryData<Session["session"][]>([
-        SESSIONS_QUERY_KEY,
+        "session",
+        "list",
       ]);
 
       // Optimistically update to the new value
       queryClient.setQueryData(
-        [SESSIONS_QUERY_KEY],
+        ["session", "list"],
         (old: Session["session"][]) =>
           old.filter((session) => session.token !== token),
       );
@@ -41,17 +43,18 @@ export const useRevokeSessionMutation = () => {
     // If the mutation fails,
     // use the context returned from onMutate to roll back
     onError: (error: AuthClientError, _token, context) => {
-      queryClient.setQueryData([SESSIONS_QUERY_KEY], context?.previousSessions);
+      queryClient.setQueryData(["session", "list"], context?.previousSessions);
 
       switch (error.code) {
         case "SESSION_NOT_FOUND":
-          toast.info("The session you tried to revoke was already closed 🤓", {
+          toast.info(t("session-not-found-error"), {
             duration: 5_000,
           });
           return;
 
         default:
-          toast.error("Failed to revoke session, please try again later 😢", {
+          toast.error(t("error-toast"), {
+            description: t("error-toast-description"),
             duration: 5_000,
           });
           return;
@@ -59,7 +62,7 @@ export const useRevokeSessionMutation = () => {
     },
     // Always refetch after error or success:
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [SESSIONS_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: ["session", "list"] });
     },
   });
 };

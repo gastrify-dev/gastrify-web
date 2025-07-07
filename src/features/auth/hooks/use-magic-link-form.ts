@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 
-import { magicLinkFormSchema } from "@/features/auth/schemas/magic-link-form-schema";
+import { magicLinkSchema } from "@/features/auth/schemas/magic-link";
 import { useMagicLinkMutation } from "@/features/auth/hooks/use-magic-link-mutation";
-import type { MagicLinkFormValues } from "@/features/auth/types";
+import type { MagicLinkVariables } from "@/features/auth/types";
 
 export const useMagicLinkForm = () => {
-  const form = useForm<MagicLinkFormValues>({
-    resolver: zodResolver(magicLinkFormSchema),
+  const form = useForm<MagicLinkVariables>({
+    resolver: zodResolver(magicLinkSchema),
     defaultValues: {
       email: "",
     },
@@ -15,7 +16,9 @@ export const useMagicLinkForm = () => {
 
   const { mutate, isPending } = useMagicLinkMutation({ form });
 
-  const onSubmit = async (values: MagicLinkFormValues) => mutate(values);
+  const onSubmit = (variables: MagicLinkVariables) => mutate(variables);
 
-  return { form, onSubmit, isPending };
+  const t = useTranslations("features.auth.magic-link-form");
+
+  return { form, onSubmit, isPending, t };
 };

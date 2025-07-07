@@ -58,6 +58,7 @@ export const QRCodeDialog = ({
     showBackupCodes,
     handleDownloadBackupCodes,
     dialogCloseRef,
+    t,
   } = useQrCodeDialog({
     URI,
     setTotpURI,
@@ -76,14 +77,12 @@ export const QRCodeDialog = ({
       >
         <DialogHeader>
           <DialogTitle>
-            {showBackupCodes
-              ? "Download backup codes"
-              : "Scan the QR in your authenticator app"}
+            {showBackupCodes ? t("backup-codes-title") : t("qr-code-title")}
           </DialogTitle>
           <DialogDescription>
             {showBackupCodes
-              ? "Please download your backup codes and keep them in a safe place."
-              : "Or enter your secret key manually:"}
+              ? t("backup-codes-description")
+              : t("qr-code-description")}
           </DialogDescription>
 
           {!showBackupCodes && (
@@ -107,7 +106,7 @@ export const QRCodeDialog = ({
 
         {showBackupCodes ? (
           <Button onClick={handleDownloadBackupCodes} className="mx-auto">
-            Download backup codes
+            {t("download-backup-codes-button")}
           </Button>
         ) : (
           <Form {...form}>
@@ -117,11 +116,8 @@ export const QRCodeDialog = ({
                 name="code"
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
-                    <FormLabel>One-Time Password</FormLabel>
-                    <FormDescription>
-                      Please enter the one-time password from your authenticator
-                      app.
-                    </FormDescription>
+                    <FormLabel>{t("otp-label")}</FormLabel>
+                    <FormDescription>{t("otp-description")}</FormDescription>
                     <FormControl>
                       <div className="flex items-center gap-4">
                         <InputOTP
@@ -147,7 +143,7 @@ export const QRCodeDialog = ({
                         >
                           {isPending && <LoaderIcon className="animate-spin" />}
                           {isError && <RotateCcwIcon />}
-                          Verify
+                          {t("verify-button")}
                         </Button>
                       </div>
                     </FormControl>

@@ -1,40 +1,45 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { cancelAppointment } from "@/features/appointments/actions/cancel-appointment";
 import { useSession } from "@/shared/hooks/use-session";
-import type { Appointment, CalendarEvent } from "@/features/appointments/types";
+import type {
+  Appointment,
+  CalendarEvent,
+  CancelAppointmentVariables,
+} from "@/features/appointments/types";
 import {
   optimisticRemove,
   optimisticUpdate,
   rollback,
 } from "@/features/appointments/utils/optimistic-helpers";
 
-type CancelAppointmentValues = {
-  appointmentId: string;
-};
-
 export const useCancelAppointmentMutation = () => {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
 
+  const t = useTranslations(
+    "features.appointments.use-cancel-appointment-mutation",
+  );
+
   return useMutation({
-    mutationFn: async (variables: CancelAppointmentValues) => {
-      const { error } = await cancelAppointment(variables.appointmentId);
+    mutationFn: async (variables: CancelAppointmentVariables) => {
+      const { error } = await cancelAppointment(variables);
 
       if (error) return Promise.reject(error);
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({
-        queryKey: ["appointments", "list", "calendar"],
+        queryKey: ["appointment", "list", "calendar"],
       });
       await queryClient.cancelQueries({
-        queryKey: ["appointments", "list", "user", session?.user?.id],
+        queryKey: ["appointment", "list", "user", session?.user?.id],
       });
 
       const previousCalendarAppointments = optimisticUpdate<CalendarEvent>(
         queryClient,
-        ["appointments", "list", "calendar"],
+        ["appointment", "list", "calendar"],
         (calendarAppointment) =>
           calendarAppointment.id === variables.appointmentId,
         (calendarAppointment) => ({
@@ -46,7 +51,7 @@ export const useCancelAppointmentMutation = () => {
 
       const previousUserAppointments = optimisticRemove<Appointment>(
         queryClient,
-        ["appointments", "list", "user", session?.user?.id],
+        ["appointment", "list", "user", session?.user?.id],
         (appointment) => appointment.id === variables.appointmentId,
       );
 
@@ -56,29 +61,29 @@ export const useCancelAppointmentMutation = () => {
       if (context?.previousCalendarAppointments) {
         rollback<CalendarEvent>(
           queryClient,
-          ["appointments", "list", "calendar"],
+          ["appointment", "list", "calendar"],
           context.previousCalendarAppointments,
         );
       }
       if (context?.previousUserAppointments) {
         rollback<Appointment>(
           queryClient,
-          ["appointments", "list", "user", session?.user?.id],
+          ["appointment", "list", "user", session?.user?.id],
           context.previousUserAppointments,
         );
       }
 
-      toast.error("Failed to cancel appointment 😢", {
-        description: "Please try again later",
+      toast.error(t("error-toast"), {
+        description: t("error-toast-description"),
       });
     },
     onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "user", session?.user?.id],
+        queryKey: ["appointment", "list", "user", session?.user?.id],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["appointments", "list", "calendar"],
+        queryKey: ["appointment", "list", "calendar"],
       });
     },
   });

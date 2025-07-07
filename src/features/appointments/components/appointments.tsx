@@ -1,14 +1,17 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import { getAllAppointments } from "@/features/appointments/actions/get-all-appointments";
 import { EventCalendar } from "@/features/appointments/components/event-calendar";
 
 export function Appointments() {
+  const t = useTranslations("features.appointments.appointments");
+
   const { data, isError } = useQuery({
-    queryKey: ["appointments", "list", "calendar"],
+    queryKey: ["appointment", "list", "calendar"],
     queryFn: async () => {
       const { data, error } = await getAllAppointments();
 
@@ -19,8 +22,8 @@ export function Appointments() {
   });
 
   if (isError)
-    toast.error("Something went wrong fetching appointments", {
-      description: "Please try again later",
+    toast.error(t("error-toast"), {
+      description: t("error-toast-description"),
     });
 
   return <EventCalendar initialView="agenda" events={data} />;

@@ -17,7 +17,7 @@ import { cn } from "@/shared/utils/cn";
 import { useMagicLinkForm } from "@/features/auth/hooks/use-magic-link-form";
 
 export function MagicLinkForm() {
-  const { form, onSubmit, isPending } = useMagicLinkForm();
+  const { form, onSubmit, isPending, t } = useMagicLinkForm();
 
   return (
     <Form {...form}>
@@ -30,7 +30,7 @@ export function MagicLinkForm() {
           name="email"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("email-label")}</FormLabel>
 
               <div className="relative">
                 <FormControl>
@@ -39,7 +39,7 @@ export function MagicLinkForm() {
                     type="email"
                     disabled={isPending}
                     placeholder={
-                      fieldState.invalid ? undefined : "david@aragundy.com"
+                      fieldState.invalid ? undefined : t("email-placeholder")
                     }
                     {...field}
                   />
@@ -65,7 +65,7 @@ export function MagicLinkForm() {
 
         <Button disabled={isPending} type="submit">
           {isPending && <LoaderIcon className="animate-spin" />}
-          Send Magic Link
+          {t("submit-button")}
         </Button>
       </form>
     </Form>

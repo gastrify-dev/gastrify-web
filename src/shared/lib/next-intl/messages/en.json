@@ -503,6 +503,23 @@
         "error-toast": "Something went wrong enabling two-factor authentication 😢",
         "error-toast-description": "Please try again later"
       }
+    },
+    "notifications": {
+      "page": {
+        "title": "Notifications",
+        "empty-content": "No notifications yet."
+      },
+      "empty": "No notifications",
+      "loading": "Loading...",
+      "error": "Error loading notifications",
+      "select": "Select a notification",
+      "content": {
+        "received": "Received:",
+        "mark-read": "Mark as read",
+        "mark-unread": "Mark as unread",
+        "delete": "Delete",
+        "delete-confirm": "Are you sure you want to delete this notification?"
+      }
     }
   },
   "shared": {

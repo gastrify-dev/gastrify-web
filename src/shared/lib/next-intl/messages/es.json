@@ -503,6 +503,23 @@
         "error-toast": "Algo salió mal al habilitar la autenticación de dos factores 😢",
         "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
       }
+    },
+    "notifications": {
+      "page": {
+        "title": "Notificaciones",
+        "empty-content": "Aún no tienes notificaciones."
+      },
+      "empty": "Aún no tienes notificaciones",
+      "loading": "Cargando...",
+      "error": "Error cargando notificaciones",
+      "select": "Selecciona una notificación",
+      "content": {
+        "received": "Recibido:",
+        "mark-read": "Marcar como leída",
+        "mark-unread": "Marcar como no leída",
+        "delete": "Eliminar",
+        "delete-confirm": "¿Seguro que deseas eliminar esta notificación?"
+      }
     }
   },
   "shared": {

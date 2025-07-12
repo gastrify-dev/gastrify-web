@@ -7,6 +7,8 @@ import { NavLink } from "@/shared/components/nav-link";
 import { NavUser } from "@/shared/components/nav-user";
 import { NavUserSkeleton } from "@/shared/components/nav-user-skeleton";
 import { useAppSidebar } from "@/shared/hooks/use-app-sidebar";
+import { useUnreadNotifications } from "@/features/notifications/hooks/use-unread-notifications";
+import { NotificationBadge } from "@/features/notifications/components/notification-badge";
 
 export const AppSidebar = () => {
   const {
@@ -19,6 +21,7 @@ export const AppSidebar = () => {
     isSessionRefetching,
     t,
   } = useAppSidebar();
+  const { data: unreadCount } = useUnreadNotifications();
 
   return (
     <div className="flex flex-col items-center gap-4 md:items-stretch">
@@ -27,14 +30,31 @@ export const AppSidebar = () => {
       </div>
 
       <nav className="flex flex-col items-start gap-2 md:items-stretch">
-        {links.map((link) => (
-          <NavLink
-            key={link.href}
-            href={link.href}
-            label={link.label}
-            icon={link.icon}
-          />
-        ))}
+        {links.map((link) =>
+          link.href === "/notifications" ? (
+            <NavLink
+              key={link.href}
+              href={link.href}
+              label={link.label}
+              icon={
+                <span className="relative">
+                  {link.icon}
+                  <NotificationBadge
+                    count={unreadCount ?? 0}
+                    className="border-background absolute -top-1.5 left-full min-w-5 -translate-x-3.5 px-1"
+                  />
+                </span>
+              }
+            />
+          ) : (
+            <NavLink
+              key={link.href}
+              href={link.href}
+              label={link.label}
+              icon={link.icon}
+            />
+          ),
+        )}
       </nav>
 
       <div className="mt-auto max-w-60">

@@ -86,3 +86,32 @@ export const appointment = pgTable("appointment", {
   location: text("location"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
+
+export const notification = pgTable("notification", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  titleEs: text("title_es").notNull(),
+  previewEs: text("preview_es").notNull(),
+  contentEs: text("content_es").notNull(),
+  read: boolean("read").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
+});
+
+export const notificationTranslation = pgTable("notification_translation", {
+  id: text("id")
+    .primaryKey()
+    .references(() => notification.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  titleEn: text("title_en").notNull(),
+  previewEn: text("preview_en").notNull(),
+  contentEn: text("content_en").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  deletedAt: timestamp("deleted_at"),
+});

@@ -1,0 +1,16 @@
+import { z } from "zod";
+
+export const notificationSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  title: z.string().max(255),
+  preview: z.string().max(255),
+  content: z.string().max(2000),
+  locale: z.enum(["en", "es"]),
+  read: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  deletedAt: z.string().nullable(),
+});
+
+export type Notification = z.infer<typeof notificationSchema>;

@@ -21,7 +21,7 @@ export const AppSidebar = () => {
     isSessionRefetching,
     t,
   } = useAppSidebar();
-  const { data: unreadCount } = useUnreadNotifications();
+  const unreadCount = useUnreadNotifications();
 
   return (
     <div className="flex flex-col items-center gap-4 md:items-stretch">

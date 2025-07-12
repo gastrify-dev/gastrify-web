@@ -59,7 +59,6 @@ export async function createNotification(input: CreateNotificationInput) {
 
   await db.insert(notificationTranslation).values({
     id,
-    userId: data.userId,
     titleEn,
     previewEn,
     contentEn,
@@ -67,3 +66,4 @@ export async function createNotification(input: CreateNotificationInput) {
 
   return created;
 }
+// ...existing code...

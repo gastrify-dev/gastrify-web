@@ -105,9 +105,6 @@ export const notificationTranslation = pgTable("notification_translation", {
   id: text("id")
     .primaryKey()
     .references(() => notification.id, { onDelete: "cascade" }),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
   titleEn: text("title_en").notNull(),
   previewEn: text("preview_en").notNull(),
   contentEn: text("content_en").notNull(),

@@ -29,6 +29,13 @@
       "when": 1752272227374,
       "tag": "0003_shallow_micromacro",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1752284996234,
+      "tag": "0004_bored_blink",
+      "breakpoints": true
     }
   ]
 }

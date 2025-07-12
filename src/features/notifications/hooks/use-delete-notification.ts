@@ -1,3 +1,4 @@
+import { useLocale } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Notification = {
@@ -7,10 +8,11 @@ type Notification = {
 
 export function useDeleteNotification() {
   const queryClient = useQueryClient();
+  const locale = useLocale();
   return useMutation({
     mutationFn: async (id: string) => {
       queryClient.setQueryData(
-        ["notifications"],
+        ["notifications", locale],
         (old: Notification[] | undefined) => {
           if (!old) return old;
           return old.filter(
@@ -32,13 +34,13 @@ export function useDeleteNotification() {
       return res.json();
     },
     onError: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count"],
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count"],
       });

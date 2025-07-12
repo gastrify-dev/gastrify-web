@@ -4,7 +4,7 @@ import {
   notification,
   notificationTranslation,
 } from "@/shared/lib/drizzle/schema";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, desc } from "drizzle-orm";
 import { auth } from "@/shared/lib/better-auth/server";
 
 export async function GET(req: NextRequest) {
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
       .where(
         and(eq(notification.userId, userId), isNull(notification.deletedAt)),
       )
-      .orderBy(notification.createdAt);
+      .orderBy(desc(notification.createdAt));
 
     const notifications = await Promise.all(
       rows.map(async (n: typeof notification.$inferSelect) => {

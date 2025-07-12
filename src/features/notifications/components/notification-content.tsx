@@ -52,7 +52,7 @@ export default function NotificationContent({ notification }: Props) {
         <Button
           variant="destructive"
           onClick={() => deleteNotif.mutate(notification.id)}
-          disabled={deleteNotif.isPending}
+          disabled={deleteNotif.status === "pending"}
         >
           {t("delete")}
         </Button>

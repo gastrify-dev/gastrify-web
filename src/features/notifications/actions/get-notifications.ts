@@ -37,7 +37,6 @@ export async function getNotifications({
     .limit(limit)
     .offset(offset);
 
-  // Map to return only the requested locale for i18n fields
   return rows.map((n) => {
     const notif = n as unknown as NotificationRow;
     return {

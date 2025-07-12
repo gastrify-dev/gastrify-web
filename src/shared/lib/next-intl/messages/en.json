@@ -509,6 +509,7 @@
         "title": "Notifications",
         "empty-content": "No notifications yet."
       },
+      "badgeAriaLabel": "{count} unread notifications",
       "empty": "No notifications",
       "loading": "Loading...",
       "error": "Error loading notifications",

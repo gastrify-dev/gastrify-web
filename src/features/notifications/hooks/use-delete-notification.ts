@@ -1,5 +1,6 @@
 import { useLocale } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "@/shared/hooks/use-session";
 
 type Notification = {
   id: string;
@@ -9,6 +10,8 @@ type Notification = {
 export function useDeleteNotification() {
   const queryClient = useQueryClient();
   const locale = useLocale();
+  const { data } = useSession();
+  const userId = data?.user?.id;
   return useMutation({
     mutationFn: async (id: string) => {
       queryClient.setQueryData(
@@ -21,7 +24,7 @@ export function useDeleteNotification() {
         },
       );
       queryClient.setQueryData(
-        ["notifications", "unread-count"],
+        ["notifications", "unread-count", userId],
         (old: number | undefined) => {
           if (typeof old === "number") return Math.max(0, old - 1);
           return old;
@@ -36,13 +39,13 @@ export function useDeleteNotification() {
     onError: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
-        queryKey: ["notifications", "unread-count"],
+        queryKey: ["notifications", "unread-count", userId],
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
-        queryKey: ["notifications", "unread-count"],
+        queryKey: ["notifications", "unread-count", userId],
       });
     },
   });

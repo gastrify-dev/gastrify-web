@@ -6,7 +6,6 @@ export const notificationSchema = z.object({
   title: z.string().max(255),
   preview: z.string().max(255),
   content: z.string().max(2000),
-  locale: z.enum(["en", "es"]),
   read: z.boolean(),
   createdAt: z.string(),
   updatedAt: z.string(),

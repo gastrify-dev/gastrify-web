@@ -509,6 +509,7 @@
         "title": "Notificaciones",
         "empty-content": "Aún no tienes notificaciones."
       },
+      "badgeAriaLabel": "{count} notificaciones sin leer",
       "empty": "Aún no tienes notificaciones",
       "loading": "Cargando...",
       "error": "Error cargando notificaciones",

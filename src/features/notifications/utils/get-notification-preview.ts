@@ -1,7 +1,11 @@
-export function getNotificationPreview(content: string, maxLength = 80) {
+export function getNotificationPreview(
+  content: string,
+  maxLength = 80,
+  locale = "en",
+) {
   if (content.length <= maxLength) return content;
   if (typeof Intl !== "undefined" && Intl.Segmenter) {
-    const segmenter = new Intl.Segmenter("en", { granularity: "word" });
+    const segmenter = new Intl.Segmenter(locale, { granularity: "word" });
     const segments = segmenter.segment(content);
     let truncated = "";
     let length = 0;

@@ -30,7 +30,7 @@ export function useCreateNotification() {
       ]);
       const newNotification = {
         ...input,
-        id: Math.random().toString(36).slice(2), // id temporal
+        id: crypto.randomUUID(),
         read: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),

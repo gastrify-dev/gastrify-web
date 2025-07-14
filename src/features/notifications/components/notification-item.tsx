@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { Notification } from "../types";
 import { formatNotificationDate } from "../utils/format-notification-date";
 import { getDateFnsLocale } from "../utils/get-date-fns-locale";
@@ -15,6 +16,11 @@ type Props = {
 
 export function NotificationItem({ notification, selected, onClick }: Props) {
   const locale = useLocale();
+  const formattedDate = React.useMemo(
+    () =>
+      formatNotificationDate(notification.createdAt, getDateFnsLocale(locale)),
+    [notification.createdAt, locale],
+  );
   return (
     <button
       className="flex w-full flex-col gap-1 px-4 py-3 text-left"
@@ -33,10 +39,7 @@ export function NotificationItem({ notification, selected, onClick }: Props) {
           <div className="flex items-center justify-between">
             <span className="max-w-xs truncate">{notification.title}</span>
             <span className="text-muted-foreground text-xs">
-              {formatNotificationDate(
-                notification.createdAt,
-                getDateFnsLocale(locale),
-              )}
+              {formattedDate}
             </span>
           </div>
           <div className="text-muted-foreground hidden truncate text-sm md:block">

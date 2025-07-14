@@ -40,10 +40,15 @@ export function useDeleteNotification() {
           );
         },
       );
+      const deletedNotification = previousNotifications?.find(
+        (notification: Notification) => notification.id === id,
+      );
       queryClient.setQueryData(
         ["notifications", "unread-count", userId],
         (old: number | undefined) => {
-          if (typeof old === "number") return Math.max(0, old - 1);
+          if (typeof old === "number" && deletedNotification?.read === false) {
+            return Math.max(0, old - 1);
+          }
           return old;
         },
       );

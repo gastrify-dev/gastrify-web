@@ -28,31 +28,21 @@ export default function NotificationsClient() {
 
   const notifications = notificationsQuery.notifications as AppNotification[];
 
-  const [localNotifications, setLocalNotifications] =
-    React.useState<AppNotification[]>(notifications);
-  React.useEffect(() => {
-    setLocalNotifications(notifications);
-  }, [notifications]);
-
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
   const selected =
-    localNotifications.find((n: AppNotification) => n.id === selectedId) ||
-    null;
+    notifications.find((n: AppNotification) => n.id === selectedId) || null;
   React.useEffect(() => {
     if (selectedId && !selected) {
       setSelectedId(null);
     }
-  }, [localNotifications, selectedId, selected]);
+  }, [notifications, selectedId, selected]);
   const handleSelect = (n: AppNotification) => {
     setSelectedId(n.id);
-    if (!n.read) {
-      n.read = true;
-    }
+    // Si quieres marcar como leída, deberías hacerlo vía una mutación, no solo en el estado local
   };
 
   const { mutate: deleteNotification } = useDeleteNotification();
   const handleDelete = (id: string) => {
-    setLocalNotifications((prev) => prev.filter((n) => n.id !== id));
     setSelectedId((prev) => (prev === id ? null : prev));
     deleteNotification(id);
   };
@@ -68,7 +58,7 @@ export default function NotificationsClient() {
           ) : notificationsQuery.notifications &&
             notificationsQuery.notifications.length > 0 ? (
             <NotificationList
-              notifications={localNotifications as AppNotification[]}
+              notifications={notifications as AppNotification[]}
               selectedId={selected?.id}
               onSelect={handleSelect}
             />

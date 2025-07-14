@@ -23,13 +23,16 @@ export function useDeleteNotification() {
       return res.json();
     },
     onMutate: async (id: string) => {
-      await queryClient.cancelQueries({ queryKey: ["notifications", locale] });
+      await queryClient.cancelQueries({
+        queryKey: ["notifications", userId, locale],
+      });
       const previousNotifications = queryClient.getQueryData<Notification[]>([
         "notifications",
+        userId,
         locale,
       ]);
       queryClient.setQueryData(
-        ["notifications", locale],
+        ["notifications", userId, locale],
         (old: Notification[] | undefined) => {
           if (!old) return old;
           return old.filter(
@@ -49,17 +52,21 @@ export function useDeleteNotification() {
     onError: (err, variables, context) => {
       if (context?.previousNotifications) {
         queryClient.setQueryData(
-          ["notifications", locale],
+          ["notifications", userId, locale],
           context.previousNotifications,
         );
       }
-      queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", userId, locale],
+      });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count", userId],
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
+      queryClient.invalidateQueries({
+        queryKey: ["notifications", userId, locale],
+      });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count", userId],
       });

@@ -1,25 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "@/shared/hooks/use-session";
+import { fetchUnreadNotificationCount } from "@/features/notifications/actions/client";
+import React from "react";
 
 export function useUnreadNotifications() {
   const { data } = useSession();
   const userId = data?.user?.id;
 
-  const { data: unreadCount } = useQuery({
+  const { data: unreadCount, refetch } = useQuery({
     queryKey: ["notifications", "unread-count", userId],
     queryFn: async () => {
       if (!userId) return 0;
-      const res = await fetch(
-        `/api/notifications/unread-count?userId=${userId}`,
-      );
-      if (!res.ok)
-        throw new Error("Failed to fetch unread notifications count");
-      const json = await res.json();
-      return json.count ?? 0;
+      return await fetchUnreadNotificationCount(userId);
     },
     enabled: !!userId,
-    staleTime: 60_000, // 1 min
+    staleTime: 0,
   });
+
+  React.useEffect(() => {
+    const handler = () => {
+      refetch();
+    };
+    window.addEventListener("notification-created", handler);
+    return () => window.removeEventListener("notification-created", handler);
+  }, [refetch]);
 
   return unreadCount ?? 0;
 }

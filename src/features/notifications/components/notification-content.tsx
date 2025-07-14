@@ -14,12 +14,31 @@ import { Button } from "@/shared/components/ui/button";
 
 type Props = {
   notification: Notification;
+  clearSelection?: () => void;
+  onDelete?: (id: string) => void;
 };
 
-export default function NotificationContent({ notification }: Props) {
+export default function NotificationContent({
+  notification,
+  clearSelection,
+  onDelete,
+}: Props) {
   const locale = useLocale();
   const t = useTranslations("features.notifications.content");
   const deleteNotif = useDeleteNotification();
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(notification.id);
+      if (clearSelection) clearSelection();
+    } else {
+      deleteNotif.mutate(notification.id, {
+        onSuccess: () => {
+          if (clearSelection) clearSelection();
+        },
+      });
+    }
+  };
 
   return (
     <Card className="mx-auto w-full max-w-xl">
@@ -51,7 +70,7 @@ export default function NotificationContent({ notification }: Props) {
       <CardFooter className="mt-4 flex gap-2">
         <Button
           variant="destructive"
-          onClick={() => deleteNotif.mutate(notification.id)}
+          onClick={handleDelete}
           disabled={deleteNotif.status === "pending"}
         >
           {t("delete")}

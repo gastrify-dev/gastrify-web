@@ -15,6 +15,20 @@ export function useMarkNotificationRead() {
   const userId = data?.user?.id;
   return useMutation({
     mutationFn: async ({ id, read }: { id: string; read: boolean }) => {
+      const res = await fetch("/actions/notifications/mark-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationId: id, userId, read }),
+      });
+      if (!res.ok) throw new Error("Error updating notification");
+      return res.json();
+    },
+    onMutate: async ({ id, read }) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications", locale] });
+      const previousNotifications = queryClient.getQueryData<Notification[]>([
+        "notifications",
+        locale,
+      ]);
       queryClient.setQueryData(
         ["notifications", locale],
         (old: Notification[] | undefined) => {
@@ -31,21 +45,21 @@ export function useMarkNotificationRead() {
           return old;
         },
       );
-      const res = await fetch(`/api/notifications/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ read }),
-      });
-      if (!res.ok) throw new Error("Error updating notification");
-      return res.json();
+      return { previousNotifications };
     },
-    onError: () => {
+    onError: (err, variables, context) => {
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(
+          ["notifications", locale],
+          context.previousNotifications,
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count", userId],
       });
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count", userId],

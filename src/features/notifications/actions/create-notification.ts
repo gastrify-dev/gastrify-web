@@ -1,4 +1,4 @@
-import { db } from "@/shared/lib/drizzle";
+import { db } from "@/shared/lib/drizzle/server";
 import {
   notification,
   notificationTranslation,
@@ -32,6 +32,7 @@ const createNotificationSchema = z.object({
   titleEs: z.string().max(255),
   previewEs: z.string().max(255),
   contentEs: z.string().max(2000),
+  locale: z.string().optional(),
 });
 
 export type CreateNotificationInput = z.infer<typeof createNotificationSchema>;

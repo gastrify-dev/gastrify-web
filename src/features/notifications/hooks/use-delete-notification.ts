@@ -14,6 +14,20 @@ export function useDeleteNotification() {
   const userId = data?.user?.id;
   return useMutation({
     mutationFn: async (id: string) => {
+      const res = await fetch("/actions/notifications/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notificationId: id, userId }),
+      });
+      if (!res.ok) throw new Error("Error deleting notification");
+      return res.json();
+    },
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["notifications", locale] });
+      const previousNotifications = queryClient.getQueryData<Notification[]>([
+        "notifications",
+        locale,
+      ]);
       queryClient.setQueryData(
         ["notifications", locale],
         (old: Notification[] | undefined) => {
@@ -30,19 +44,21 @@ export function useDeleteNotification() {
           return old;
         },
       );
-      const res = await fetch(`/api/notifications/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Error deleting notification");
-      return res.json();
+      return { previousNotifications };
     },
-    onError: () => {
+    onError: (err, variables, context) => {
+      if (context?.previousNotifications) {
+        queryClient.setQueryData(
+          ["notifications", locale],
+          context.previousNotifications,
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count", userId],
       });
     },
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications", locale] });
       queryClient.invalidateQueries({
         queryKey: ["notifications", "unread-count", userId],

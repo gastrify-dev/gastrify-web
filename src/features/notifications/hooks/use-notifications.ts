@@ -1,21 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
 import { Notification } from "../types";
+import { fetchNotificationList } from "../actions/client";
 
-async function fetchNotifications(locale: string): Promise<Notification[]> {
-  const res = await fetch(`/api/notifications?locale=${locale}`);
-  if (!res.ok) throw new Error("Error fetching notifications");
-  return res.json();
-}
-
-export function useNotifications(locale: string = "es") {
+export function useNotifications(
+  userId: string | undefined,
+  locale: string = "es",
+) {
   const {
     data: notifications = [],
     isLoading,
     error,
     refetch,
   } = useQuery<Notification[]>({
-    queryKey: ["notifications", locale],
-    queryFn: () => fetchNotifications(locale),
+    queryKey: ["notifications", userId, locale],
+    queryFn: () =>
+      userId ? fetchNotificationList(userId, locale) : Promise.resolve([]),
+    enabled: !!userId,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 
   return { notifications, isLoading, error, refetch };

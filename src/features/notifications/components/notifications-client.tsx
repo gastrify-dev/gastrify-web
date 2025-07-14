@@ -1,20 +1,61 @@
 "use client";
+import React from "react";
 
 import { NotificationList } from "./notification-list";
 import NotificationContent from "./notification-content";
 import NotificationEmpty from "./notification-empty";
 import NotificationSkeleton from "./notification-skeleton";
 import { useNotifications } from "../hooks/use-notifications";
-import { useNotificationDetail } from "../hooks/use-notification-detail";
+import { useDeleteNotification } from "../hooks/use-delete-notification";
+import type { Notification as AppNotification } from "../types";
 import { useTranslations, useLocale } from "next-intl";
+import { useSession } from "@/shared/hooks/use-session";
 
 export default function NotificationsClient() {
   const locale = useLocale();
   const t = useTranslations("features.notifications");
-  const notificationsQuery = useNotifications(locale as "en" | "es");
-  const { selected, setSelectedId } = useNotificationDetail(
-    notificationsQuery.notifications,
-  );
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  const notificationsQuery = useNotifications(userId, locale as "en" | "es");
+
+  React.useEffect(() => {
+    const handler = () => {
+      notificationsQuery.refetch();
+    };
+    window.addEventListener("notification-created", handler);
+    return () => window.removeEventListener("notification-created", handler);
+  }, [notificationsQuery]);
+
+  const notifications = notificationsQuery.notifications as AppNotification[];
+
+  const [localNotifications, setLocalNotifications] =
+    React.useState<AppNotification[]>(notifications);
+  React.useEffect(() => {
+    setLocalNotifications(notifications);
+  }, [notifications]);
+
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const selected =
+    localNotifications.find((n: AppNotification) => n.id === selectedId) ||
+    null;
+  React.useEffect(() => {
+    if (selectedId && !selected) {
+      setSelectedId(null);
+    }
+  }, [localNotifications, selectedId, selected]);
+  const handleSelect = (n: AppNotification) => {
+    setSelectedId(n.id);
+    if (!n.read) {
+      n.read = true;
+    }
+  };
+
+  const { mutate: deleteNotification } = useDeleteNotification();
+  const handleDelete = (id: string) => {
+    setLocalNotifications((prev) => prev.filter((n) => n.id !== id));
+    setSelectedId((prev) => (prev === id ? null : prev));
+    deleteNotification(id);
+  };
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -27,19 +68,23 @@ export default function NotificationsClient() {
           ) : notificationsQuery.notifications &&
             notificationsQuery.notifications.length > 0 ? (
             <NotificationList
-              notifications={notificationsQuery.notifications}
+              notifications={localNotifications as AppNotification[]}
               selectedId={selected?.id}
-              onSelect={(
-                n: (typeof notificationsQuery.notifications)[number],
-              ) => setSelectedId(n.id)}
+              onSelect={handleSelect}
             />
           ) : (
             <NotificationEmpty />
           )}
         </section>
         <section className="h-full w-full flex-1 overflow-y-auto">
-          {selected ? (
-            <NotificationContent notification={selected} />
+          {selectedId && selected ? (
+            <NotificationContent
+              notification={selected as AppNotification}
+              clearSelection={() => {
+                setSelectedId(null);
+              }}
+              onDelete={handleDelete}
+            />
           ) : (
             <div className="text-muted-foreground flex h-full items-center justify-center">
               {t("select")}

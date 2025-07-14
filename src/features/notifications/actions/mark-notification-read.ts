@@ -1,4 +1,4 @@
-import { db } from "@/shared/lib/drizzle";
+import { db } from "@/shared/lib/drizzle/server";
 import { notification } from "@/shared/lib/drizzle/schema";
 import { eq, and } from "drizzle-orm";
 

@@ -1,21 +1,9 @@
-import { db } from "@/shared/lib/drizzle";
-import { notification } from "@/shared/lib/drizzle/schema";
-import { eq, and, desc, isNull } from "drizzle-orm";
-
-interface I18nField {
-  en: string;
-  es: string;
-}
-
-interface NotificationRow
-  extends Omit<
-    typeof notification.$inferSelect,
-    "title" | "preview" | "content"
-  > {
-  title: I18nField;
-  preview: I18nField;
-  content: I18nField;
-}
+import { db } from "@/shared/lib/drizzle/server";
+import {
+  notification,
+  notificationTranslation,
+} from "@/shared/lib/drizzle/schema";
+import { eq, and, desc, isNull, inArray } from "drizzle-orm";
 
 export async function getNotifications({
   userId,
@@ -28,7 +16,6 @@ export async function getNotifications({
   limit?: number;
   offset?: number;
 }) {
-  // Get notifications for user, not deleted, ordered by createdAt desc
   const rows = await db
     .select()
     .from(notification)
@@ -37,13 +24,33 @@ export async function getNotifications({
     .limit(limit)
     .offset(offset);
 
-  return rows.map((n) => {
-    const notif = n as unknown as NotificationRow;
-    return {
-      ...notif,
-      title: notif.title?.[locale] ?? notif.title?.en,
-      preview: notif.preview?.[locale] ?? notif.preview?.en,
-      content: notif.content?.[locale] ?? notif.content?.en,
-    };
-  });
+  if (locale === "en") {
+    const notificationIds = rows.map((n) => n.id);
+    const translations =
+      notificationIds.length > 0
+        ? await db
+            .select()
+            .from(notificationTranslation)
+            .where(inArray(notificationTranslation.id, notificationIds))
+        : [];
+    const translationMap = new Map(translations.map((t) => [t.id, t]));
+    return rows.map((n) => {
+      const t = translationMap.get(n.id);
+      return {
+        ...n,
+        title: t?.titleEn ?? n.titleEs ?? "",
+        preview: t?.previewEn ?? n.previewEs ?? "",
+        content: t?.contentEn ?? n.contentEs ?? "",
+      };
+    });
+  } else {
+    return rows.map((n) => {
+      return {
+        ...n,
+        title: n.titleEs ?? "",
+        preview: n.previewEs ?? "",
+        content: n.contentEs ?? "",
+      };
+    });
+  }
 }

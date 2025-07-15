@@ -9,6 +9,8 @@ import { appointment, user } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
+import { sendAppointmentConfirmation } from "@/shared/lib/react-email/send-appointment-confirmation";
+import { formatAppointmentDateTime } from "@/shared/lib/react-email/send-appointment-confirmation";
 
 import type {
   Appointment,
@@ -226,7 +228,59 @@ export async function updateAppointment(
     };
   }
 
+  // Send confirmation email if appointment is booked for a patient
   if (status === "booked" && patient) {
+    try {
+      // Get patient language preference
+      const { data: patientData, error: patientDbError } = await tryCatch(
+        db
+          .select({ language: user.language })
+          .from(user)
+          .where(eq(user.id, patient.id))
+          .limit(1),
+      );
+
+      if (!patientDbError && patientData && patientData.length > 0) {
+        const patientLanguage = patientData[0].language as "en" | "es";
+
+        // Format date and time for email
+        const { date: appointmentDate, time: appointmentTime } =
+          formatAppointmentDateTime(start, patientLanguage);
+
+        // Calculate duration in minutes
+        const durationMinutes = Math.round(
+          (end.getTime() - start.getTime()) / (1000 * 60),
+        );
+
+        // Send confirmation email
+        await sendAppointmentConfirmation({
+          to: patient.email,
+          patientName: patient.name,
+          appointmentId: dbUpdateAppointmentData[0].id,
+          appointmentDate,
+          appointmentTime,
+          appointmentType: type || "in-person",
+          location: dbUpdateAppointmentData[0].location || undefined,
+          meetingLink: dbUpdateAppointmentData[0].meetingLink || undefined,
+          duration: `${durationMinutes} minutes`,
+          language: patientLanguage,
+          calendarAttachment: true,
+          startDate: start,
+          durationMinutes,
+        });
+
+        console.log(
+          "Appointment confirmation email sent successfully (admin updated)",
+        );
+      }
+    } catch (emailError) {
+      // Log error but don't fail the appointment update
+      console.error(
+        "Failed to send appointment confirmation email:",
+        emailError,
+      );
+    }
+
     return {
       data: {
         appointment: dbUpdateAppointmentData[0],

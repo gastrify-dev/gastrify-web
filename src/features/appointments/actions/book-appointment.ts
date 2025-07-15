@@ -2,13 +2,13 @@
 
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
-
 import { db } from "@/shared/lib/drizzle/server";
-import { appointment } from "@/shared/lib/drizzle/schema";
+import { appointment, user } from "@/shared/lib/drizzle/schema";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { ActionResponse } from "@/shared/types";
 import { auth } from "@/shared/lib/better-auth/server";
-
+import { sendAppointmentConfirmation } from "@/shared/lib/react-email/send-appointment-confirmation";
+import { formatAppointmentDateTime } from "@/shared/lib/react-email/send-appointment-confirmation";
 import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type { BookAppointmentVariables } from "@/features/appointments/types";
 
@@ -148,6 +148,54 @@ export const bookAppointment = async (
         message: "An unexpected error occurred",
       },
     };
+  }
+
+  // Send confirmation email (don't block booking if email fails)
+  try {
+    // Get user data for email
+    const { data: userData, error: userDbError } = await tryCatch(
+      db.select().from(user).where(eq(user.id, patientId)).limit(1),
+    );
+
+    if (!userDbError && userData && userData.length > 0) {
+      const patient = userData[0];
+      const appointmentData = existingAppointment[0];
+
+      // Format date and time for email
+      const { date: appointmentDate, time: appointmentTime } =
+        formatAppointmentDateTime(
+          appointmentData.start,
+          patient.language as "en" | "es",
+        );
+
+      // Calculate duration in minutes
+      const durationMinutes = Math.round(
+        (appointmentData.end.getTime() - appointmentData.start.getTime()) /
+          (1000 * 60),
+      );
+
+      // Send confirmation email
+      await sendAppointmentConfirmation({
+        to: patient.email,
+        patientName: patient.name,
+        appointmentId: appointmentData.id,
+        appointmentDate,
+        appointmentTime,
+        appointmentType: appointmentData.type || "in-person",
+        location: appointmentData.location || undefined,
+        meetingLink: appointmentData.meetingLink || undefined,
+        duration: `${durationMinutes} minutes`,
+        language: patient.language as "en" | "es",
+        calendarAttachment: true,
+        startDate: appointmentData.start,
+        durationMinutes,
+      });
+
+      console.log("Appointment confirmation email sent successfully");
+    }
+  } catch (emailError) {
+    // Log error but don't fail the booking
+    console.error("Failed to send appointment confirmation email:", emailError);
   }
 
   return {

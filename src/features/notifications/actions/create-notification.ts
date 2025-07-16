@@ -1,69 +1,57 @@
+"use server";
+
 import { db } from "@/shared/lib/drizzle/server";
-import {
-  notification,
-  notificationTranslation,
-} from "@/shared/lib/drizzle/schema";
-import { z } from "zod";
-import { randomUUID } from "crypto";
+import { notification } from "@/shared/lib/drizzle/schema";
+import { ActionResponse } from "@/shared/types";
+import { notificationCreateSchema } from "../schemas/notification";
+import { Notification } from "../types/notification";
 
-async function translateText(
-  text: string,
-  from: string,
-  to: string,
-): Promise<string> {
-  const apiKey = process.env.DEEPL_API_KEY;
-  if (!apiKey)
-    throw new Error("DeepL API key not set in environment variables");
-  const res = await fetch("https://api-free.deepl.com/v2/translate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization: `DeepL-Auth-Key ${apiKey}`,
-    },
-    body: `text=${encodeURIComponent(text)}&source_lang=${from.toUpperCase()}&target_lang=${to.toUpperCase()}`,
-  });
-  if (!res.ok) throw new Error("DeepL API error");
-  const data = await res.json();
-  return data.translations?.[0]?.text || "";
-}
-
-const createNotificationSchema = z.object({
-  userId: z.string(),
-  titleEs: z.string().max(255),
-  previewEs: z.string().max(255),
-  contentEs: z.string().max(2000),
-  locale: z.string().optional(),
-});
-
-export type CreateNotificationInput = z.infer<typeof createNotificationSchema>;
-
-export async function createNotification(input: CreateNotificationInput) {
-  const data = createNotificationSchema.parse(input);
-  const id = randomUUID();
-
-  const [created] = await db
-    .insert(notification)
-    .values({
-      id,
-      userId: data.userId,
-      titleEs: data.titleEs,
-      previewEs: data.previewEs,
-      contentEs: data.contentEs,
-    })
-    .returning();
-
-  const [titleEn, previewEn, contentEn] = await Promise.all([
-    translateText(data.titleEs, "es", "en"),
-    translateText(data.previewEs, "es", "en"),
-    translateText(data.contentEs, "es", "en"),
-  ]);
-
-  await db.insert(notificationTranslation).values({
-    id,
-    titleEn,
-    previewEn,
-    contentEn,
-  });
-
-  return created;
+export async function createNotification(
+  data: unknown,
+): Promise<ActionResponse<Notification, string>> {
+  try {
+    const parsed = notificationCreateSchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        data: null,
+        error: { code: "VALIDATION_ERROR", message: parsed.error.message },
+      };
+    }
+    const result = await db
+      .insert(notification)
+      .values({
+        id: crypto.randomUUID(),
+        userId: parsed.data.userId,
+        title: parsed.data.title,
+        preview: parsed.data.preview,
+        content: parsed.data.content,
+        read: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    if (!result[0]) {
+      return {
+        data: null,
+        error: {
+          code: "CREATE_FAILED",
+          message: "Failed to create notification",
+        },
+      };
+    }
+    const notif: Notification = {
+      ...result[0],
+      createdAt: new Date(result[0].createdAt).toISOString(),
+      updatedAt: new Date(result[0].updatedAt).toISOString(),
+      deletedAt: result[0].deletedAt
+        ? new Date(result[0].deletedAt).toISOString()
+        : null,
+    };
+    return { data: notif, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error: { code: "UNKNOWN_ERROR", message: (error as Error).message },
+    };
+  }
 }

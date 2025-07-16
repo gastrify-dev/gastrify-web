@@ -1,24 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
-import { Notification } from "../types";
-import { fetchNotificationList } from "../actions/client";
 
-export function useNotifications(
-  userId: string | undefined,
-  locale: string = "es",
-) {
-  const {
-    data: notifications = [],
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<Notification[]>({
-    queryKey: ["notifications", userId, locale],
-    queryFn: () =>
-      userId ? fetchNotificationList(userId, locale) : Promise.resolve([]),
-    enabled: !!userId,
-    staleTime: 0,
-    refetchOnWindowFocus: true,
+import { getNotifications } from "../actions/get-notifications";
+import type {
+  Notification,
+  NotificationErrorCode,
+} from "../types/notification";
+import { GetNotificationsVariables } from "../schemas/get-notifications";
+
+export function useNotifications(variables: GetNotificationsVariables) {
+  return useQuery<{
+    data: Notification[];
+    error: NotificationErrorCode | null;
+  }>({
+    queryKey: ["notifications", variables],
+    queryFn: async ({ queryKey }) => {
+      const [, vars] = queryKey as [string, GetNotificationsVariables];
+      const result = await getNotifications(vars);
+      return {
+        data: result.data ?? [],
+        error: result.error?.code ?? null,
+      };
+    },
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+    refetchInterval: 5000,
   });
-
-  return { notifications, isLoading, error, refetch };
 }

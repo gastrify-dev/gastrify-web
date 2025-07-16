@@ -1,56 +1,75 @@
+"use server";
+
+import { eq, desc } from "drizzle-orm";
+
 import { db } from "@/shared/lib/drizzle/server";
-import {
-  notification,
-  notificationTranslation,
-} from "@/shared/lib/drizzle/schema";
-import { eq, and, desc, isNull, inArray } from "drizzle-orm";
+import { tryCatch } from "@/shared/utils/try-catch";
+import { ActionResponse } from "@/shared/types";
+import { auth } from "@/shared/lib/better-auth/server";
+import { headers } from "next/headers";
 
-export async function getNotifications({
-  userId,
-  locale,
-  limit = 20,
-  offset = 0,
-}: {
-  userId: string;
-  locale: "en" | "es";
-  limit?: number;
-  offset?: number;
-}) {
-  const rows = await db
-    .select()
-    .from(notification)
-    .where(and(eq(notification.userId, userId), isNull(notification.deletedAt)))
-    .orderBy(desc(notification.createdAt))
-    .limit(limit)
-    .offset(offset);
+import { notification } from "@/shared/lib/drizzle/schema";
+import { getNotificationsSchema } from "../schemas/get-notifications";
+import { Notification, NotificationErrorCode } from "../types/notification";
+import { GetNotificationsVariables } from "../schemas/get-notifications";
 
-  if (locale === "en") {
-    const notificationIds = rows.map((n) => n.id);
-    const translations =
-      notificationIds.length > 0
-        ? await db
-            .select()
-            .from(notificationTranslation)
-            .where(inArray(notificationTranslation.id, notificationIds))
-        : [];
-    const translationMap = new Map(translations.map((t) => [t.id, t]));
-    return rows.map((n) => {
-      const t = translationMap.get(n.id);
+export async function getNotifications(
+  variables: GetNotificationsVariables,
+): Promise<ActionResponse<Notification[], NotificationErrorCode>> {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) {
       return {
-        ...n,
-        title: t?.titleEn ?? n.titleEs ?? "",
-        preview: t?.previewEn ?? n.previewEs ?? "",
-        content: t?.contentEn ?? n.contentEs ?? "",
+        data: null,
+        error: { code: "UNAUTHORIZED", message: "User not authenticated" },
       };
-    });
-  } else {
-    return rows.map((n) => {
+    }
+
+    const parsed = getNotificationsSchema.safeParse(variables);
+    if (!parsed.success) {
       return {
-        ...n,
-        title: n.titleEs ?? "",
-        preview: n.previewEs ?? "",
-        content: n.contentEs ?? "",
+        data: null,
+        error: { code: "BAD_REQUEST", message: parsed.error.message },
       };
-    });
+    }
+
+    const { limit, offset } = parsed.data;
+
+    const { data, error } = await tryCatch(
+      db
+        .select()
+        .from(notification)
+        .where(eq(notification.userId, session.user.id))
+        .orderBy(desc(notification.createdAt))
+        .limit(limit)
+        .offset(offset),
+    );
+
+    if (error) {
+      return {
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch notifications",
+        },
+      };
+    }
+
+    const notifications = (data ?? []).map((n) => ({
+      ...n,
+      createdAt: n.createdAt ? new Date(n.createdAt).toISOString() : "",
+      updatedAt: n.updatedAt ? new Date(n.updatedAt).toISOString() : "",
+      deletedAt: n.deletedAt ? new Date(n.deletedAt).toISOString() : null,
+    }));
+
+    return { data: notifications, error: null };
+  } catch {
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Unexpected error fetching notifications",
+      },
+    };
   }
 }

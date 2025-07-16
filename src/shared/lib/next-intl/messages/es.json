@@ -519,6 +519,7 @@
         "mark-read": "Marcar como leída",
         "mark-unread": "Marcar como no leída",
         "delete": "Eliminar",
+        "deleting": "Eliminando...",
         "delete-confirm": "¿Seguro que deseas eliminar esta notificación?"
       }
     }

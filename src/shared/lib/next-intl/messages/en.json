@@ -519,6 +519,7 @@
         "mark-read": "Mark as read",
         "mark-unread": "Mark as unread",
         "delete": "Delete",
+        "deleting": "Deleting...",
         "delete-confirm": "Are you sure you want to delete this notification?"
       }
     }

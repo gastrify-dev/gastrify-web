@@ -2,13 +2,15 @@
 
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+
 import { db } from "@/shared/lib/drizzle/server";
 import { appointment, user } from "@/shared/lib/drizzle/schema";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { ActionResponse } from "@/shared/types";
 import { auth } from "@/shared/lib/better-auth/server";
-import { sendAppointmentConfirmation } from "@/shared/lib/react-email/send-appointment-confirmation";
-import { formatAppointmentDateTime } from "@/shared/lib/react-email/send-appointment-confirmation";
+
+import { formatAppointmentDateTime } from "../utils/format-appointment-date-time";
+import { sendAppointmentConfirmation } from "./send-appointment-confirmation";
 import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type { BookAppointmentVariables } from "@/features/appointments/types";
 
@@ -24,8 +26,6 @@ export type BookAppointmentErrorCode =
 export const bookAppointment = async (
   variables: BookAppointmentVariables,
 ): Promise<ActionResponse<null, BookAppointmentErrorCode>> => {
-  // check if user is authenticated
-
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -39,8 +39,6 @@ export const bookAppointment = async (
       },
     };
   }
-
-  // parse values
 
   const parsedVariables = bookAppointmentSchema.safeParse(variables);
 
@@ -56,8 +54,6 @@ export const bookAppointment = async (
 
   const { appointmentId, patientId, appointmentType } = parsedVariables.data;
 
-  // check if patient is the same as the one who is booking the appointment
-
   if (session.user.id !== patientId) {
     return {
       data: null,
@@ -67,8 +63,6 @@ export const bookAppointment = async (
       },
     };
   }
-
-  // check if appointment exists
 
   const { data: existingAppointment, error: existingAppointmentDbError } =
     await tryCatch(
@@ -101,8 +95,6 @@ export const bookAppointment = async (
     };
   }
 
-  // if it exists, check if it's available
-
   if (existingAppointment[0].status !== "available") {
     return {
       data: null,
@@ -113,8 +105,6 @@ export const bookAppointment = async (
     };
   }
 
-  // check if appointment is in the past
-
   if (existingAppointment[0].start < new Date()) {
     return {
       data: null,
@@ -124,8 +114,6 @@ export const bookAppointment = async (
       },
     };
   }
-
-  // all good, book appointment
 
   const { error: bookAppointmentDbError } = await tryCatch(
     db
@@ -150,52 +138,93 @@ export const bookAppointment = async (
     };
   }
 
-  // Send confirmation email (don't block booking if email fails)
-  try {
-    // Get user data for email
-    const { data: userData, error: userDbError } = await tryCatch(
-      db.select().from(user).where(eq(user.id, patientId)).limit(1),
-    );
+  const { data: userData, error: userDbError } = await tryCatch(
+    db.select().from(user).where(eq(user.id, patientId)).limit(1),
+  );
 
-    if (!userDbError && userData && userData.length > 0) {
-      const patient = userData[0];
-      const appointmentData = existingAppointment[0];
+  if (userDbError) {
+    console.error("Error fetching user data:", userDbError);
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
+    };
+  }
 
-      // Format date and time for email
-      const { date: appointmentDate, time: appointmentTime } =
-        formatAppointmentDateTime(
-          appointmentData.start,
-          patient.language as "en" | "es",
-        );
+  if (!userData || userData.length === 0) {
+    return {
+      data: null,
+      error: {
+        code: "NOT_FOUND",
+        message: "User not found",
+      },
+    };
+  }
 
-      // Calculate duration in minutes
-      const durationMinutes = Math.round(
+  const patient = userData[0];
+  const appointmentData = existingAppointment[0];
+
+  const { data: formatted, error: formatError } = await tryCatch(
+    Promise.resolve(
+      formatAppointmentDateTime(
+        appointmentData.start,
+        patient.language as "en" | "es",
+      ),
+    ),
+  );
+  if (formatError) {
+    console.error("Error formatting appointment date/time:", formatError);
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
+    };
+  }
+  const appointmentDate = formatted.date;
+  const appointmentTime = formatted.time;
+
+  const { data: durationMinutes, error: durationError } = await tryCatch(
+    Promise.resolve(
+      Math.round(
         (appointmentData.end.getTime() - appointmentData.start.getTime()) /
           (1000 * 60),
-      );
+      ),
+    ),
+  );
+  if (durationError) {
+    console.error("Error calculating appointment duration:", durationError);
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
+    };
+  }
 
-      // Send confirmation email
-      await sendAppointmentConfirmation({
-        to: patient.email,
-        patientName: patient.name,
-        appointmentId: appointmentData.id,
-        appointmentDate,
-        appointmentTime,
-        appointmentType: appointmentData.type || "in-person",
-        location: appointmentData.location || undefined,
-        meetingLink: appointmentData.meetingLink || undefined,
-        duration: `${durationMinutes} minutes`,
-        language: patient.language as "en" | "es",
-        calendarAttachment: true,
-        startDate: appointmentData.start,
-        durationMinutes,
-      });
-
-      console.log("Appointment confirmation email sent successfully");
-    }
-  } catch (emailError) {
-    // Log error but don't fail the booking
+  const { error: emailError } = await tryCatch(
+    sendAppointmentConfirmation({
+      to: patient.email,
+      patientName: patient.name,
+      appointmentId: appointmentData.id,
+      appointmentDate,
+      appointmentTime,
+      appointmentType: appointmentData.type || "in-person",
+      location: appointmentData.location || undefined,
+      meetingLink: appointmentData.meetingLink || undefined,
+      language: patient.language as "en" | "es",
+      startDate: appointmentData.start,
+      durationMinutes,
+    }),
+  );
+  if (emailError) {
     console.error("Failed to send appointment confirmation email:", emailError);
+  } else {
+    console.log("Appointment confirmation email sent successfully");
   }
 
   return {

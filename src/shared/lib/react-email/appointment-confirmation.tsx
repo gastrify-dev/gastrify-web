@@ -10,8 +10,8 @@ import {
   Section,
   Text,
 } from "@react-email/components";
-import * as React from "react";
 import { getEmailMessage } from "./email-i18n";
+import * as React from "react";
 
 interface AppointmentConfirmationEmailProps {
   patientName: string;
@@ -21,9 +21,8 @@ interface AppointmentConfirmationEmailProps {
   appointmentType: "in-person" | "virtual";
   location?: string;
   meetingLink?: string;
-  duration: string;
+  durationMinutes: number;
   language: "en" | "es";
-  calendarAttachment?: boolean;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://gastrify.com";
@@ -38,13 +37,12 @@ export const AppointmentConfirmationEmail: React.FC<
   appointmentType,
   location,
   meetingLink,
-  duration,
+  durationMinutes,
   language,
-  calendarAttachment = true,
 }) => {
   const t = (key: string, vars?: Record<string, string>) =>
     getEmailMessage(
-      `features.appointments.appointmentEmail.${key}`,
+      `features.appointments.appointment-confirmation.${key}`,
       language,
       vars,
     );
@@ -86,7 +84,7 @@ export const AppointmentConfirmationEmail: React.FC<
 
               <Section style={detailRow}>
                 <Text style={detailLabel}>{t("duration")}:</Text>
-                <Text style={detailValue}>{duration}</Text>
+                <Text style={detailValue}>{durationMinutes} minutes</Text>
               </Section>
 
               <Section style={detailRow}>
@@ -120,21 +118,19 @@ export const AppointmentConfirmationEmail: React.FC<
               </Section>
             </Section>
 
-            {calendarAttachment && (
-              <Section style={calendarSection}>
-                <Text style={sectionTitle}>{t("calendarInfo")}</Text>
-                <Text style={calendarDescription}>
-                  {t("calendarDescription")}
-                </Text>
+            <Section style={calendarSection}>
+              <Text style={sectionTitle}>{t("calendarInfo")}</Text>
+              <Text style={calendarDescription}>
+                {t("calendarDescription")}
+              </Text>
 
-                <Text style={calendarInstructions}>
-                  {t("calendarInstructions")}
-                </Text>
-                <Text style={calendarStep}>{t("calendarStep1")}</Text>
-                <Text style={calendarStep}>{t("calendarStep2")}</Text>
-                <Text style={calendarStep}>{t("calendarStep3")}</Text>
-              </Section>
-            )}
+              <Text style={calendarInstructions}>
+                {t("calendarInstructions")}
+              </Text>
+              <Text style={calendarStep}>{t("calendarStep1")}</Text>
+              <Text style={calendarStep}>{t("calendarStep2")}</Text>
+              <Text style={calendarStep}>{t("calendarStep3")}</Text>
+            </Section>
 
             <Section style={contactSection}>
               <Text style={sectionTitle}>{t("contactInfo")}</Text>

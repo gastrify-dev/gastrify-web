@@ -10,9 +10,9 @@ import { appointment, user } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
-import { sendAppointmentConfirmation } from "@/shared/lib/react-email/send-appointment-confirmation";
-import { formatAppointmentDateTime } from "@/shared/lib/react-email/send-appointment-confirmation";
 
+import { sendAppointmentConfirmation } from "./send-appointment-confirmation";
+import { formatAppointmentDateTime } from "../utils/format-appointment-date-time";
 import type {
   Appointment,
   CreateAppointmentVariables,
@@ -33,8 +33,6 @@ export async function createAppointment(
 ): Promise<
   ActionResponse<IncomingAppointment | Appointment, CreateAppointmentErrorCode>
 > {
-  //get the session and check if the user is authenticated
-
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -49,8 +47,6 @@ export async function createAppointment(
     };
   }
 
-  //check if the user is an admin
-
   if (!isAdmin(session.user)) {
     return {
       data: null,
@@ -60,8 +56,6 @@ export async function createAppointment(
       },
     };
   }
-
-  //validate the values
 
   const parsedVariables = createAppointmentSchema
     .transform((data) => ({
@@ -84,8 +78,6 @@ export async function createAppointment(
 
   const { start, end, status, patientIdentificationNumber, type } =
     parsedVariables.data;
-
-  //if booked, check if the patient exists and get the patient id
 
   let patient: {
     id: string;
@@ -166,8 +158,6 @@ export async function createAppointment(
       },
     };
 
-  //all good, create the appointment
-
   const { data: dbInsertAppointmentData, error: dbInsertAppointmentError } =
     await tryCatch(
       db
@@ -195,11 +185,9 @@ export async function createAppointment(
     };
   }
 
-  // Send confirmation email if appointment is booked for a patient
   if (status === "booked" && patient) {
-    try {
-      // Get patient language preference
-      const { data: patientData, error: patientDbError } = await tryCatch(
+    const { data: patientLanguageData, error: patientLanguageError } =
+      await tryCatch(
         db
           .select({ language: user.language })
           .from(user)
@@ -207,20 +195,32 @@ export async function createAppointment(
           .limit(1),
       );
 
-      if (!patientDbError && patientData && patientData.length > 0) {
-        const patientLanguage = patientData[0].language as "en" | "es";
+    if (patientLanguageError) {
+      console.error(
+        "Failed to get patient language preference:",
+        patientLanguageError,
+      );
+      return {
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get patient language preference",
+        },
+      };
+    }
 
-        // Format date and time for email
-        const { date: appointmentDate, time: appointmentTime } =
-          formatAppointmentDateTime(start, patientLanguage);
+    if (patientLanguageData && patientLanguageData.length > 0) {
+      const patientLanguage = patientLanguageData[0].language as "en" | "es";
 
-        // Calculate duration in minutes
-        const durationMinutes = Math.round(
-          (end.getTime() - start.getTime()) / (1000 * 60),
-        );
+      const { date: appointmentDate, time: appointmentTime } =
+        formatAppointmentDateTime(start, patientLanguage);
 
-        // Send confirmation email
-        await sendAppointmentConfirmation({
+      const durationMinutes = Math.round(
+        (end.getTime() - start.getTime()) / (1000 * 60),
+      );
+
+      const { error: emailError } = await tryCatch(
+        sendAppointmentConfirmation({
           to: patient.email,
           patientName: patient.name,
           appointmentId: dbInsertAppointmentData[0].id,
@@ -229,23 +229,22 @@ export async function createAppointment(
           appointmentType: type || "in-person",
           location: dbInsertAppointmentData[0].location || undefined,
           meetingLink: dbInsertAppointmentData[0].meetingLink || undefined,
-          duration: `${durationMinutes} minutes`,
           language: patientLanguage,
-          calendarAttachment: true,
           startDate: start,
           durationMinutes,
-        });
+        }),
+      );
 
+      if (emailError) {
+        console.error(
+          "Failed to send appointment confirmation email:",
+          emailError,
+        );
+      } else {
         console.log(
           "Appointment confirmation email sent successfully (admin created)",
         );
       }
-    } catch (emailError) {
-      // Log error but don't fail the appointment creation
-      console.error(
-        "Failed to send appointment confirmation email:",
-        emailError,
-      );
     }
 
     return {

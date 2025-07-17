@@ -204,7 +204,7 @@
         "error-toast": "Algo salió mal al actualizar la cita 😢",
         "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
       },
-      "appointmentEmail": {
+      "appointment-confirmation": {
         "subject": "Confirmación de Cita - Gastrify",
         "greeting": "Hola {name},",
         "confirmation": "Su cita ha sido reservada exitosamente.",

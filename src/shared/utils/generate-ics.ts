@@ -1,4 +1,5 @@
 import { createEvent } from "ics";
+
 import { getEmailMessage } from "@/shared/lib/react-email/email-i18n";
 
 export interface ICSAppointmentData {
@@ -20,15 +21,13 @@ export interface ICSFileResult {
 
 export function generateICSFile(data: ICSAppointmentData): ICSFileResult {
   try {
-    // Format dates for ICS (YYYY-MM-DD format)
     const startDate = data.startDate;
     const endDate = data.endDate;
 
-    // Create event data for ICS
     const event = {
       start: [
         startDate.getFullYear(),
-        startDate.getMonth() + 1, // Month is 0-indexed
+        startDate.getMonth() + 1,
         startDate.getDate(),
         startDate.getHours(),
         startDate.getMinutes(),
@@ -46,7 +45,6 @@ export function generateICSFile(data: ICSAppointmentData): ICSFileResult {
       uid: `appointment-${data.appointmentId}@gastrify.com`,
     };
 
-    // Generate ICS content
     const { error, value } = createEvent(event);
 
     if (error) {
@@ -80,13 +78,11 @@ export function createAppointmentICSData(
   meetingLink?: string,
   language: "en" | "es" = "en",
 ): ICSAppointmentData {
-  // Calculate end date
   const endDate = new Date(startDate.getTime() + durationMinutes * 60 * 1000);
 
-  // Create title and description based on language and type
   const t = (key: string, vars?: Record<string, string>) =>
     getEmailMessage(
-      `features.appointments.appointmentEmail.${key}`,
+      `features.appointments.appointment-confirmation.${key}`,
       language,
       vars,
     );

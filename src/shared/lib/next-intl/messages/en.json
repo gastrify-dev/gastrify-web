@@ -204,7 +204,7 @@
         "error-toast": "Something went wrong updating the appointment 😢",
         "error-toast-description": "Please try again later"
       },
-      "appointmentEmail": {
+      "appointment-confirmation": {
         "subject": "Appointment Confirmation - Gastrify",
         "greeting": "Hello {name},",
         "confirmation": "Your appointment has been successfully booked.",

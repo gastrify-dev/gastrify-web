@@ -6,6 +6,8 @@ interface Props {
 }
 
 export const usePasswordStrengthIndicator = ({ password }: Props) => {
+  const t = useTranslations("shared.password-strength-indicator");
+
   const checkStrength = (pass: string) => {
     const requirements = [
       { regex: /.{8,}/, text: t("8-characters") },
@@ -43,8 +45,6 @@ export const usePasswordStrengthIndicator = ({ password }: Props) => {
     if (score <= 4) return t("strong-password");
     return t("very-strong-password");
   };
-
-  const t = useTranslations("shared.password-strength-indicator");
 
   return {
     strength,

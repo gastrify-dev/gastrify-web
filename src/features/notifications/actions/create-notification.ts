@@ -1,57 +1,86 @@
 "use server";
 
-import { db } from "@/shared/lib/drizzle/server";
+import { headers } from "next/headers";
+import { generateId } from "better-auth";
+
+import { auth } from "@/shared/lib/better-auth/server";
 import { notification } from "@/shared/lib/drizzle/schema";
-import { ActionResponse } from "@/shared/types";
-import { notificationCreateSchema } from "../schemas/notification";
-import { Notification } from "../types/notification";
+import { db } from "@/shared/lib/drizzle/server";
+import type { ActionResponse } from "@/shared/types";
+import { tryCatch } from "@/shared/utils/try-catch";
+
+import { createNotificationSchema } from "@/features/notifications/schemas/create-notification";
+import { CreateNotificationVariables } from "@/features/notifications/types";
+import type { Notification } from "@/features/notifications/types/notification";
+
+type ErrorCode =
+  | "UNAUTHORIZED"
+  | "FORBIDDEN"
+  | "NOT_FOUND"
+  | "BAD_REQUEST"
+  | "INTERNAL_SERVER_ERROR";
 
 export async function createNotification(
-  data: unknown,
-): Promise<ActionResponse<Notification, string>> {
-  try {
-    const parsed = notificationCreateSchema.safeParse(data);
-    if (!parsed.success) {
-      return {
-        data: null,
-        error: { code: "VALIDATION_ERROR", message: parsed.error.message },
-      };
-    }
-    const result = await db
-      .insert(notification)
-      .values({
-        id: crypto.randomUUID(),
-        userId: parsed.data.userId,
-        title: parsed.data.title,
-        preview: parsed.data.preview,
-        content: parsed.data.content,
-        read: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-      .returning();
-    if (!result[0]) {
-      return {
-        data: null,
-        error: {
-          code: "CREATE_FAILED",
-          message: "Failed to create notification",
-        },
-      };
-    }
-    const notif: Notification = {
-      ...result[0],
-      createdAt: new Date(result[0].createdAt).toISOString(),
-      updatedAt: new Date(result[0].updatedAt).toISOString(),
-      deletedAt: result[0].deletedAt
-        ? new Date(result[0].deletedAt).toISOString()
-        : null,
-    };
-    return { data: notif, error: null };
-  } catch (error) {
+  variables: CreateNotificationVariables,
+): Promise<ActionResponse<Notification | null, ErrorCode>> {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session)
     return {
       data: null,
-      error: { code: "UNKNOWN_ERROR", message: (error as Error).message },
+      error: { code: "UNAUTHORIZED", message: "User not authenticated" },
+    };
+
+  const parsedVariables = createNotificationSchema.safeParse(variables);
+
+  if (!parsedVariables.success) {
+    return {
+      data: null,
+      error: { code: "BAD_REQUEST", message: parsedVariables.error.message },
     };
   }
+
+  const { userId, title, preview, content } = parsedVariables.data;
+
+  const notificationId = generateId();
+  const now = new Date();
+
+  const { error } = await tryCatch(
+    db.insert(notification).values({
+      id: notificationId,
+      userId,
+      title,
+      preview,
+      content,
+      read: false,
+      createdAt: now,
+      updatedAt: now,
+    }),
+  );
+
+  if (error) {
+    console.error(error);
+
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create notification",
+      },
+    };
+  }
+
+  const createdNotification = {
+    id: notificationId,
+    userId,
+    title,
+    preview,
+    content,
+    read: false,
+    createdAt: now.toISOString(),
+    updatedAt: now.toISOString(),
+    deletedAt: null,
+  };
+
+  return { data: createdNotification, error: null };
 }

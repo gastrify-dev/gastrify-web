@@ -509,6 +509,8 @@
         "title": "Notificaciones",
         "empty-content": "Aún no tienes notificaciones."
       },
+      "optimistic-add-success": "Notificación agregada instantáneamente",
+      "optimistic-add-error": "No se pudo agregar la notificación",
       "badgeAriaLabel": "{count} notificaciones sin leer",
       "empty": "Aún no tienes notificaciones",
       "loading": "Cargando...",
@@ -521,6 +523,10 @@
         "delete": "Eliminar",
         "deleting": "Eliminando...",
         "delete-confirm": "¿Seguro que deseas eliminar esta notificación?"
+      },
+      "use-delete-notification-mutation": {
+        "error-toast": "Algo salió mal al eliminar la notificación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
       }
     }
   },

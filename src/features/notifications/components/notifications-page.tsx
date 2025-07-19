@@ -2,14 +2,13 @@
 
 import React, { useState } from "react";
 
-import { useNotifications } from "../hooks/use-notifications";
-import { useDeleteNotificationMutation } from "../hooks/use-delete-notification-mutation";
-
-import { NotificationList } from "./notification-list";
-import NotificationContent from "./notification-content";
+import { useNotifications } from "@/features/notifications/hooks/use-notifications";
+import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
+import { NotificationList } from "@/features/notifications/components/notification-list";
+import NotificationContent from "@/features/notifications/components/notification-content";
 
 export const NotificationsPage: React.FC = () => {
-  const { data, isLoading, error } = useNotifications({ limit: 20, offset: 0 });
+  const { data, isLoading, error } = useNotifications({ limit: 99, offset: 0 });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const notifications = data?.data ?? [];
   const selectedNotification =
@@ -34,8 +33,7 @@ export const NotificationsPage: React.FC = () => {
             onDelete={(id) => {
               if (selectedNotification.userId) {
                 deleteMutation.mutate({
-                  notificationId: id,
-                  userId: selectedNotification.userId,
+                  id: id,
                 });
               }
             }}

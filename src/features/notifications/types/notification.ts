@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { notificationSchema } from "../schemas/notification";
+import { notificationSchema } from "@/features/notifications/schemas/notification";
 
 export type Notification = z.infer<typeof notificationSchema>;
 

@@ -1,6 +1,7 @@
-import { Badge } from "@/shared/components/ui/badge";
 import React from "react";
 import { useTranslations } from "next-intl";
+
+import { Badge } from "@/shared/components/ui/badge";
 
 interface NotificationBadgeProps {
   count: number;

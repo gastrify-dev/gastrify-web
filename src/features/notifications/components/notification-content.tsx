@@ -1,5 +1,8 @@
 "use client";
 
+import React from "react";
+import { formatNotificationDate } from "@/features/notifications/utils/format-notification-date";
+import { getDateFnsLocale } from "@/features/notifications/utils/get-date-fns-locale";
 import { useLocale, useTranslations } from "next-intl";
 
 import {
@@ -11,73 +14,45 @@ import {
 } from "@/shared/components/ui/card";
 import { Button } from "@/shared/components/ui/button";
 
-import { Notification } from "../types";
-import { useDeleteNotificationMutation } from "../hooks/use-delete-notification-mutation";
+import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
+import type { Notification } from "@/features/notifications/types";
 
 type Props = {
   notification: Notification;
   clearSelection?: () => void;
   onDelete?: (id: string) => void;
-  isDeleting?: boolean;
 };
 
 export default function NotificationContent({
   notification,
   clearSelection,
   onDelete,
-  isDeleting = false,
 }: Props) {
   const locale = useLocale();
   const t = useTranslations("features.notifications");
-  const deleteNotif = useDeleteNotificationMutation();
+  const { mutate: deleteNotification, status } =
+    useDeleteNotificationMutation();
 
   const handleDelete = () => {
-    if (isDeleting) return;
+    if (clearSelection) clearSelection();
 
     if (onDelete) {
       onDelete(notification.id);
-      if (clearSelection) clearSelection();
     } else {
-      deleteNotif.mutate(
-        { notificationId: notification.id, userId: notification.userId },
-        {
-          onSuccess: () => {
-            if (clearSelection) clearSelection();
-          },
-        },
-      );
+      deleteNotification({ id: notification.id });
     }
   };
-
   return (
     <div className="relative mx-auto w-full max-w-xl">
-      {isDeleting && (
-        <div
-          className="absolute inset-0 z-10 flex cursor-not-allowed items-center justify-center bg-white/60 backdrop-blur-sm"
-          aria-disabled="true"
-        >
-          <span className="text-muted-foreground">{t("content.deleting")}</span>
-        </div>
-      )}
-      <Card
-        className={
-          isDeleting ? "pointer-events-none opacity-60 select-none" : ""
-        }
-      >
+      <Card>
         <CardHeader>
           <CardTitle className="mb-2 text-xl font-semibold">
             {notification.title}
           </CardTitle>
           <div className="text-muted-foreground text-sm">
-            {new Date(notification.createdAt).toLocaleString(
-              locale === "es" ? "es-ES" : "en-US",
-              {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              },
+            {formatNotificationDate(
+              notification.createdAt,
+              getDateFnsLocale(locale),
             )}
           </div>
         </CardHeader>
@@ -93,11 +68,9 @@ export default function NotificationContent({
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={deleteNotif.status === "pending" || isDeleting}
+            disabled={status === "pending"}
           >
-            {isDeleting || deleteNotif.status === "pending"
-              ? t("content.deleting")
-              : t("content.delete")}
+            {status === "pending" ? t("content.deleting") : t("content.delete")}
           </Button>
         </CardFooter>
       </Card>

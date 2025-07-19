@@ -1,3 +1,7 @@
+import { z } from "zod";
+
+import { createNotificationSchema } from "@/features/notifications/schemas/create-notification";
+
 export interface Notification {
   id: string;
   userId: string;
@@ -9,3 +13,7 @@ export interface Notification {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+export type CreateNotificationVariables = z.infer<
+  typeof createNotificationSchema
+>;

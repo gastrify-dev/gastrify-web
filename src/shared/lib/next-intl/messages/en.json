@@ -509,6 +509,8 @@
         "title": "Notifications",
         "empty-content": "No notifications yet."
       },
+      "optimistic-add-success": "Add notification instantly",
+      "optimistic-add-error": "Could not add notification",
       "badgeAriaLabel": "{count} unread notifications",
       "empty": "No notifications",
       "loading": "Loading...",

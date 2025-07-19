@@ -1,8 +1,9 @@
 "use client";
 
-import { NotificationItem } from "./notification-item";
-import { Notification } from "../types";
 import { useTranslations } from "next-intl";
+
+import { NotificationItem } from "@/features/notifications/components/notification-item";
+import { Notification } from "@/features/notifications/types";
 
 type Props = {
   notifications: Notification[];
@@ -63,7 +64,6 @@ export function NotificationList({
             }
           }}
           data-notification-idx={idx}
-          isDeleting={deletingIds.has(n.id)}
         />
       </li>
     ));

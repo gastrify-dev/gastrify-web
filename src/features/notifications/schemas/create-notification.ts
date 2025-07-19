@@ -6,6 +6,3 @@ export const createNotificationSchema = z.object({
   preview: z.string().min(1).max(255),
   content: z.string().min(1).max(2000),
 });
-export type CreateNotificationVariables = z.infer<
-  typeof createNotificationSchema
->;

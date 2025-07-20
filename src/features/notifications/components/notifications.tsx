@@ -13,7 +13,7 @@ import NotificationContent from "@/features/notifications/components/notificatio
 import NotificationSkeleton from "@/features/notifications/components/notification-skeleton";
 import type { Notification as AppNotification } from "@/features/notifications/types";
 
-const NotificationsClient: React.FC = () => {
+const Notifications: React.FC = () => {
   const { data: session } = useSession();
   const t = useTranslations("features.notifications");
   const userId = session?.user?.id;
@@ -148,4 +148,4 @@ const NotificationsClient: React.FC = () => {
   );
 };
 
-export default NotificationsClient;
+export default Notifications;

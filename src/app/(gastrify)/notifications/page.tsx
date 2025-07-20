@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import NotificationsClient from "@/features/notifications/components/notifications-client";
+import Notifications from "@/features/notifications/components/notifications";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app.notifications-page");
@@ -13,5 +13,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function NotificationsPage() {
-  return <NotificationsClient />;
+  return <Notifications />;
 }

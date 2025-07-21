@@ -1,6 +1,6 @@
 import z from "zod/v4";
 
-export const Step2Schema = z.object({
+export const medicalInfo = z.object({
   bloodType: z.enum(["O", "A", "AB", "B"], {
     message: "BloodType is required",
   }),
@@ -9,7 +9,7 @@ export const Step2Schema = z.object({
   }),
   allergies: z.boolean(),
   allergyDetails: z.string().trim(),
-  religion: z.enum(["CRISTIANO EVANGELICO", "CATOLICO", "OTROS"], {
+  religion: z.enum(["cristiano evangelico", "catolico", "otros"], {
     message: "Religion is required",
   }),
   allowsTransfusions: z.boolean(),

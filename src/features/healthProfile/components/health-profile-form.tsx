@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 
 import { HealthProfileFormStepper } from "./health-profile-form-stepper";
 import { StepItem } from "../types";
-import { Step1Form } from "./step-1-form";
+import { PersonalInfoForm } from "./personal-info-form";
+import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
 
 //Steps are to be replaced with the t function to get the translations
 const steps: StepItem[] = [
@@ -29,29 +29,10 @@ const steps: StepItem[] = [
   },
 ];
 
-const stepLength = steps.length;
-
 export function HealthProfileForm() {
   const [step, setStep] = useState(1);
 
-  const form = useForm({
-    defaultValues: {
-      age: "",
-      maritalStatus: "",
-      profession: "",
-      occupation: "",
-      hasChildren: false,
-      numMale: 0,
-      numFemale: 0,
-      cSections: false,
-      abortions: false,
-      placeOfResidence: "",
-      city: "",
-      homePhoneNumber: "",
-      celularPhoneNumber: "",
-      workPhoneNumber: "",
-    },
-  });
+  const { form } = usePersonalInfoForm();
 
   const handleStepChange = (newStep: number) => {
     setStep(newStep);
@@ -75,7 +56,11 @@ export function HealthProfileForm() {
         steps={steps}
       />
 
-      {step === 1 && <Step1Form form={form} />}
+      <div className="h-[600px]">
+        <div className="max-h-[600px] w-full space-y-4 overflow-y-auto rounded-lg border-2 border-gray-700 p-6">
+          {step === 1 && <PersonalInfoForm />}
+        </div>
+      </div>
 
       <div className="mt-6 flex justify-between gap-2">
         <Button
@@ -94,7 +79,7 @@ export function HealthProfileForm() {
           aria-label="Next Step"
         >
           <span className="hidden sm:inline">
-            {step === stepLength ? "Finish" : "Next"}
+            {step === steps.length ? "Finish" : "Next"}
           </span>
           <ArrowRightIcon className="h-6 w-6 sm:hidden" />
         </Button>

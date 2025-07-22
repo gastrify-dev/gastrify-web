@@ -2,13 +2,13 @@
 
 import React from "react";
 import { useLocale } from "next-intl";
+import clsx from "clsx";
 
 import { Card, CardContent } from "@/shared/components/ui/card";
 
 import { formatNotificationDate } from "@/features/notifications/utils/format-notification-date";
 import { getDateFnsLocale } from "@/features/notifications/utils/get-date-fns-locale";
 import type { Notification } from "@/features/notifications/types";
-import clsx from "clsx";
 
 type Props = {
   notification: Notification;

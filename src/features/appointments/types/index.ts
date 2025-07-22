@@ -7,7 +7,6 @@ import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appo
 import { updateAppointmentSchema } from "@/features/appointments/schemas/update-appointment";
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import { deleteAppointmentSchema } from "@/features/appointments/schemas/delete-appointment";
-import type { Notification } from "@/features/notifications/types/notification";
 
 export type CalendarView = "month" | "week" | "day" | "agenda";
 
@@ -49,5 +48,4 @@ export interface IncomingAppointment {
     identificationNumber: string;
     email: string;
   };
-  notification?: Notification;
 }

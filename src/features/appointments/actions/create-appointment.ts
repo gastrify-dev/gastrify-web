@@ -12,6 +12,7 @@ import { appointment, user } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
+
 import { createNotification } from "@/features/notifications/actions/create-notification";
 
 import type {
@@ -208,15 +209,24 @@ export async function createAppointment(
       }.`,
     });
 
+    if (notificationResult.error) {
+      return {
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create notification for appointment",
+        },
+      };
+    }
+
     return {
       data: {
         appointment: dbInsertAppointmentData[0],
         patient: {
-          identificationNumber: patient.identificationNumber,
-          name: patient.name,
-          email: patient.email,
+          identificationNumber: patient!.identificationNumber,
+          name: patient!.name,
+          email: patient!.email,
         },
-        notification: notificationResult.data || undefined,
       },
       error: null,
     };

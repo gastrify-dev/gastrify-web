@@ -1,9 +1,3 @@
-// export const notificationCreateSchema = z.object({
-//   userId: z.string(),
-//   title: z.string().max(255),
-//   preview: z.string().max(255),
-//   content: z.string().max(2000),
-// });
 import { z } from "zod";
 
 export const notificationSchema = z.object({

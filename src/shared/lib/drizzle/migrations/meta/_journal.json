@@ -36,6 +36,13 @@
       "when": 1752284996234,
       "tag": "0004_bored_blink",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1753112458652,
+      "tag": "0005_unusual_thing",
+      "breakpoints": true
     }
   ]
 }

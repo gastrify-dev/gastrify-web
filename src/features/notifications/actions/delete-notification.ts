@@ -1,27 +1,26 @@
 "use server";
 
+import { headers } from "next/headers";
 import { db } from "@/shared/lib/drizzle/server";
 import { eq, and } from "drizzle-orm";
 
 import type { ActionResponse } from "@/shared/types";
 import { notification } from "@/shared/lib/drizzle/schema";
 import { auth } from "@/shared/lib/better-auth/server";
+import { tryCatch } from "@/shared/utils/try-catch";
 
-import {
-  deleteNotificationSchema,
-  DeleteNotificationVariables,
-} from "@/features/notifications/schemas/delete-notification";
-import { headers } from "next/headers";
+import { deleteNotificationSchema } from "@/features/notifications/schemas/delete-notification";
+import type { DeleteNotificationVariables } from "@/features/notifications/types";
 
 type ErrorCode =
   | "UNAUTHORIZED"
   | "BAD_REQUEST"
-  | "NOT_FOUND_OR_NOT_DELETED"
+  | "NOT_FOUND"
   | "INTERNAL_SERVER_ERROR";
 
 export async function deleteNotification(
   variables: DeleteNotificationVariables,
-): Promise<ActionResponse<{ id: string }, ErrorCode>> {
+): Promise<ActionResponse<null, ErrorCode>> {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -31,36 +30,28 @@ export async function deleteNotification(
     };
   }
 
-  const parsed = deleteNotificationSchema.safeParse({ id: variables.id });
+  const parsedVariables = deleteNotificationSchema.safeParse({
+    id: variables.id,
+  });
 
-  if (!parsed.success) {
+  if (!parsedVariables.success) {
     return {
       data: null,
-      error: { code: "BAD_REQUEST", message: parsed.error.message },
+      error: { code: "BAD_REQUEST", message: parsedVariables.error.message },
     };
   }
 
-  const { id } = variables;
+  const { id } = parsedVariables.data;
   const userId = session.user.id;
 
-  try {
-    const result = await db
+  const { data: result, error } = await tryCatch(
+    db
       .delete(notification)
       .where(and(eq(notification.id, id), eq(notification.userId, userId)))
-      .returning();
+      .returning(),
+  );
 
-    if (!result[0]) {
-      return {
-        data: null,
-        error: {
-          code: "NOT_FOUND_OR_NOT_DELETED",
-          message: "Notification not found or not deleted",
-        },
-      };
-    }
-
-    return { data: { id }, error: null };
-  } catch (error) {
+  if (error) {
     console.error(error);
     return {
       data: null,
@@ -70,4 +61,16 @@ export async function deleteNotification(
       },
     };
   }
+
+  if (!result || !result[0]) {
+    return {
+      data: null,
+      error: {
+        code: "NOT_FOUND",
+        message: "Notification not found or not deleted",
+      },
+    };
+  }
+
+  return { data: null, error: null };
 }

@@ -1,10 +1,8 @@
 "use client";
 
 import React from "react";
-import { formatNotificationDate } from "@/features/notifications/utils/format-notification-date";
-import { getDateFnsLocale } from "@/features/notifications/utils/get-date-fns-locale";
-import { useLocale, useTranslations } from "next-intl";
 
+import { Button } from "@/shared/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -12,9 +10,10 @@ import {
   CardContent,
   CardFooter,
 } from "@/shared/components/ui/card";
-import { Button } from "@/shared/components/ui/button";
 
-import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
+import { useNotification } from "@/features/notifications/hooks/use-notification";
+import { formatNotificationDate } from "@/features/notifications/utils/format-notification-date";
+import { getDateFnsLocale } from "@/features/notifications/utils/get-date-fns-locale";
 import type { Notification } from "@/features/notifications/types";
 
 type Props = {
@@ -28,20 +27,11 @@ export default function NotificationContent({
   clearSelection,
   onDelete,
 }: Props) {
-  const locale = useLocale();
-  const t = useTranslations("features.notifications");
-  const { mutate: deleteNotification, status } =
-    useDeleteNotificationMutation();
-
-  const handleDelete = () => {
-    if (clearSelection) clearSelection();
-
-    if (onDelete) {
-      onDelete(notification.id);
-    } else {
-      deleteNotification({ id: notification.id });
-    }
-  };
+  const { locale, t, status, handleDelete } = useNotification(
+    notification,
+    clearSelection,
+    onDelete,
+  );
   return (
     <div className="relative mx-auto w-full max-w-xl">
       <Card>

@@ -10,15 +10,16 @@ import type { ActionResponse } from "@/shared/types";
 import { notification } from "@/shared/lib/drizzle/schema";
 
 import { getNotificationsSchema } from "@/features/notifications/schemas/get-notifications";
-import {
+import type {
   Notification,
-  NotificationErrorCode,
-} from "@/features/notifications/types/notification";
-import { GetNotificationsVariables } from "@/features/notifications/schemas/get-notifications";
+  GetNotificationsVariables,
+} from "@/features/notifications/types";
+
+type ErrorCode = "UNAUTHORIZED" | "BAD_REQUEST" | "INTERNAL_SERVER_ERROR";
 
 export async function getNotifications(
   variables: GetNotificationsVariables,
-): Promise<ActionResponse<Notification[], NotificationErrorCode>> {
+): Promise<ActionResponse<Notification[], ErrorCode>> {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session)
@@ -27,16 +28,16 @@ export async function getNotifications(
       error: { code: "UNAUTHORIZED", message: "User not authenticated" },
     };
 
-  const parsed = getNotificationsSchema.safeParse(variables);
+  const parsedVariables = getNotificationsSchema.safeParse(variables);
 
-  if (!parsed.success) {
+  if (!parsedVariables.success) {
     return {
       data: null,
-      error: { code: "BAD_REQUEST", message: parsed.error.message },
+      error: { code: "BAD_REQUEST", message: parsedVariables.error.message },
     };
   }
 
-  const { limit, offset } = parsed.data;
+  const { limit, offset } = parsedVariables.data;
 
   const { data, error } = await tryCatch(
     db
@@ -58,12 +59,5 @@ export async function getNotifications(
     };
   }
 
-  const notifications = (data ?? []).map((n) => ({
-    ...n,
-    createdAt: n.createdAt ? new Date(n.createdAt).toISOString() : "",
-    updatedAt: n.updatedAt ? new Date(n.updatedAt).toISOString() : "",
-    deletedAt: n.deletedAt ? new Date(n.deletedAt).toISOString() : null,
-  }));
-
-  return { data: notifications, error: null };
+  return { data: data ?? [], error: null };
 }

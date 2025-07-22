@@ -9,10 +9,10 @@ import { tryCatch } from "@/shared/utils/try-catch";
 import type { ActionResponse } from "@/shared/types";
 import { notification } from "@/shared/lib/drizzle/schema";
 
-import { NotificationErrorCode } from "@/features/notifications/types/notification";
+type ErrorCode = "UNAUTHORIZED" | "BAD_REQUEST" | "INTERNAL_SERVER_ERROR";
 
 export async function getUnreadNotificationsCount(): Promise<
-  ActionResponse<number, NotificationErrorCode>
+  ActionResponse<number, ErrorCode>
 > {
   const session = await auth.api.getSession({ headers: await headers() });
 

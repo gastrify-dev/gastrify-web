@@ -10,8 +10,7 @@ import type { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 import { createNotificationSchema } from "@/features/notifications/schemas/create-notification";
-import { CreateNotificationVariables } from "@/features/notifications/types";
-import type { Notification } from "@/features/notifications/types/notification";
+import type { CreateNotificationVariables } from "@/features/notifications/types";
 
 type ErrorCode =
   | "UNAUTHORIZED"
@@ -22,7 +21,7 @@ type ErrorCode =
 
 export async function createNotification(
   variables: CreateNotificationVariables,
-): Promise<ActionResponse<Notification | null, ErrorCode>> {
+): Promise<ActionResponse<null, ErrorCode>> {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session)
@@ -70,17 +69,5 @@ export async function createNotification(
     };
   }
 
-  const createdNotification = {
-    id: notificationId,
-    userId,
-    title,
-    preview,
-    content,
-    read: false,
-    createdAt: now.toISOString(),
-    updatedAt: now.toISOString(),
-    deletedAt: null,
-  };
-
-  return { data: createdNotification, error: null };
+  return { data: null, error: null };
 }

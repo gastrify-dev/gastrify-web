@@ -1,140 +1,113 @@
 "use client";
-import React from "react";
-import { useTranslations } from "next-intl";
 
-import { useSession } from "@/shared/hooks/use-session";
+import { LoaderIcon } from "lucide-react";
 
+import { Button } from "@/shared/components/ui/button";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { useNotifications } from "@/features/notifications/hooks/use-notifications";
-import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
-import { useMarkNotificationAsReadMutation } from "@/features/notifications/hooks/use-mark-notification-as-read-mutation";
-import { useOptimisticNotifications } from "@/features/notifications/hooks/use-optimistic-notifications";
-import { NotificationList } from "@/features/notifications/components/notification-list";
-import NotificationContent from "@/features/notifications/components/notification-content";
+import NotificationContent from "@/features/notifications/components/notification-detail";
 import NotificationSkeleton from "@/features/notifications/components/notification-skeleton";
-import type { Notification as AppNotification } from "@/features/notifications/types";
+import { NotificationItem } from "@/features/notifications/components/notification";
+import type { Notification } from "@/features/notifications/types";
 
-const Notifications: React.FC = () => {
-  const { data: session } = useSession();
-  const t = useTranslations("features.notifications");
-  const userId = session?.user?.id;
-  const notificationsQuery = useNotifications({ limit: 99, offset: 0 });
-  const { addOptimisticNotification } = useOptimisticNotifications();
+const Notifications = () => {
+  const {
+    notifications,
+    selected,
+    selectedId,
+    deletingIds,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+    handleSelect,
+    handleDelete,
+    clearSelection,
+    t,
+  } = useNotifications();
 
-  React.useEffect(() => {
-    const handler = (event: CustomEvent) => {
-      if (event.detail?.notification) {
-        addOptimisticNotification(event.detail.notification);
-      } else {
-        notificationsQuery.refetch();
-      }
-    };
+  if (isLoading) return <NotificationSkeleton />;
 
-    window.addEventListener("notification-created", handler as EventListener);
+  if (isError)
+    return (
+      <div className="flex flex-col items-center justify-center gap-2">
+        {t("error")}
+        <Button
+          disabled={isRefetching}
+          variant="destructive"
+          onClick={() => refetch()}
+        >
+          {isRefetching && <LoaderIcon className="animate-spin" />}
+          {t("refetch")}
+        </Button>
+      </div>
+    );
 
-    const storageHandler = (e: StorageEvent) => {
-      if (e.key === "notification-created") {
-        try {
-          const notificationData = e.newValue ? JSON.parse(e.newValue) : null;
-          if (notificationData) {
-            addOptimisticNotification(notificationData);
-          } else {
-            notificationsQuery.refetch();
-          }
-        } catch {
-          notificationsQuery.refetch();
-        }
-      }
-    };
-
-    window.addEventListener("storage", storageHandler);
-
-    return () => {
-      window.removeEventListener(
-        "notification-created",
-        handler as EventListener,
-      );
-      window.removeEventListener("storage", storageHandler);
-    };
-  }, [notificationsQuery, addOptimisticNotification]);
-
-  const [selectedId, setSelectedId] = React.useState<string | null>(null);
-  const [deletingIds, setDeletingIds] = React.useState<Set<string>>(new Set());
-  const notifications = React.useMemo(
-    () => notificationsQuery.data?.data ?? [],
-    [notificationsQuery.data],
-  );
-  const selected =
-    notifications.find(
-      (notification: AppNotification) => notification.id === selectedId,
-    ) || null;
-
-  const { mutate: markAsRead } = useMarkNotificationAsReadMutation();
-  const { mutate: deleteNotification } = useDeleteNotificationMutation();
-
-  const handleSelect = (notification: AppNotification) => {
-    setSelectedId(notification.id);
-    if (!notification.read && userId) {
-      markAsRead({ id: notification.id });
-    }
-  };
-
-  const handleDelete = (id: string) => {
-    setDeletingIds((prev) => new Set(prev).add(id));
-    setSelectedId((prev) => (prev === id ? null : prev));
-    if (userId) {
-      deleteNotification({ id });
-    }
-  };
-
-  React.useEffect(() => {
-    setDeletingIds((prev) => {
-      const newSet = new Set(prev);
-      for (const id of prev) {
-        if (
-          !notifications.some(
-            (notification: AppNotification) => notification.id === id,
-          )
-        ) {
-          newSet.delete(id);
-        }
-      }
-      return newSet;
-    });
-  }, [notifications]);
+  if (!notifications || notifications.length === 0)
+    return (
+      <div className="flex flex-col items-center justify-center gap-2">
+        {t("empty")}
+      </div>
+    );
 
   return (
     <div className="flex h-full w-full flex-col">
       <div className="flex flex-1 flex-col gap-2 md:flex-row">
         <section className="flex w-full flex-col border-r md:h-full md:w-1/2">
-          <div
-            className="max-h-[calc(100vh-10rem)] min-h-[320px] flex-1 overflow-y-auto"
+          <ScrollArea
+            className="max-h-[calc(100vh-10rem)] min-h-[320px] flex-1"
             style={{ minHeight: 320, maxHeight: "calc(100vh - 10rem)" }}
           >
-            {notificationsQuery.isLoading ? (
-              <NotificationSkeleton />
-            ) : notificationsQuery.error ? (
-              <div className="p-8 text-red-500">
-                Error al cargar notificaciones
-              </div>
-            ) : (
-              <NotificationList
-                notifications={notifications}
-                selectedId={selected?.id ?? undefined}
-                onSelect={handleSelect}
-                deletingIds={deletingIds}
-                loading={notificationsQuery.isLoading}
-                error={notificationsQuery.error as string | null}
-              />
-            )}
-          </div>
+            <ul
+              className="divide-y"
+              role="listbox"
+              aria-label="Lista de notificaciones"
+              tabIndex={0}
+            >
+              {notifications.map((n: Notification, idx: number) => (
+                <li
+                  key={`notif-${n.id}`}
+                  role="option"
+                  aria-selected={n.id === selected?.id}
+                >
+                  <NotificationItem
+                    notification={n}
+                    selected={n.id === selected?.id}
+                    onClick={() => {
+                      if (deletingIds.has(n.id)) return;
+                      handleSelect(n);
+                    }}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (deletingIds.has(n.id)) return;
+                      if (e.key === "Enter" || e.key === " ") handleSelect(n);
+                      if (e.key === "ArrowDown") {
+                        const next = document.querySelector(
+                          `[data-notification-idx='${idx + 1}']`,
+                        );
+                        if (next) (next as HTMLElement).focus();
+                      }
+                      if (e.key === "ArrowUp") {
+                        const prev = document.querySelector(
+                          `[data-notification-idx='${idx - 1}']`,
+                        );
+                        if (prev) (prev as HTMLElement).focus();
+                      }
+                    }}
+                    data-notification-idx={idx}
+                  />
+                </li>
+              ))}
+            </ul>
+          </ScrollArea>
         </section>
         <section className="h-full w-full flex-1 overflow-y-auto">
           {selectedId &&
           selected &&
-          notifications.some((n) => n.id === selectedId) ? (
+          notifications.some((n: Notification) => n.id === selectedId) ? (
             <NotificationContent
               notification={selected}
-              clearSelection={() => setSelectedId(null)}
+              clearSelection={clearSelection}
               onDelete={handleDelete}
             />
           ) : (

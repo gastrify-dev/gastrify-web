@@ -1,45 +1,27 @@
-"use client";
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 
-import React, { useState } from "react";
+import { getNotifications } from "@/features/notifications/actions/get-notifications";
+import Notifications from "@/features/notifications/components/notifications";
 
-import { useNotifications } from "@/features/notifications/hooks/use-notifications";
-import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
-import { NotificationList } from "@/features/notifications/components/notification-list";
-import NotificationContent from "@/features/notifications/components/notification-content";
+export default async function NotificationsPage() {
+  const queryClient = new QueryClient();
 
-export const NotificationsPage: React.FC = () => {
-  const { data, isLoading, error } = useNotifications({ limit: 99, offset: 0 });
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const notifications = data?.data ?? [];
-  const selectedNotification =
-    notifications.find((n) => n.id === selectedId) ?? null;
-  const deleteMutation = useDeleteNotificationMutation();
+  await queryClient.prefetchQuery({
+    queryKey: ["notification", "list", { limit: 99, offset: 0 }],
+    queryFn: async () => {
+      const { data, error } = await getNotifications({ limit: 99, offset: 0 });
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  });
 
   return (
-    <div className="flex h-full">
-      <div className="w-1/2 border-r">
-        <NotificationList
-          notifications={notifications}
-          loading={!!isLoading}
-          error={error?.message ?? null}
-          onSelect={(n) => setSelectedId(n.id)}
-          selectedId={selectedId ?? undefined}
-        />
-      </div>
-      <div className="w-1/2">
-        {selectedNotification && (
-          <NotificationContent
-            notification={selectedNotification}
-            onDelete={(id) => {
-              if (selectedNotification.userId) {
-                deleteMutation.mutate({
-                  id: id,
-                });
-              }
-            }}
-          />
-        )}
-      </div>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Notifications />
+    </HydrationBoundary>
   );
-};
+}

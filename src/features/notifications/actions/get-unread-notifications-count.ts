@@ -36,6 +36,8 @@ export async function getUnreadNotificationsCount(): Promise<
   );
 
   if (error) {
+    console.error(error);
+
     return {
       data: null,
       error: {

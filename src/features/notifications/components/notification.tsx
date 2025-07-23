@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
 import clsx from "clsx";
 
@@ -28,14 +28,16 @@ export const NotificationItem = React.forwardRef<
     ref,
   ) => {
     const locale = useLocale();
-    const formattedDate = React.useMemo(
-      () =>
+    const [formattedDate, setFormattedDate] = useState<string>("");
+
+    useEffect(() => {
+      setFormattedDate(
         formatNotificationDate(
           notification.createdAt,
           getDateFnsLocale(locale),
         ),
-      [notification.createdAt, locale],
-    );
+      );
+    }, [notification.createdAt, locale]);
     return (
       <button
         ref={ref}
@@ -57,14 +59,14 @@ export const NotificationItem = React.forwardRef<
             selected
               ? "border-primary bg-accent"
               : "border-border bg-background",
-            !notification.read ? "font-bold" : "opacity-70",
+            !notification.read && !selected ? "font-bold" : "opacity-70",
           )}
         >
           <CardContent className="p-0">
             <div className="flex items-center justify-between">
               <span className="max-w-xs truncate">{notification.title}</span>
               <span className="text-muted-foreground text-xs">
-                {formattedDate}
+                {formattedDate || "\u00A0"}
               </span>
             </div>
             <div className="text-muted-foreground hidden truncate text-sm md:block">

@@ -515,6 +515,7 @@
       "empty": "Aún no tienes notificaciones",
       "loading": "Cargando...",
       "error": "Error cargando notificaciones",
+      "refetch": "Reintentar",
       "select": "Selecciona una notificación",
       "content": {
         "received": "Recibido:",

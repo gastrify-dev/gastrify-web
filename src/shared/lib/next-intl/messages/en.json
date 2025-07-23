@@ -515,6 +515,7 @@
       "empty": "No notifications",
       "loading": "Loading...",
       "error": "Error loading notifications",
+      "refetch": "Retry",
       "select": "Select a notification",
       "content": {
         "received": "Received:",

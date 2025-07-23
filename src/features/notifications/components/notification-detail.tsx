@@ -22,7 +22,7 @@ type Props = {
   onDelete?: (id: string) => void;
 };
 
-export default function NotificationContent({
+export default function NotificationDetail({
   notification,
   clearSelection,
   onDelete,

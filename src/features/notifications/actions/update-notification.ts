@@ -54,6 +54,8 @@ export async function updateNotificationStatus(
   );
 
   if (error) {
+    console.error(error);
+
     return {
       data: null,
       error: {

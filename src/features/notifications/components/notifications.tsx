@@ -4,6 +4,7 @@ import { LoaderIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
+
 import { useNotifications } from "@/features/notifications/hooks/use-notifications";
 import NotificationContent from "@/features/notifications/components/notification-detail";
 import NotificationSkeleton from "@/features/notifications/components/notification-skeleton";

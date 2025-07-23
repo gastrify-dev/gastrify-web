@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+
 import { updateNotificationStatus } from "@/features/notifications/actions/update-notification";
 import type { UpdateNotificationVariables } from "@/features/notifications/schemas/update-notification";
 

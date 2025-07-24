@@ -1,5 +1,3 @@
-import { useForm, FormProvider } from "react-hook-form";
-
 import {
   Form,
   FormControl,
@@ -21,9 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { Button } from "@/shared/components/ui/button";
 
 import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
-import { Button } from "@/shared/components/ui/button";
 
 export function PersonalInfoForm() {
   const { form, onSubmit } = usePersonalInfoForm();
@@ -31,7 +29,7 @@ export function PersonalInfoForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 p-1">
           <FormField
             control={form.control}
             name="age"
@@ -43,7 +41,11 @@ export function PersonalInfoForm() {
                     type="number"
                     placeholder="Age"
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(event) =>
+                      field.onChange(Number(event.target.value))
+                    }
+                    min={0}
+                    max={120}
                   />
                 </FormControl>
                 <FormMessage />
@@ -90,7 +92,7 @@ export function PersonalInfoForm() {
                 <FormLabel>Do you have any children?</FormLabel>
                 <FormControl>
                   <RadioGroup onValueChange={field.onChange} className="">
-                    <FormItem className="flex flex-row items-center gap-3">
+                    <FormItem className="flex items-center gap-3">
                       <FormControl>
                         <RadioGroupItem value="yes" />
                       </FormControl>
@@ -158,7 +160,7 @@ export function PersonalInfoForm() {
                   <FormLabel>Profession</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="Enter your profession"
                       value={field.value}
                       onChange={field.onChange}
@@ -177,7 +179,7 @@ export function PersonalInfoForm() {
                   <FormLabel>Occupation</FormLabel>
                   <FormControl>
                     <Input
-                      type="number"
+                      type="text"
                       placeholder="Enter your occupation"
                       value={field.value}
                       onChange={field.onChange}
@@ -190,61 +192,161 @@ export function PersonalInfoForm() {
             />
           </div>
 
-          <FormField
-            control={form.control}
-            name="cSections"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Have you had any cesarean section?</FormLabel>
-                <FormControl>
-                  <RadioGroup onValueChange={field.onChange} className="">
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormControl>
-                        <RadioGroupItem value="yes" />
-                      </FormControl>
-                      <FormLabel>Yes</FormLabel>
-                    </FormItem>
+          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+            <FormField
+              control={form.control}
+              name="cSections"
+              render={({ field }) => (
+                <FormItem className="flex flex-col space-y-3">
+                  <FormLabel>Have you had any cesarean section?</FormLabel>
+                  <FormControl>
+                    <RadioGroup onValueChange={field.onChange} className="">
+                      <FormItem className="flex items-center gap-3">
+                        <FormControl>
+                          <RadioGroupItem value="yes" />
+                        </FormControl>
+                        <FormLabel>Yes</FormLabel>
+                      </FormItem>
 
-                    <FormItem className="flex items-center gap-3">
-                      <FormControl>
-                        <RadioGroupItem value="no" />
-                      </FormControl>
-                      <FormLabel>No</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                      <FormItem className="flex items-center gap-3">
+                        <FormControl>
+                          <RadioGroupItem value="no" />
+                        </FormControl>
+                        <FormLabel>No</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="hasChildren"
-            render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Do you have any children?</FormLabel>
-                <FormControl>
-                  <RadioGroup onValueChange={field.onChange} className="">
-                    <FormItem className="flex flex-row items-center gap-3">
-                      <FormControl>
-                        <RadioGroupItem value="yes" />
-                      </FormControl>
-                      <FormLabel>Yes</FormLabel>
-                    </FormItem>
+            <FormField
+              control={form.control}
+              name="abortions"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Have you had any abortions?</FormLabel>
+                  <FormControl>
+                    <RadioGroup onValueChange={field.onChange} className="">
+                      <FormItem className="flex flex-row items-center gap-3">
+                        <FormControl>
+                          <RadioGroupItem value="yes" />
+                        </FormControl>
+                        <FormLabel>Yes</FormLabel>
+                      </FormItem>
 
-                    <FormItem className="flex items-center gap-3">
-                      <FormControl>
-                        <RadioGroupItem value="no" />
-                      </FormControl>
-                      <FormLabel>No</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                      <FormItem className="flex items-center gap-3">
+                        <FormControl>
+                          <RadioGroupItem value="no" />
+                        </FormControl>
+                        <FormLabel>No</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+            <FormField
+              control={form.control}
+              name="placeOfResidence"
+              render={({ field }) => (
+                <FormItem className="flex-1/2">
+                  <FormLabel>Place of residence</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your place of residence"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem className="flex-1/2">
+                  <FormLabel>City</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter the city you live in"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+            <FormField
+              control={form.control}
+              name="homePhoneNumber"
+              render={({ field }) => (
+                <FormItem className="flex-1/3">
+                  <FormLabel>Home phone number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your home phone number"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="celularPhoneNumber"
+              render={({ field }) => (
+                <FormItem className="flex-1/3">
+                  <FormLabel>Celular phone number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your celular phone number"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="workPhoneNumber"
+              render={({ field }) => (
+                <FormItem className="flex-1/3">
+                  <FormLabel>Work phone number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your work phone number"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <Button type="submit">Submit</Button>
         </div>

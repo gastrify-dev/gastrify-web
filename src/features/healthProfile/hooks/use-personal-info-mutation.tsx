@@ -3,8 +3,6 @@ import { useMutation } from "@tanstack/react-query";
 
 import type { PersonalInfoVariables } from "../types";
 
-//Optimistic Imports???
-
 interface Props {
   form: UseFormReturn<PersonalInfoVariables>;
 }

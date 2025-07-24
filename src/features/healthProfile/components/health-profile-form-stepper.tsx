@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   Stepper,
   StepperItem,

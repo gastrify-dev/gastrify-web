@@ -1,4 +1,4 @@
-import z from "zod/v4";
+import { z } from "zod/v4";
 
 import { personalInfo } from "../schemas/personal-info";
 import { medicalInfo } from "../schemas/medical-info";

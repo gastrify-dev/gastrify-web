@@ -4,11 +4,13 @@ import { useState } from "react";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
 import { HealthProfileFormStepper } from "./health-profile-form-stepper";
 import { StepItem } from "../types";
 import { PersonalInfoForm } from "./personal-info-form";
 import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
+import { MedicalInfoForm } from "./medical-info-form";
 
 //Steps are to be replaced with the t function to get the translations
 const steps: StepItem[] = [
@@ -55,14 +57,17 @@ export function HealthProfileForm() {
         stepOnValueChange={handleStepChange}
         steps={steps}
       />
-
-      <div className="h-[600px]">
-        <div className="max-h-[600px] w-full space-y-4 overflow-y-auto rounded-lg border-2 border-gray-700 p-6">
+      <ScrollArea className="h-[550px] w-full rounded-md border p-6">
+        {step === 1 && <PersonalInfoForm />}
+        {step === 2 && <MedicalInfoForm />}
+      </ScrollArea>
+      {/* <div className="h-[550px]">
+        <div className="max-h-[550px] w-full space-y-4 overflow-y-auto rounded-lg border-2 border-gray-700 p-6">
           {step === 1 && <PersonalInfoForm />}
         </div>
-      </div>
+      </div> */}
 
-      <div className="mt-6 flex justify-between gap-2">
+      <div className="mt-4 flex justify-between gap-2">
         <Button
           className="cursor-pointer sm:w-1/2 md:w-50"
           onClick={previousStep}

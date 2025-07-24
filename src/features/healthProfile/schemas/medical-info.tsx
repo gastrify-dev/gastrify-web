@@ -7,16 +7,16 @@ export const medicalInfo = z.object({
   rhFactor: z.enum(["+", "-"], {
     message: "rhFactor is required",
   }),
-  allergies: z.boolean(),
+  allergies: z.enum(["yes", "no"]),
   allergyDetails: z.string().trim(),
   religion: z.enum(["cristiano evangelico", "catolico", "otros"], {
     message: "Religion is required",
   }),
-  allowsTransfusions: z.boolean(),
-  alcohol: z.boolean(),
-  drugs: z.boolean(),
+  allowsTransfusions: z.enum(["yes", "no"]),
+  alcohol: z.enum(["yes", "no"]),
+  drugs: z.enum(["yes", "no"]),
   chronicIllnessMedication: z.string().trim().optional(),
   chronicIlnessDetails: z.string().trim().optional(),
-  hasHealthInsurance: z.boolean(),
-  healthInsuranceProvider: z.string().trim(),
+  hasHealthInsurance: z.enum(["yes", "no"]),
+  healthInsuranceProvider: z.string().trim().optional(),
 });

@@ -8,8 +8,7 @@ import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { useNotifications } from "@/features/notifications/hooks/use-notifications";
 import NotificationContent from "@/features/notifications/components/notification-detail";
 import NotificationSkeleton from "@/features/notifications/components/notification-skeleton";
-import { NotificationItem } from "@/features/notifications/components/notification";
-import type { Notification } from "@/features/notifications/types";
+import { Notification } from "@/features/notifications/components/notification";
 
 const Notifications = () => {
   const {
@@ -55,57 +54,28 @@ const Notifications = () => {
     <div className="flex h-full w-full flex-col">
       <div className="flex flex-1 flex-col gap-2 md:flex-row">
         <section className="flex w-full flex-col border-r md:h-full md:w-1/2">
-          <ScrollArea
-            className="max-h-[calc(100vh-10rem)] min-h-[320px] flex-1"
-            style={{ minHeight: 320, maxHeight: "calc(100vh - 10rem)" }}
-          >
-            <ul
-              className="divide-y"
-              role="listbox"
-              aria-label="Lista de notificaciones"
-              tabIndex={0}
-            >
-              {notifications.map((n: Notification, idx: number) => (
-                <li
-                  key={`notif-${n.id}`}
-                  role="option"
-                  aria-selected={n.id === selected?.id}
-                >
-                  <NotificationItem
-                    notification={n}
-                    selected={n.id === selected?.id}
-                    onClick={() => {
-                      if (deletingIds.has(n.id)) return;
-                      handleSelect(n);
-                    }}
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (deletingIds.has(n.id)) return;
-                      if (e.key === "Enter" || e.key === " ") handleSelect(n);
-                      if (e.key === "ArrowDown") {
-                        const next = document.querySelector(
-                          `[data-notification-idx='${idx + 1}']`,
-                        );
-                        if (next) (next as HTMLElement).focus();
-                      }
-                      if (e.key === "ArrowUp") {
-                        const prev = document.querySelector(
-                          `[data-notification-idx='${idx - 1}']`,
-                        );
-                        if (prev) (prev as HTMLElement).focus();
-                      }
-                    }}
-                    data-notification-idx={idx}
-                  />
-                </li>
+          <ScrollArea className="max-h-[calc(100vh-10rem)] min-h-[320px] flex-1">
+            <div className="flex flex-col gap-2 p-2">
+              {notifications.map((notification) => (
+                <Notification
+                  key={notification.id}
+                  notification={notification}
+                  selected={notification.id === selected?.id}
+                  onClick={() => {
+                    if (deletingIds.has(notification.id)) return;
+                    handleSelect(notification);
+                  }}
+                />
               ))}
-            </ul>
+            </div>
           </ScrollArea>
         </section>
         <section className="h-full w-full flex-1 overflow-y-auto">
           {selectedId &&
           selected &&
-          notifications.some((n: Notification) => n.id === selectedId) ? (
+          notifications.some(
+            (notification) => notification.id === selectedId,
+          ) ? (
             <NotificationContent
               notification={selected}
               clearSelection={clearSelection}

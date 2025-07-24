@@ -3,7 +3,8 @@
 import { headers } from "next/headers";
 import { generateId } from "better-auth";
 import { and, eq, gte, lte } from "drizzle-orm";
-import { format } from "date-fns";
+//import { format } from "date-fns";
+import { toZonedTime, format } from "date-fns-tz";
 import { es } from "date-fns/locale";
 
 import { auth } from "@/shared/lib/better-auth/server";
@@ -198,13 +199,16 @@ export async function createAppointment(
   }
 
   if (status === "booked" && patient) {
-    const fechaFormateada = format(new Date(start), "PPPPp", { locale: es });
+    console.log(start);
+    const timeZone = "America/Guayaquil"; // Ecuador GMT-5
+    const zonedDate = toZonedTime(start, timeZone);
+    const formatedDate = format(zonedDate, "PPPPp", { locale: es });
 
     const notificationResult = await createNotification({
       userId: patient.id,
       title: "Cita creada",
       preview: "Tu cita ha sido registrada",
-      content: `La cita para el día ${fechaFormateada} (GMT-5, hora de Ecuador) ha sido confirmada exitosamente. Tipo: ${
+      content: `La cita para el día ${formatedDate} (GMT-5, hora de Ecuador) ha sido confirmada exitosamente. Tipo: ${
         type === "virtual" ? "Virtual" : "Presencial"
       }.`,
     });

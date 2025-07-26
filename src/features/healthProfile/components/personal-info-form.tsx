@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Form,
   FormControl,
@@ -7,9 +9,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/shared/components/ui/form";
-import { Input } from "@/shared/components/ui/input";
-import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
-
 import {
   Select,
   SelectContent,
@@ -19,12 +18,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { Input } from "@/shared/components/ui/input";
+import { Switch } from "@/shared/components/ui/switch";
 import { Button } from "@/shared/components/ui/button";
 
-import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
+import { usePersonalInfoForm } from "@/features/healthProfile/hooks/use-personal-info-form";
 
 export function PersonalInfoForm() {
   const { form, onSubmit } = usePersonalInfoForm();
+  const [hasChildren, setHasChidlren] = useState(false);
 
   return (
     <Form {...form}>
@@ -41,9 +43,7 @@ export function PersonalInfoForm() {
                     type="number"
                     placeholder="Age"
                     value={field.value}
-                    onChange={(event) =>
-                      field.onChange(Number(event.target.value))
-                    }
+                    onChange={field.onChange}
                     min={0}
                     max={120}
                   />
@@ -88,70 +88,69 @@ export function PersonalInfoForm() {
             control={form.control}
             name="hasChildren"
             render={({ field }) => (
-              <FormItem className="space-y-3">
-                <FormLabel>Do you have any children?</FormLabel>
-                <FormControl>
-                  <RadioGroup onValueChange={field.onChange} className="">
-                    <FormItem className="flex items-center gap-3">
-                      <FormControl>
-                        <RadioGroupItem value="yes" />
-                      </FormControl>
-                      <FormLabel>Yes</FormLabel>
-                    </FormItem>
-
-                    <FormItem className="flex items-center gap-3">
-                      <FormControl>
-                        <RadioGroupItem value="no" />
-                      </FormControl>
-                      <FormLabel>No</FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
+              <FormItem className="">
+                <div className="">
+                  <FormLabel>Do you have any children?</FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(bool) => {
+                        field.onChange(bool);
+                        setHasChidlren(bool);
+                      }}
+                    />
+                  </FormControl>
+                  <p className="text-sm">Yes</p>
+                </div>
               </FormItem>
             )}
           />
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
-            <FormField
-              control={form.control}
-              name="numMale"
-              render={({ field }) => (
-                <FormItem className="flex-1/2">
-                  <FormLabel>Number of sons</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter number of sons"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="numFemale"
-              render={({ field }) => (
-                <FormItem className="flex-1/2">
-                  <FormLabel>Number of daughters</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Enter number of daughters"
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {hasChildren && (
+            <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
+              <FormField
+                control={form.control}
+                name="numMale"
+                render={({ field }) => (
+                  <FormItem className="flex-1/2">
+                    <FormLabel>Number of sons</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter number of sons"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="numFemale"
+                render={({ field }) => (
+                  <FormItem className="flex-1/2">
+                    <FormLabel>Number of daughters</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter number of daughters"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          )}
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
             <FormField
               control={form.control}
               name="profession"
@@ -192,31 +191,25 @@ export function PersonalInfoForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
             <FormField
               control={form.control}
               name="cSections"
               render={({ field }) => (
-                <FormItem className="flex flex-col space-y-3">
-                  <FormLabel>Have you had any cesarean section?</FormLabel>
-                  <FormControl>
-                    <RadioGroup onValueChange={field.onChange} className="">
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="yes" />
-                        </FormControl>
-                        <FormLabel>Yes</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="no" />
-                        </FormControl>
-                        <FormLabel>No</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem className="">
+                  <div className="">
+                    <FormLabel>Have you had any Cesarean Sections?</FormLabel>
+                  </div>
+                  <div className="flex flex-row items-center gap-4">
+                    <p className="text-sm">No</p>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <p className="text-sm">Yes</p>
+                  </div>
                 </FormItem>
               )}
             />
@@ -225,32 +218,26 @@ export function PersonalInfoForm() {
               control={form.control}
               name="abortions"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Have you had any abortions?</FormLabel>
-                  <FormControl>
-                    <RadioGroup onValueChange={field.onChange} className="">
-                      <FormItem className="flex flex-row items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="yes" />
-                        </FormControl>
-                        <FormLabel>Yes</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="no" />
-                        </FormControl>
-                        <FormLabel>No</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem className="">
+                  <div className="">
+                    <FormLabel>Have you had any abortions?</FormLabel>
+                  </div>
+                  <div className="flex flex-row items-center gap-4">
+                    <p className="text-sm">No</p>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <p className="text-sm">Yes</p>
+                  </div>
                 </FormItem>
               )}
             />
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
             <FormField
               control={form.control}
               name="placeOfResidence"
@@ -289,7 +276,7 @@ export function PersonalInfoForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
             <FormField
               control={form.control}
               name="homePhoneNumber"

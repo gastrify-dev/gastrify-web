@@ -1,7 +1,7 @@
 import { z } from "zod/v4";
 
-import { personalInfo } from "../schemas/personal-info";
-import { medicalInfo } from "../schemas/medical-info";
+import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
+import { medicalInfo } from "@/features/healthProfile/schemas/medical-info";
 
 export interface StepItem {
   step: number;

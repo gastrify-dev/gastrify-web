@@ -6,11 +6,11 @@ import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
-import { HealthProfileFormStepper } from "./health-profile-form-stepper";
-import { StepItem } from "../types";
-import { PersonalInfoForm } from "./personal-info-form";
-import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
-import { MedicalInfoForm } from "./medical-info-form";
+import { HealthProfileFormStepper } from "@/features/healthProfile/components/health-profile-form-stepper";
+import { StepItem } from "@/features/healthProfile/types";
+import { PersonalInfoForm } from "@/features/healthProfile/components/personal-info-form";
+import { usePersonalInfoForm } from "@/features/healthProfile/hooks/use-personal-info-form";
+import { MedicalInfoForm } from "@/features/healthProfile/components/medical-info-form";
 
 //Steps are to be replaced with the t function to get the translations
 const steps: StepItem[] = [
@@ -51,7 +51,7 @@ export function HealthProfileForm() {
   }
 
   return (
-    <div className="flex max-w-6xl flex-col gap-5 p-6">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-6">
       <HealthProfileFormStepper
         stepValue={step}
         stepOnValueChange={handleStepChange}
@@ -61,11 +61,6 @@ export function HealthProfileForm() {
         {step === 1 && <PersonalInfoForm />}
         {step === 2 && <MedicalInfoForm />}
       </ScrollArea>
-      {/* <div className="h-[550px]">
-        <div className="max-h-[550px] w-full space-y-4 overflow-y-auto rounded-lg border-2 border-gray-700 p-6">
-          {step === 1 && <PersonalInfoForm />}
-        </div>
-      </div> */}
 
       <div className="mt-4 flex justify-between gap-2">
         <Button

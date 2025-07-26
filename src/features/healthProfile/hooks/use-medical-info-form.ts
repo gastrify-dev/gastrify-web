@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { medicalInfo } from "../schemas/medical-info";
-import type { MedicalInfoVariables } from "../types";
+import { medicalInfo } from "@/features/healthProfile/schemas/medical-info";
+import type { MedicalInfoVariables } from "@/features/healthProfile/types";
 
 export const useMedicalInfoForm = () => {
   const form = useForm<MedicalInfoVariables>({
@@ -10,11 +10,11 @@ export const useMedicalInfoForm = () => {
     defaultValues: {
       bloodType: undefined,
       rhFactor: undefined,
-      allergies: undefined,
+      allergies: false,
       allergyDetails: "",
-      allowsTransfusions: undefined,
-      alcohol: undefined,
-      drugs: undefined,
+      allowsTransfusions: false,
+      alcohol: false,
+      drugs: false,
       chronicIllnessMedication: "",
       chronicIlnessDetails: "",
       hasHealthInsurance: undefined,

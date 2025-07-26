@@ -1,7 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 
-import type { PersonalInfoVariables } from "../types";
+import type { PersonalInfoVariables } from "@/features/healthProfile/types";
 
 interface Props {
   form: UseFormReturn<PersonalInfoVariables>;

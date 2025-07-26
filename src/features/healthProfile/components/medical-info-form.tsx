@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Form,
   FormControl,
@@ -9,11 +11,13 @@ import {
 } from "@/shared/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { Textarea } from "@/shared/components/ui/textarea";
+import { Switch } from "@/shared/components/ui/switch";
 
-import { useMedicalInfoForm } from "../hooks/use-medical-info-form";
+import { useMedicalInfoForm } from "@/features/healthProfile/hooks/use-medical-info-form";
 
 export function MedicalInfoForm() {
   const { form, onSubmit } = useMedicalInfoForm();
+  const [allergies, setAllergies] = useState(false);
 
   return (
     <Form {...form}>
@@ -101,22 +105,77 @@ export function MedicalInfoForm() {
             control={form.control}
             name="allergies"
             render={({ field }) => (
+              <FormItem className="">
+                <div className="">
+                  <FormLabel>Do you have any allergies?</FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={(bool) => {
+                        field.onChange(bool);
+                        setAllergies(bool);
+                      }}
+                    />
+                  </FormControl>
+                  <p className="text-sm">Yes</p>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {allergies && (
+            <FormField
+              control={form.control}
+              name="allergyDetails"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Allergy Details</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe your allergies..."
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Describe all your allergies and if you consume any medicine
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          <FormField
+            control={form.control}
+            name="religion"
+            render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>Do you have any allergies?</FormLabel>
+                <FormLabel>Religious Creed</FormLabel>
                 <FormControl>
                   <RadioGroup onValueChange={field.onChange} className="">
                     <FormItem className="flex items-center gap-3">
                       <FormControl>
-                        <RadioGroupItem value="yes" />
+                        <RadioGroupItem value="cristiano evangelico" />
                       </FormControl>
-                      <FormLabel>Yes</FormLabel>
+                      <FormLabel>Evangelical Christian</FormLabel>
                     </FormItem>
 
                     <FormItem className="flex items-center gap-3">
                       <FormControl>
-                        <RadioGroupItem value="no" />
+                        <RadioGroupItem value="catolico" />
                       </FormControl>
-                      <FormLabel>No</FormLabel>
+                      <FormLabel>Catholic</FormLabel>
+                    </FormItem>
+
+                    <FormItem className="flex items-center gap-3">
+                      <FormControl>
+                        <RadioGroupItem value="otro" />
+                      </FormControl>
+                      <FormLabel>Other</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
@@ -127,118 +186,48 @@ export function MedicalInfoForm() {
 
           <FormField
             control={form.control}
-            name="allergyDetails"
+            name="allowsTransfusions"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Allergy Details</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Describe your allergies..."
-                    className="resize-none"
-                    {...field}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Describe all your allergies and if you consume any medicine
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="flex gap-4 md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="religion"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Religious Creed</FormLabel>
-                  <FormControl>
-                    <RadioGroup onValueChange={field.onChange} className="">
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="cristiano evangelico" />
-                        </FormControl>
-                        <FormLabel>Evangelical Christian</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="catolico" />
-                        </FormControl>
-                        <FormLabel>Catholic</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="otro" />
-                        </FormControl>
-                        <FormLabel>Other</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="allowsTransfusions"
-              render={({ field }) => (
-                <FormItem className="space-y-3">
+              <FormItem className="">
+                <div className="">
                   <FormLabel>
                     In case you need a blood transfusion or its derivatives,
                     your creed allows it?
                   </FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
                   <FormControl>
-                    <RadioGroup onValueChange={field.onChange} className="">
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="yes" />
-                        </FormControl>
-                        <FormLabel>Yes</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="no" />
-                        </FormControl>
-                        <FormLabel>No</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* </div> */}
+                  <p className="text-sm">Yes</p>
+                </div>
+              </FormItem>
+            )}
+          />
 
-            {/* <div className="flex flex-col gap-4 md:flex-row md:gap-6"> */}
+          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-8">
             <FormField
               control={form.control}
               name="alcohol"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Alcohol</FormLabel>
-                  <FormControl>
-                    <RadioGroup onValueChange={field.onChange} className="">
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="yes" />
-                        </FormControl>
-                        <FormLabel>Yes</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="no" />
-                        </FormControl>
-                        <FormLabel>No</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem className="">
+                  <div className="">
+                    <FormLabel>Alcohol</FormLabel>
+                  </div>
+                  <div className="flex flex-row items-center gap-4">
+                    <p className="text-sm">No</p>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <p className="text-sm">Yes</p>
+                  </div>
                 </FormItem>
               )}
             />
@@ -247,26 +236,20 @@ export function MedicalInfoForm() {
               control={form.control}
               name="drugs"
               render={({ field }) => (
-                <FormItem className="space-y-3">
-                  <FormLabel>Drugs</FormLabel>
-                  <FormControl>
-                    <RadioGroup onValueChange={field.onChange} className="">
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="yes" />
-                        </FormControl>
-                        <FormLabel>Yes</FormLabel>
-                      </FormItem>
-
-                      <FormItem className="flex items-center gap-3">
-                        <FormControl>
-                          <RadioGroupItem value="no" />
-                        </FormControl>
-                        <FormLabel>No</FormLabel>
-                      </FormItem>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
+                <FormItem className="">
+                  <div className="">
+                    <FormLabel>Drugs</FormLabel>
+                  </div>
+                  <div className="flex flex-row items-center gap-4">
+                    <p className="text-sm">No</p>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <p className="text-sm">Yes</p>
+                  </div>
                 </FormItem>
               )}
             />

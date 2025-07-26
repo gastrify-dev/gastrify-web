@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 import type { ActionError } from "@/shared/types";
+import { optimisticAdd } from "@/shared/utils/optimistic-helpers";
 
 import {
   createAppointment,
@@ -14,7 +15,6 @@ import type {
   CalendarEvent,
   IncomingAppointment,
 } from "@/features/appointments/types";
-import { optimisticAdd } from "@/features/appointments/utils/optimistic-helpers";
 
 interface Props {
   form: UseFormReturn<CreateAppointmentVariables>;

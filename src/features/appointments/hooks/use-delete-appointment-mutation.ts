@@ -2,16 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
+import { optimisticRemove, rollback } from "@/shared/utils/optimistic-helpers";
+
 import { deleteAppointment } from "@/features/appointments/actions/delete-appointment";
 import type {
   CalendarEvent,
   DeleteAppointmentVariables,
   IncomingAppointment,
 } from "@/features/appointments/types";
-import {
-  optimisticRemove,
-  rollback,
-} from "@/features/appointments/utils/optimistic-helpers";
 
 export const useDeleteAppointmentMutation = () => {
   const queryClient = useQueryClient();

@@ -3,6 +3,8 @@
 import { headers } from "next/headers";
 import { generateId } from "better-auth";
 import { and, eq, gte, lte } from "drizzle-orm";
+import { es } from "date-fns/locale";
+import { format } from "date-fns";
 
 import { auth } from "@/shared/lib/better-auth/server";
 import { db } from "@/shared/lib/drizzle/server";
@@ -10,6 +12,8 @@ import { appointment, user } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
+
+import { createNotification } from "@/features/notifications/actions/create-notification";
 
 import type {
   Appointment,
@@ -194,13 +198,24 @@ export async function createAppointment(
   }
 
   if (status === "booked" && patient) {
+    const formattedDate = format(start, "PPPPp", { locale: es });
+
+    await createNotification({
+      userId: patient.id,
+      title: "Cita",
+      preview: "Tu cita ha sido creada",
+      content: `La cita para el día ${formattedDate} ha sido creada exitosamente. Tipo: ${
+        type === "virtual" ? "Virtual" : "Presencial"
+      }.`,
+    });
+
     return {
       data: {
         appointment: dbInsertAppointmentData[0],
         patient: {
-          identificationNumber: patient.identificationNumber,
-          name: patient.name,
-          email: patient.email,
+          identificationNumber: patient!.identificationNumber,
+          name: patient!.name,
+          email: patient!.email,
         },
       },
       error: null,

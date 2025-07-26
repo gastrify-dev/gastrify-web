@@ -35,9 +35,10 @@
       "meta-title": "Gastrify | Home",
       "meta-description": "Welcome to Gastrify"
     },
-    "notifications-page": {
+    "notifications-layout": {
       "meta-title": "Gastrify | Notifications",
-      "meta-description": "Manage your notifications"
+      "meta-description": "Manage your notifications",
+      "title": "Notifications"
     },
     "settings-layout": {
       "meta-title": "Gastrify | Settings",
@@ -332,6 +333,26 @@
       "use-two-factor-mutation": {
         "error-invalid-one-time-password-message": "Invalid verification code",
         "error-toast": "Something went wrong verifying the verification code 😢",
+        "error-toast-description": "Please try again later"
+      }
+    },
+    "notifications": {
+      "notifications-sidebar": {
+        "error-message": "Error loading notifications 😢",
+        "refetch-button": "Retry",
+        "empty-message": "You don't have any notifications yet 😢"
+      },
+      "notification": {
+        "error-message": "Error loading notification 😢",
+        "refetch-button": "Retry",
+        "delete-button": "Delete"
+      },
+      "use-delete-notification-mutation": {
+        "error-toast": "Something went wrong deleting the notification 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-notification-mutation": {
+        "error-toast": "Something went wrong updating the notification 😢",
         "error-toast-description": "Please try again later"
       }
     },

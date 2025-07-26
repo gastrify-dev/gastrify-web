@@ -45,7 +45,7 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
           )
         </CardTitle>
 
-        <CardDescription className="flex flex-col gap-6">
+        <CardDescription className="flex items-center gap-42">
           <div className="flex flex-col">
             <TypographyP className="!mt-2 leading-normal">
               <span className="font-bold">{t("start")}:</span>{" "}

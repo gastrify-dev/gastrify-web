@@ -12,13 +12,13 @@ export function AdminAppointmentsPage() {
     <div className="flex h-full flex-col gap-6 pr-6">
       <TypographyH1>{t("title")}</TypographyH1>
 
-      <div className="flex flex-1 gap-6">
-        <div className="flex w-1/3 flex-col gap-6">
+      <div className="flex flex-1 flex-col gap-6">
+        <div className="flex flex-col gap-6">
           <TypographyH3>{t("incoming-appointments-title")}</TypographyH3>
           <AdminIncomingAppointments />
         </div>
 
-        <div className="flex w-2/3 flex-col gap-6">
+        <div className="flex flex-col gap-6">
           <TypographyH3>{t("manage-appointments-title")}</TypographyH3>
           <Appointments />
         </div>

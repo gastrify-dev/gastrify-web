@@ -9,13 +9,21 @@ import { notification } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 
-import type { Notification } from "@/features/notifications/types";
+import { getNotificationSchema } from "@/features/notifications/schemas/get-notification";
+import type {
+  GetNotificationVariables,
+  Notification,
+} from "@/features/notifications/types";
 
-type ErrorCode = "UNAUTHORIZED" | "BAD_REQUEST" | "INTERNAL_SERVER_ERROR";
+type ErrorCode =
+  | "UNAUTHORIZED"
+  | "BAD_REQUEST"
+  | "INTERNAL_SERVER_ERROR"
+  | "NOT_FOUND";
 
-export async function getNotifications(): Promise<
-  ActionResponse<Notification[], ErrorCode>
-> {
+export async function getNotification(
+  variables: GetNotificationVariables,
+): Promise<ActionResponse<Notification, ErrorCode>> {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session)
@@ -24,11 +32,22 @@ export async function getNotifications(): Promise<
       error: { code: "UNAUTHORIZED", message: "User not authenticated" },
     };
 
+  const parsedVariables = getNotificationSchema.safeParse(variables);
+
+  if (!parsedVariables.success) {
+    return {
+      data: null,
+      error: { code: "BAD_REQUEST", message: parsedVariables.error.message },
+    };
+  }
+
+  const { id } = parsedVariables.data;
+
   const { data, error } = await tryCatch(
     db
       .select()
       .from(notification)
-      .where(eq(notification.userId, session.user.id))
+      .where(eq(notification.id, id))
       .orderBy(desc(notification.createdAt)),
   );
 
@@ -44,5 +63,12 @@ export async function getNotifications(): Promise<
     };
   }
 
-  return { data: data ?? [], error: null };
+  if (!data || data.length === 0) {
+    return {
+      data: null,
+      error: { code: "NOT_FOUND", message: "Notification not found" },
+    };
+  }
+
+  return { data: data[0], error: null };
 }

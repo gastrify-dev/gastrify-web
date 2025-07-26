@@ -18,9 +18,9 @@ type ErrorCode =
   | "NOT_FOUND"
   | "INTERNAL_SERVER_ERROR";
 
-export async function updateNotificationStatus(
+export async function updateNotification(
   variables: UpdateNotificationVariables,
-): Promise<ActionResponse<{ id: string; read: boolean }, ErrorCode>> {
+): Promise<ActionResponse<null, ErrorCode>> {
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session) {
@@ -75,5 +75,5 @@ export async function updateNotificationStatus(
     };
   }
 
-  return { data: { id, read }, error: null };
+  return { data: null, error: null };
 }

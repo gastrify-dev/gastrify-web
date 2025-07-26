@@ -35,9 +35,10 @@
       "meta-title": "Gastrify | Inicio",
       "meta-description": "Bienvenido a Gastrify"
     },
-    "notifications-page": {
+    "notifications-layout": {
       "meta-title": "Gastrify | Notificaciones",
-      "meta-description": "Gestiona tus notificaciones"
+      "meta-description": "Gestiona tus notificaciones",
+      "title": "Notificaciones"
     },
     "settings-layout": {
       "meta-title": "Gastrify | Configuración",
@@ -335,6 +336,26 @@
         "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
       }
     },
+    "notifications": {
+      "notifications-sidebar": {
+        "error-message": "Error cargando notificaciones 😢",
+        "refetch-button": "Reintentar",
+        "empty-message": "Aún no tienes notificaciones 😢"
+      },
+      "notification": {
+        "error-message": "Error cargando notificación 😢",
+        "refetch-button": "Reintentar",
+        "delete-button": "Eliminar"
+      },
+      "use-delete-notification-mutation": {
+        "error-toast": "Algo salió mal al eliminar la notificación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-notification-mutation": {
+        "error-toast": "Algo salió mal al actualizar la notificación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      }
+    },
     "settings": {
       "account-page": {
         "title": "Cuenta",
@@ -501,32 +522,6 @@
         "success-toast": "Autenticación de dos factores habilitada correctamente 🎉",
         "invalid-one-time-password-message": "Código de verificación inválido",
         "error-toast": "Algo salió mal al habilitar la autenticación de dos factores 😢",
-        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
-      }
-    },
-    "notifications": {
-      "page": {
-        "title": "Notificaciones",
-        "empty-content": "Aún no tienes notificaciones."
-      },
-      "optimistic-add-success": "Notificación agregada instantáneamente",
-      "optimistic-add-error": "No se pudo agregar la notificación",
-      "badgeAriaLabel": "{count} notificaciones sin leer",
-      "empty": "Aún no tienes notificaciones",
-      "loading": "Cargando...",
-      "error": "Error cargando notificaciones",
-      "refetch": "Reintentar",
-      "select": "Selecciona una notificación",
-      "content": {
-        "received": "Recibido:",
-        "mark-read": "Marcar como leída",
-        "mark-unread": "Marcar como no leída",
-        "delete": "Eliminar",
-        "deleting": "Eliminando...",
-        "delete-confirm": "¿Seguro que deseas eliminar esta notificación?"
-      },
-      "use-delete-notification-mutation": {
-        "error-toast": "Algo salió mal al eliminar la notificación 😢",
         "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
       }
     }

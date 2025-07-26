@@ -1,31 +1,45 @@
 import { useLocale, useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
-import type { Notification } from "@/features/notifications/types";
+import { getNotification } from "@/features/notifications/actions/get-notification";
 
-export function useNotification(
-  notification: Notification,
-  clearSelection?: () => void,
-  onDelete?: (id: string) => void,
-) {
+interface Props {
+  id: string;
+}
+
+export function useNotification({ id }: Props) {
   const locale = useLocale();
-  const t = useTranslations("features.notifications");
-  const { mutate: deleteNotification, status } =
-    useDeleteNotificationMutation();
+  const t = useTranslations("features.notifications.notification");
+  const router = useRouter();
+
+  const { data, isLoading, isError, refetch, isRefetching } = useQuery({
+    queryKey: ["notification", "details", id],
+    queryFn: async () => {
+      const { data, error } = await getNotification({ id });
+
+      if (error) return Promise.reject(error);
+
+      return data;
+    },
+  });
+
+  const { mutate: deleteNotification } = useDeleteNotificationMutation();
 
   const handleDelete = () => {
-    if (clearSelection) clearSelection();
-    if (onDelete) {
-      onDelete(notification.id);
-    } else {
-      deleteNotification({ id: notification.id });
-    }
+    deleteNotification({ id });
+    router.push("/notifications");
   };
 
   return {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
     locale,
     t,
-    status,
     handleDelete,
   };
 }

@@ -44,7 +44,7 @@ export async function deleteNotification(
   const { id } = parsedVariables.data;
   const userId = session.user.id;
 
-  const { data: result, error } = await tryCatch(
+  const { data, error } = await tryCatch(
     db
       .delete(notification)
       .where(and(eq(notification.id, id), eq(notification.userId, userId)))
@@ -53,6 +53,7 @@ export async function deleteNotification(
 
   if (error) {
     console.error(error);
+
     return {
       data: null,
       error: {
@@ -62,7 +63,7 @@ export async function deleteNotification(
     };
   }
 
-  if (!result || !result[0]) {
+  if (!data || data.length === 0) {
     return {
       data: null,
       error: {

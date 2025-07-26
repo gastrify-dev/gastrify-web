@@ -10,6 +10,9 @@ import { useTranslations } from "next-intl";
 
 import { useSession } from "@/shared/hooks/use-session";
 
+import { NotificationBadge } from "@/features/notifications/components/notification-badge";
+import { useNotifications } from "@/features/notifications/hooks/use-notifications";
+
 export const useAppSidebar = () => {
   const t = useTranslations("shared.app-sidebar");
 
@@ -22,6 +25,11 @@ export const useAppSidebar = () => {
     isRefetching: isSessionRefetching,
   } = useSession();
 
+  const { data: notifications } = useNotifications();
+
+  const unreadNotificationsCount =
+    notifications?.filter((notification) => !notification.read).length ?? 0;
+
   const links = useMemo(
     () => [
       { href: "/home", label: t("home"), icon: <HomeIcon /> },
@@ -33,7 +41,12 @@ export const useAppSidebar = () => {
       {
         href: "/notifications",
         label: t("notifications"),
-        icon: <BellIcon />,
+        icon: (
+          <span className="relative">
+            <BellIcon />
+            <NotificationBadge count={unreadNotificationsCount} />
+          </span>
+        ),
       },
       {
         href: `/${session?.user.identificationNumber}`,
@@ -46,7 +59,7 @@ export const useAppSidebar = () => {
         icon: <SettingsIcon />,
       },
     ],
-    [session?.user.identificationNumber, t],
+    [session?.user.identificationNumber, t, unreadNotificationsCount],
   );
 
   return {

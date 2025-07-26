@@ -35,9 +35,10 @@
       "meta-title": "Gastrify | Home",
       "meta-description": "Welcome to Gastrify"
     },
-    "notifications-page": {
+    "notifications-layout": {
       "meta-title": "Gastrify | Notifications",
-      "meta-description": "Manage your notifications"
+      "meta-description": "Manage your notifications",
+      "title": "Notifications"
     },
     "settings-layout": {
       "meta-title": "Gastrify | Settings",
@@ -335,6 +336,26 @@
         "error-toast-description": "Please try again later"
       }
     },
+    "notifications": {
+      "notifications-sidebar": {
+        "error-message": "Error loading notifications 😢",
+        "refetch-button": "Retry",
+        "empty-message": "You don't have any notifications yet 😢"
+      },
+      "notification": {
+        "error-message": "Error loading notification 😢",
+        "refetch-button": "Retry",
+        "delete-button": "Delete"
+      },
+      "use-delete-notification-mutation": {
+        "error-toast": "Something went wrong deleting the notification 😢",
+        "error-toast-description": "Please try again later"
+      },
+      "use-update-notification-mutation": {
+        "error-toast": "Something went wrong updating the notification 😢",
+        "error-toast-description": "Please try again later"
+      }
+    },
     "settings": {
       "account-page": {
         "title": "Account",
@@ -502,28 +523,6 @@
         "invalid-one-time-password-message": "Invalid verification code",
         "error-toast": "Something went wrong enabling two-factor authentication 😢",
         "error-toast-description": "Please try again later"
-      }
-    },
-    "notifications": {
-      "page": {
-        "title": "Notifications",
-        "empty-content": "No notifications yet."
-      },
-      "optimistic-add-success": "Add notification instantly",
-      "optimistic-add-error": "Could not add notification",
-      "badgeAriaLabel": "{count} unread notifications",
-      "empty": "No notifications",
-      "loading": "Loading...",
-      "error": "Error loading notifications",
-      "refetch": "Retry",
-      "select": "Select a notification",
-      "content": {
-        "received": "Received:",
-        "mark-read": "Mark as read",
-        "mark-unread": "Mark as unread",
-        "delete": "Delete",
-        "deleting": "Deleting...",
-        "delete-confirm": "Are you sure you want to delete this notification?"
       }
     }
   },

@@ -1,24 +1,16 @@
-import React from "react";
-import { useTranslations } from "next-intl";
-
 import { Badge } from "@/shared/components/ui/badge";
 
-interface NotificationBadgeProps {
+interface Props {
   count: number;
-  className?: string;
 }
 
-export function NotificationBadge({
-  count,
-  className = "",
-}: NotificationBadgeProps) {
-  const t = useTranslations("features.notifications");
+export function NotificationBadge({ count }: Props) {
   if (!count || count < 1) return null;
+
   return (
     <Badge
       variant="destructive"
-      className={`!bg-destructive min-w-5 px-1 !text-white !opacity-100 ${className}`}
-      aria-label={t("badgeAriaLabel", { count })}
+      className="!bg-destructive border-background absolute -top-1.5 left-full min-w-5 -translate-x-3.5 px-1 !text-white !opacity-100"
     >
       {count}
     </Badge>

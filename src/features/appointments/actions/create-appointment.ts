@@ -3,9 +3,8 @@
 import { headers } from "next/headers";
 import { generateId } from "better-auth";
 import { and, eq, gte, lte } from "drizzle-orm";
-//import { format } from "date-fns";
-import { toZonedTime, format } from "date-fns-tz";
 import { es } from "date-fns/locale";
+import { format } from "date-fns";
 
 import { auth } from "@/shared/lib/better-auth/server";
 import { db } from "@/shared/lib/drizzle/server";
@@ -199,29 +198,16 @@ export async function createAppointment(
   }
 
   if (status === "booked" && patient) {
-    console.log(start);
-    const timeZone = "America/Guayaquil"; // Ecuador GMT-5
-    const zonedDate = toZonedTime(start, timeZone);
-    const formatedDate = format(zonedDate, "PPPPp", { locale: es });
+    const formattedDate = format(start, "PPPPp", { locale: es });
 
-    const notificationResult = await createNotification({
+    await createNotification({
       userId: patient.id,
-      title: "Cita creada",
-      preview: "Tu cita ha sido registrada",
-      content: `La cita para el día ${formatedDate} (GMT-5, hora de Ecuador) ha sido confirmada exitosamente. Tipo: ${
+      title: "Cita",
+      preview: "Tu cita ha sido creada",
+      content: `La cita para el día ${formattedDate} ha sido creada exitosamente. Tipo: ${
         type === "virtual" ? "Virtual" : "Presencial"
       }.`,
     });
-
-    if (notificationResult.error) {
-      return {
-        data: null,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create notification for appointment",
-        },
-      };
-    }
 
     return {
       data: {

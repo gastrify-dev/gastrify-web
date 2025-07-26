@@ -3,13 +3,17 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 import { deleteNotification } from "@/features/notifications/actions/delete-notification";
-import type { DeleteNotificationVariables } from "@/features/notifications/schemas/delete-notification";
-import type { Notification } from "@/features/notifications/types/notification";
+import type {
+  Notification,
+  DeleteNotificationVariables,
+} from "@/features/notifications/types";
 
 export function useDeleteNotificationMutation() {
   const queryClient = useQueryClient();
 
-  const t = useTranslations("features.notifications");
+  const t = useTranslations(
+    "features.notifications.use-delete-notification-mutation",
+  );
 
   return useMutation({
     mutationFn: async (variables: DeleteNotificationVariables) => {
@@ -18,68 +22,53 @@ export function useDeleteNotificationMutation() {
       if (error) return Promise.reject(error);
     },
     onMutate: async (variables) => {
-      const activeKey = ["notifications", { limit: 99, offset: 0 }];
-      await queryClient.cancelQueries({ queryKey: activeKey });
+      await queryClient.cancelQueries({ queryKey: ["notification", "list"] });
       await queryClient.cancelQueries({
-        queryKey: ["notifications", "unread-count"],
+        queryKey: ["notification", "details", variables.id],
       });
 
-      const previousNotifications = queryClient.getQueryData<{
-        data: Notification[];
-      }>(activeKey);
-      const previousUnreadCount = queryClient.getQueryData<{ data: number }>([
-        "notifications",
-        "unread-count",
+      const previousNotifications = queryClient.getQueryData<Notification[]>([
+        "notification",
+        "list",
       ]);
 
-      if (previousNotifications?.data) {
-        queryClient.setQueryData(activeKey, {
-          ...previousNotifications,
-          data: previousNotifications.data.filter(
-            (notification) => notification.id !== variables.id,
-          ),
-        });
-      }
-
-      const deletedNotification = previousNotifications?.data?.find(
-        (notification) => notification.id === variables.id,
+      queryClient.setQueryData<Notification[]>(
+        ["notification", "list"],
+        (old) =>
+          old?.filter((notification) => notification.id !== variables.id),
       );
-      if (
-        deletedNotification &&
-        !deletedNotification.read &&
-        previousUnreadCount
-      ) {
-        queryClient.setQueryData(["notifications", "unread-count"], {
-          ...previousUnreadCount,
-          data: Math.max(0, previousUnreadCount.data - 1),
-        });
-      }
 
-      return { previousNotifications, previousUnreadCount };
+      const previousNotification = queryClient.getQueryData<Notification>([
+        "notification",
+        "details",
+        variables.id,
+      ]);
+
+      queryClient.removeQueries({
+        queryKey: ["notification", "details", variables.id],
+      });
+
+      return { previousNotifications, previousNotification };
     },
-    onError: (_error, _variables, context) => {
-      const activeKey = ["notifications", { limit: 99, offset: 0 }];
-      if (context?.previousNotifications) {
-        queryClient.setQueryData(activeKey, context.previousNotifications);
-      }
-      if (context?.previousUnreadCount) {
-        queryClient.setQueryData(
-          ["notifications", "unread-count"],
-          context.previousUnreadCount,
-        );
-      }
+    onError: (_error, variables, context) => {
+      queryClient.setQueryData<Notification[]>(
+        ["notification", "list"],
+        context?.previousNotifications,
+      );
 
-      toast.error(t("use-delete-notification-mutation.error-toast"), {
-        description: t(
-          "use-delete-notification-mutation.error-toast-description",
-        ),
+      queryClient.setQueryData<Notification>(
+        ["notification", "details", variables.id],
+        context?.previousNotification,
+      );
+
+      toast.error(t("error-toast"), {
+        description: t("error-toast-description"),
       });
     },
-    onSettled: () => {
-      const activeKey = ["notifications", { limit: 99, offset: 0 }];
-      queryClient.invalidateQueries({ queryKey: activeKey });
+    onSettled: (_data, _error, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["notification", "list"] });
       queryClient.invalidateQueries({
-        queryKey: ["notifications", "unread-count"],
+        queryKey: ["notification", "details", variables.id],
       });
     },
   });

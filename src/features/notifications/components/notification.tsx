@@ -1,54 +1,82 @@
 "use client";
 
-import { useLocale } from "next-intl";
+import { LoaderIcon, TrashIcon } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
+import { es, enUS } from "date-fns/locale";
 
-import { Card, CardContent } from "@/shared/components/ui/card";
-import { cn } from "@/shared/utils/cn";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
+import { TypographyP } from "@/shared/components/ui/typography";
 
-import { formatNotificationDate } from "@/features/notifications/utils/format-notification-date";
-import { getDateFnsLocale } from "@/features/notifications/utils/get-date-fns-locale";
-import type { Notification as INotification } from "@/features/notifications/types";
+import { useNotification } from "@/features/notifications/hooks/use-notification";
+import { NotificationSkeleton } from "@/features/notifications/components/notification-skeleton";
 
-type Props = {
-  notification: INotification;
-  selected?: boolean;
-  onClick?: () => void;
-};
+interface Props {
+  id: string;
+}
 
-export const Notification = ({ notification, selected, onClick }: Props) => {
-  const locale = useLocale();
-  const formattedDate = formatNotificationDate(
-    notification.createdAt,
-    getDateFnsLocale(locale),
-  );
+export const Notification = ({ id }: Props) => {
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+    t,
+    handleDelete,
+    locale,
+  } = useNotification({ id });
+
+  if (isLoading) return <NotificationSkeleton />;
+
+  if (isError)
+    return (
+      <div className="flex h-full flex-1 flex-col items-center justify-center gap-2">
+        {t("error-message")}
+        <Button
+          variant="destructive"
+          disabled={isRefetching}
+          onClick={() => refetch()}
+        >
+          {isRefetching && <LoaderIcon className="animate-spin" />}
+          {t("refetch-button")}
+        </Button>
+      </div>
+    );
 
   return (
-    <Card
-      className={cn(
-        "w-full cursor-pointer border transition-colors",
-        selected ? "border-primary bg-accent" : "border-border bg-background",
-        !notification.read && !selected ? "font-bold" : "opacity-70",
-      )}
-      onClick={onClick}
-    >
-      <CardContent className="p-0">
-        <div className="flex items-center justify-between">
-          <span className="max-w-xs truncate">{notification.title}</span>
-          <span className="text-muted-foreground text-xs">
-            {formattedDate || "\u00A0"}
-          </span>
-        </div>
-        <div className="text-muted-foreground hidden truncate text-sm md:block">
-          {notification.preview}
-        </div>
-        <div
-          className={cn(
-            "text-muted-foreground text-sm md:hidden",
-            !selected && "truncate",
-          )}
-        >
-          {selected ? notification.content : notification.preview}
-        </div>
+    <Card className="flex-1 border-none bg-transparent p-0">
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">{data!.title}</CardTitle>
+
+        <CardDescription className="text-muted-foreground text-sm">
+          {formatDistanceToNow(data!.createdAt, {
+            addSuffix: true,
+            locale: locale === "es" ? es : enUS,
+          })}
+        </CardDescription>
+
+        <CardAction>
+          <Button
+            variant="destructive"
+            className="rounded-full"
+            size="icon"
+            onClick={handleDelete}
+          >
+            <TrashIcon className="size-4" />
+          </Button>
+        </CardAction>
+      </CardHeader>
+
+      <CardContent>
+        <TypographyP>{data!.content}</TypographyP>
       </CardContent>
     </Card>
   );

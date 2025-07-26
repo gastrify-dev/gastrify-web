@@ -1,2 +1,0 @@
-ALTER TABLE "notification_translation" ADD COLUMN "deleted_at" timestamp;--> statement-breakpoint
-ALTER TABLE "notification_translation" ADD CONSTRAINT "notification_translation_id_notification_id_fk" FOREIGN KEY ("id") REFERENCES "public"."notification"("id") ON DELETE cascade ON UPDATE no action;

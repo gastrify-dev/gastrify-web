@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { useSession } from "@/shared/hooks/use-session";
+
 import { getNotifications } from "@/features/notifications/actions/get-notifications";
 import { Notification } from "@/features/notifications/types";
 import { useDeleteNotificationMutation } from "@/features/notifications/hooks/use-delete-notification-mutation";
@@ -81,29 +82,11 @@ export function useNotifications() {
 
     window.addEventListener("notification-created", handler as EventListener);
 
-    const storageHandler = (e: StorageEvent) => {
-      if (e.key === "notification-created") {
-        try {
-          const notificationData = e.newValue ? JSON.parse(e.newValue) : null;
-          if (notificationData) {
-            addOptimisticNotification(notificationData);
-          } else {
-            refetch();
-          }
-        } catch {
-          refetch();
-        }
-      }
-    };
-
-    window.addEventListener("storage", storageHandler);
-
     return () => {
       window.removeEventListener(
         "notification-created",
         handler as EventListener,
       );
-      window.removeEventListener("storage", storageHandler);
     };
   }, [refetch, addOptimisticNotification]);
 

@@ -36,9 +36,7 @@ export interface IcsEventData {
  * @returns Promise<{ filename: string; content: string; type: string; disposition: string }>
  */
 
-export async function generateIcsAttachment(
-  event: IcsEventData,
-): Promise<{
+export async function generateIcsAttachment(event: IcsEventData): Promise<{
   filename: string;
   content: string;
   type: string;
@@ -91,14 +89,24 @@ export async function generateIcsAttachment(
         return;
       }
 
-      let icsString = value.replace(/METHOD:[A-Z]+\n?/g, "");
+      let icsLines = value.split("\n");
+      icsLines = icsLines.filter((line) => !line.startsWith("METHOD:"));
+      let icsString = icsLines.join("\n");
       if (event.method) {
         icsString = icsString.replace(
           "BEGIN:VCALENDAR",
           `BEGIN:VCALENDAR\nMETHOD:${event.method}`,
         );
       }
-      const base64 = Buffer.from(icsString, "utf-8").toString("base64");
+
+      const base64 =
+        typeof window !== "undefined" && typeof window.btoa === "function"
+          ? window.btoa(
+              new TextEncoder()
+                .encode(icsString)
+                .reduce((data, byte) => data + String.fromCharCode(byte), ""),
+            )
+          : Buffer.from(icsString).toString("base64");
       resolve({
         filename: "cita.ics",
         content: base64,

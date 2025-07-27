@@ -159,21 +159,33 @@ export const bookAppointment = async (
   });
   const appointmentTypeStr = appt.type || "Consulta";
 
-  // Usar el componente React directamente en la prop 'react' de resend
-
   // Generar el ICS una sola vez
-  const icsAttachment = await generateIcsAttachment({
-    start: appt.start,
-    end: appt.end,
-    summary: `Cita médica (${appointmentTypeStr})`,
-    description: "Cita reservada en Gastrify",
-    location: appt.location || "",
-    status: "CONFIRMED",
-    uid: appt.id,
-    method: "REQUEST",
-    sequence: 0,
-  });
-
+  const { data: icsAttachment, error: icsError } = await tryCatch(
+    generateIcsAttachment({
+      start: appt.start,
+      end: appt.end,
+      summary: `Cita médica (${appointmentTypeStr})`,
+      description: "Cita reservada en Gastrify",
+      location: appt.location || "",
+      status: "CONFIRMED",
+      uid: appt.id,
+      method: "REQUEST",
+      sequence: 0,
+    }),
+  );
+  if (icsError) {
+    console.error(
+      "[BOOK-APPOINTMENT] Error generating ICS attachment:",
+      icsError,
+    );
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
+    };
+  }
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",

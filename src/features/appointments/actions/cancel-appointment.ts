@@ -134,18 +134,32 @@ export const cancelAppointment = async (
   const appointmentTypeStr = "Consulta";
 
   // Generar el ICS primero
-  const icsAttachment = await generateIcsAttachment({
-    start: appt.start,
-    end: appt.end,
-    summary: `Cita médica (${appointmentTypeStr})`,
-    description: "Cita cancelada en Gastrify",
-    location: appt.location || "",
-    status: "CANCELLED",
-    uid: appt.id,
-    method: "CANCEL",
-    sequence: 1,
-  });
-
+  const { data: icsAttachment, error: icsError } = await tryCatch(
+    generateIcsAttachment({
+      start: appt.start,
+      end: appt.end,
+      summary: `Cita médica (${appointmentTypeStr})`,
+      description: "Cita cancelada en Gastrify",
+      location: appt.location || "",
+      status: "CANCELLED",
+      uid: appt.id,
+      method: "CANCEL",
+      sequence: 1,
+    }),
+  );
+  if (icsError) {
+    console.error(
+      "[CANCEL-APPOINTMENT] Error generating ICS attachment:",
+      icsError,
+    );
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to generate ICS attachment",
+      },
+    };
+  }
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",

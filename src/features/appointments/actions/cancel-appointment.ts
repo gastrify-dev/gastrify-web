@@ -177,7 +177,7 @@ export const cancelAppointment = async (
   );
 
   if (emailError) {
-    console.error("[CANCEL-APPOINTMENT] Error enviando email:", emailError);
+    console.error("[CANCEL-APPOINTMENT] Error sending email:", emailError);
     return {
       data: null,
       error: {

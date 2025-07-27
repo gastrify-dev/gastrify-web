@@ -203,7 +203,7 @@ export const bookAppointment = async (
   );
 
   if (emailError) {
-    console.error("[BOOK-APPOINTMENT] Error enviando email:", emailError);
+    console.error("[BOOK-APPOINTMENT] Error sending email:", emailError);
     return {
       data: null,
       error: {

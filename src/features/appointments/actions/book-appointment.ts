@@ -7,10 +7,13 @@ import { db } from "@/shared/lib/drizzle/server";
 import { appointment } from "@/shared/lib/drizzle/schema";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { ActionResponse } from "@/shared/types";
+import { resend } from "@/shared/lib/resend/server";
 import { auth } from "@/shared/lib/better-auth/server";
+import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 
 import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type { BookAppointmentVariables } from "@/features/appointments/types";
+import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
 
 export type BookAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -126,7 +129,6 @@ export const bookAppointment = async (
   }
 
   // all good, book appointment
-
   const { error: bookAppointmentDbError } = await tryCatch(
     db
       .update(appointment)
@@ -140,7 +142,6 @@ export const bookAppointment = async (
 
   if (bookAppointmentDbError) {
     console.error(bookAppointmentDbError);
-
     return {
       data: null,
       error: {
@@ -149,6 +150,67 @@ export const bookAppointment = async (
       },
     };
   }
+
+  // --- Envío de email con ICS usando tryCatch ---
+  console.log("ANTES DE EMAIL");
+  const appt = existingAppointment[0];
+  const patientName = session.user.name || "Paciente";
+  const patientEmail = session.user.email;
+  const appointmentDate = appt.start.toLocaleString("es-ES", {
+    timeZone: "America/Guayaquil",
+  });
+  const appointmentTypeStr = appt.type || "Consulta";
+
+  // Usar el componente React directamente en la prop 'react' de resend
+
+  // Generar el ICS una sola vez
+  const icsAttachment = await generateIcsAttachment({
+    start: appt.start,
+    end: appt.end,
+    summary: `Cita médica (${appointmentTypeStr})`,
+    description: "Cita reservada en Gastrify",
+    location: appt.location || "",
+    status: "CONFIRMED",
+    uid: appt.id,
+    method: "REQUEST",
+    sequence: 0,
+  });
+
+  const { error: emailError } = await tryCatch(
+    resend.emails.send({
+      from: "Gastrify <mail@gastrify.aragundy.com>",
+      to: ["cesarandresdaniel.cooc@gmail.com"],
+      subject: "Cita reservada",
+      react: AppointmentEmail({
+        patientName,
+        patientEmail,
+        appointmentDate,
+        appointmentType: appointmentTypeStr,
+        action: "booked",
+      }),
+      attachments: [icsAttachment],
+    }),
+  );
+
+  if (emailError) {
+    console.error("[BOOK-APPOINTMENT] Error enviando email:", emailError);
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
+      },
+    };
+  }
+
+  // console.log("[BOOK-APPOINTMENT] Enviando email de cita reservada", {
+  //   to: [patientEmail, "cesarandresdaniel.cooc@gmail.com"],
+  //   subject: "Cita reservada",
+  //   patientName,
+  //   appointmentDate,
+  //   appointmentTypeStr,
+  //   icsAttachment,
+  // });
 
   return {
     data: null,

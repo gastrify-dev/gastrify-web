@@ -8,9 +8,12 @@ import { db } from "@/shared/lib/drizzle/server";
 import { appointment } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
+import { resend } from "@/shared/lib/resend/server";
+import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import type { CancelAppointmentVariables } from "@/features/appointments/types";
+import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
 
 export type CancelAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -96,7 +99,6 @@ export const cancelAppointment = async (
   }
 
   //cancel the appointment
-
   const { error: cancelAppointmentDbError } = await tryCatch(
     db
       .update(appointment)
@@ -112,12 +114,61 @@ export const cancelAppointment = async (
 
   if (cancelAppointmentDbError) {
     console.error(cancelAppointmentDbError);
-
     return {
       data: null,
       error: {
         code: "INTERNAL_SERVER_ERROR",
         message: "Internal server error",
+      },
+    };
+  }
+
+  // --- Envío de email de cancelación con ICS usando tryCatch ---
+  const appt = existingAppointment[0];
+  const patientName = session.user.name || "Paciente";
+  const patientEmail = session.user.email;
+  const appointmentDate = appt.start.toLocaleString("es-ES", {
+    timeZone: "America/Guayaquil",
+  });
+  // Forzar tipo 'Consulta' para que el SUMMARY sea 'Cita médica (Consulta)'
+  const appointmentTypeStr = "Consulta";
+
+  // Generar el ICS primero
+  const icsAttachment = await generateIcsAttachment({
+    start: appt.start,
+    end: appt.end,
+    summary: `Cita médica (${appointmentTypeStr})`,
+    description: "Cita cancelada en Gastrify",
+    location: appt.location || "",
+    status: "CANCELLED",
+    uid: appt.id,
+    method: "CANCEL",
+    sequence: 1,
+  });
+
+  const { error: emailError } = await tryCatch(
+    resend.emails.send({
+      from: "Gastrify <mail@gastrify.aragundy.com>",
+      to: ["cesarandresdaniel.cooc@gmail.com"],
+      subject: "Cita cancelada",
+      react: AppointmentEmail({
+        patientName,
+        patientEmail,
+        appointmentDate,
+        appointmentType: appointmentTypeStr,
+        action: "canceled",
+      }),
+      attachments: [icsAttachment],
+    }),
+  );
+
+  if (emailError) {
+    console.error("[CANCEL-APPOINTMENT] Error enviando email:", emailError);
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An unexpected error occurred",
       },
     };
   }

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import {
   Form,
   FormControl,
@@ -12,12 +10,19 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Switch } from "@/shared/components/ui/switch";
+import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/shared/components/ui/button";
 
 import { useMedicalInfoForm } from "@/features/healthProfile/hooks/use-medical-info-form";
 
 export function MedicalInfoForm() {
-  const { form, onSubmit } = useMedicalInfoForm();
-  const [allergies, setAllergies] = useState(false);
+  const {
+    form,
+    onSubmit,
+    hasAllergies,
+    hasChronicIllness,
+    hasHealthInsurance,
+  } = useMedicalInfoForm();
 
   return (
     <Form {...form}>
@@ -103,7 +108,7 @@ export function MedicalInfoForm() {
 
           <FormField
             control={form.control}
-            name="allergies"
+            name="hasAllergies"
             render={({ field }) => (
               <FormItem className="">
                 <div className="">
@@ -114,10 +119,7 @@ export function MedicalInfoForm() {
                   <FormControl>
                     <Switch
                       checked={field.value}
-                      onCheckedChange={(bool) => {
-                        field.onChange(bool);
-                        setAllergies(bool);
-                      }}
+                      onCheckedChange={field.onChange}
                     />
                   </FormControl>
                   <p className="text-sm">Yes</p>
@@ -126,7 +128,7 @@ export function MedicalInfoForm() {
             )}
           />
 
-          {allergies && (
+          {hasAllergies && (
             <FormField
               control={form.control}
               name="allergyDetails"
@@ -209,51 +211,140 @@ export function MedicalInfoForm() {
             )}
           />
 
-          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-8">
-            <FormField
-              control={form.control}
-              name="alcohol"
-              render={({ field }) => (
-                <FormItem className="">
-                  <div className="">
-                    <FormLabel>Alcohol</FormLabel>
-                  </div>
-                  <div className="flex flex-row items-center gap-4">
-                    <p className="text-sm">No</p>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <p className="text-sm">Yes</p>
-                  </div>
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="alcohol"
+            render={({ field }) => (
+              <FormItem className="">
+                <div className="">
+                  <FormLabel>Alcohol</FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <p className="text-sm">Yes</p>
+                </div>
+              </FormItem>
+            )}
+          />
 
+          <FormField
+            control={form.control}
+            name="drugs"
+            render={({ field }) => (
+              <FormItem className="">
+                <div className="">
+                  <FormLabel>Drugs</FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <p className="text-sm">Yes</p>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="hasChronicIllness"
+            render={({ field }) => (
+              <FormItem className="">
+                <div className="">
+                  <FormLabel>Do you have any chronic illnesses?</FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <p className="text-sm">Yes</p>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {hasChronicIllness && (
             <FormField
               control={form.control}
-              name="drugs"
+              name="chronicIllnessDetails"
               render={({ field }) => (
-                <FormItem className="">
-                  <div className="">
-                    <FormLabel>Drugs</FormLabel>
-                  </div>
-                  <div className="flex flex-row items-center gap-4">
-                    <p className="text-sm">No</p>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <p className="text-sm">Yes</p>
-                  </div>
+                <FormItem>
+                  <FormLabel>Allergy Details</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe your allergies..."
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Describe all the illnesses and medication you are currently
+                    taking
+                  </FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
+          )}
+
+          <FormField
+            control={form.control}
+            name="hasHealthInsurance"
+            render={({ field }) => (
+              <FormItem className="">
+                <div className="">
+                  <FormLabel>Do you have health insurance?</FormLabel>
+                </div>
+                <div className="flex flex-row items-center gap-4">
+                  <p className="text-sm">No</p>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <p className="text-sm">Yes</p>
+                </div>
+              </FormItem>
+            )}
+          />
+
+          {hasHealthInsurance && (
+            <FormField
+              control={form.control}
+              name="healthInsuranceProvider"
+              render={({ field }) => (
+                <FormItem className="flex-1/2">
+                  <FormLabel>Health insurance provider</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter your health insurance provider"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          <Button type="submit">Submit</Button>
         </div>
       </form>
     </Form>

@@ -10,22 +10,29 @@ export const useMedicalInfoForm = () => {
     defaultValues: {
       bloodType: undefined,
       rhFactor: undefined,
-      allergies: false,
+      hasAllergies: false,
       allergyDetails: "",
       allowsTransfusions: false,
       alcohol: false,
       drugs: false,
-      chronicIllnessMedication: "",
-      chronicIlnessDetails: "",
-      hasHealthInsurance: undefined,
+      hasChronicIllness: false,
+      chronicIllnessDetails: "",
+      hasHealthInsurance: false,
       healthInsuranceProvider: "",
     },
   });
 
   const onSubmit = (variables: MedicalInfoVariables) => console.log(variables);
 
+  const hasAllergies = form.watch("hasAllergies");
+  const hasChronicIllness = form.watch("hasChronicIllness");
+  const hasHealthInsurance = form.watch("hasHealthInsurance");
+
   return {
     form,
     onSubmit,
+    hasAllergies,
+    hasChronicIllness,
+    hasHealthInsurance,
   };
 };

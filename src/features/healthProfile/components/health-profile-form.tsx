@@ -11,6 +11,7 @@ import { StepItem } from "@/features/healthProfile/types";
 import { PersonalInfoForm } from "@/features/healthProfile/components/personal-info-form";
 import { usePersonalInfoForm } from "@/features/healthProfile/hooks/use-personal-info-form";
 import { MedicalInfoForm } from "@/features/healthProfile/components/medical-info-form";
+import { EmergencyContactsForm } from "./emergency-contacts-form";
 
 //Steps are to be replaced with the t function to get the translations
 const steps: StepItem[] = [
@@ -60,6 +61,7 @@ export function HealthProfileForm() {
       <ScrollArea className="h-[550px] w-full rounded-md border p-6">
         {step === 1 && <PersonalInfoForm />}
         {step === 2 && <MedicalInfoForm />}
+        {step === 3 && <EmergencyContactsForm />}
       </ScrollArea>
 
       <div className="mt-4 flex justify-between gap-2">

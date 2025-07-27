@@ -14,8 +14,8 @@ export const usePersonalInfoForm = () => {
       occupation: "",
       maritalStatus: undefined,
       hasChildren: false,
-      numMale: "",
-      numFemale: "",
+      numMale: 0,
+      numFemale: 0,
       cSections: false,
       abortions: false,
       placeOfResidence: "",
@@ -32,8 +32,11 @@ export const usePersonalInfoForm = () => {
 
   const onSubmit = (variables: PersonalInfoVariables) => console.log(variables);
 
+  const hasChildren = form.watch("hasChildren");
+
   return {
     form,
     onSubmit,
+    hasChildren,
   };
 };

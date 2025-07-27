@@ -2,10 +2,11 @@ import { z } from "zod/v4";
 
 export const personalInfo = z
   .object({
-    age: z.coerce
-      .number<number>()
-      .positive()
-      .min(1, { error: "Age is required" }),
+    age: z.number(),
+    // .coerce
+    // .number<number>()
+    // .positive()
+    // .min(1, { error: "Age is required" }),
     maritalStatus: z.string({
       error: "Marital Status is required",
     }),
@@ -16,8 +17,8 @@ export const personalInfo = z
       message: "Occupation is required",
     }),
     hasChildren: z.boolean(),
-    numMale: z.string().trim().optional(),
-    numFemale: z.string().trim().optional(),
+    numMale: z.number(),
+    numFemale: z.number(),
     cSections: z.boolean(),
     abortions: z.boolean(),
     placeOfResidence: z.string().trim().min(1, {
@@ -56,19 +57,10 @@ export const personalInfo = z
       )
       .optional(),
   })
-  .check((ctx) => {
-    if (ctx.value.hasChildren) {
-      const male = parseInt(ctx.value.numMale ?? "0", 10);
-      const female = parseInt(ctx.value.numFemale ?? "0", 10);
-      const total = (isNaN(male) ? 0 : male) + (isNaN(female) ? 0 : female);
-      console.log(total);
-      if (total <= 0) {
-        ctx.issues.push({
-          code: "custom",
-          message: "You must specify the number of kids",
-          input: ctx.value,
-          path: ["numMale"],
-        });
-      }
-    }
-  });
+  .refine(
+    (data) => (data.hasChildren ? data.numFemale + data.numMale > 0 : true),
+    {
+      error: "You must specify the number of kids",
+      path: ["numMale"],
+    },
+  );

@@ -25,8 +25,7 @@ import { Button } from "@/shared/components/ui/button";
 import { usePersonalInfoForm } from "@/features/healthProfile/hooks/use-personal-info-form";
 
 export function PersonalInfoForm() {
-  const { form, onSubmit } = usePersonalInfoForm();
-  const [hasChildren, setHasChidlren] = useState(false);
+  const { form, onSubmit, hasChildren } = usePersonalInfoForm();
 
   return (
     <Form {...form}>
@@ -43,7 +42,11 @@ export function PersonalInfoForm() {
                     type="number"
                     placeholder="Age"
                     value={field.value}
-                    onChange={field.onChange}
+                    onChange={(event) =>
+                      event.target.value
+                        ? field.onChange(Number(event.target.value))
+                        : field.onChange(0)
+                    }
                     min={0}
                     max={120}
                   />
@@ -99,7 +102,7 @@ export function PersonalInfoForm() {
                       checked={field.value}
                       onCheckedChange={(bool) => {
                         field.onChange(bool);
-                        setHasChidlren(bool);
+                        // setHasChidlren(bool);
                       }}
                     />
                   </FormControl>
@@ -122,7 +125,12 @@ export function PersonalInfoForm() {
                         type="number"
                         placeholder="Enter number of sons"
                         value={field.value}
-                        onChange={field.onChange}
+                        onChange={(event) =>
+                          event.target.value
+                            ? field.onChange(Number(event.target.value))
+                            : field.onChange(0)
+                        }
+                        min={0}
                       />
                     </FormControl>
                     <FormMessage />
@@ -140,7 +148,12 @@ export function PersonalInfoForm() {
                         type="number"
                         placeholder="Enter number of daughters"
                         value={field.value}
-                        onChange={field.onChange}
+                        onChange={(event) =>
+                          event.target.value
+                            ? field.onChange(Number(event.target.value))
+                            : field.onChange(0)
+                        }
+                        min={0}
                       />
                     </FormControl>
                     <FormMessage />
@@ -276,7 +289,7 @@ export function PersonalInfoForm() {
             />
           </div>
 
-          <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
+          <div className="flex flex-col items-start gap-4 lg:flex-row lg:gap-6">
             <FormField
               control={form.control}
               name="homePhoneNumber"

@@ -149,7 +149,7 @@ export const cancelAppointment = async (
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",
-      to: ["cesarandresdaniel.cooc@gmail.com"],
+      to: [patientEmail],
       subject: "Cita cancelada",
       react: AppointmentEmail({
         patientName,

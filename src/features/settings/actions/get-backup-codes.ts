@@ -50,7 +50,7 @@ export const getBackupCodes = async (
   }
 
   return {
-    data: [backupCodes],
+    data: backupCodes,
     error: null,
   };
 };

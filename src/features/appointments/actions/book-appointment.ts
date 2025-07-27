@@ -151,8 +151,6 @@ export const bookAppointment = async (
     };
   }
 
-  // --- Envío de email con ICS usando tryCatch ---
-  console.log("ANTES DE EMAIL");
   const appt = existingAppointment[0];
   const patientName = session.user.name || "Paciente";
   const patientEmail = session.user.email;
@@ -179,7 +177,7 @@ export const bookAppointment = async (
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",
-      to: ["cesarandresdaniel.cooc@gmail.com"],
+      to: [patientEmail],
       subject: "Cita reservada",
       react: AppointmentEmail({
         patientName,
@@ -202,15 +200,6 @@ export const bookAppointment = async (
       },
     };
   }
-
-  // console.log("[BOOK-APPOINTMENT] Enviando email de cita reservada", {
-  //   to: [patientEmail, "cesarandresdaniel.cooc@gmail.com"],
-  //   subject: "Cita reservada",
-  //   patientName,
-  //   appointmentDate,
-  //   appointmentTypeStr,
-  //   icsAttachment,
-  // });
 
   return {
     data: null,

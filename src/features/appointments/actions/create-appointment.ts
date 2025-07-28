@@ -9,6 +9,8 @@ import { format } from "date-fns";
 import { auth } from "@/shared/lib/better-auth/server";
 import { db } from "@/shared/lib/drizzle/server";
 import { appointment, user } from "@/shared/lib/drizzle/schema";
+import { resend } from "@/shared/lib/resend/server";
+import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
@@ -21,6 +23,7 @@ import type {
   IncomingAppointment,
 } from "@/features/appointments/types";
 import { createAppointmentSchema } from "@/features/appointments/schemas/create-appointment";
+import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
 
 export type CreateAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -198,24 +201,72 @@ export async function createAppointment(
   }
 
   if (status === "booked" && patient) {
-    const formattedDate = format(start, "PPPPp", { locale: es });
+    const appointmentData = dbInsertAppointmentData[0];
+
+    // create in-app notification
+
+    const formattedDate = format(appointmentData.start, "PPPPp", {
+      locale: es,
+    });
 
     await createNotification({
       userId: patient.id,
       title: "Cita",
       preview: "Tu cita ha sido creada",
       content: `La cita para el día ${formattedDate} ha sido creada exitosamente. Tipo: ${
-        type === "virtual" ? "Virtual" : "Presencial"
+        appointmentData.type === "virtual" ? "Virtual" : "Presencial"
       }.`,
     });
 
+    // send notification email
+
+    const appointmentDate = appointmentData.start.toLocaleString("es-ES", {
+      timeZone: "America/Guayaquil",
+    });
+    const displayAppointmentType =
+      appointmentData.type === "in-person" ? "Presencial" : "Virtual";
+
+    // generate ICS attachment
+    const { data: icsData, error: icsError } = await tryCatch(
+      generateIcsAttachment({
+        start: appointmentData.start,
+        end: appointmentData.end,
+        title: `Cita médica (${displayAppointmentType})`,
+        description: "Cita reservada en Gastrify",
+        location: appointmentData.location ?? undefined,
+        id: appointmentData.id,
+      }),
+    );
+
+    if (icsError) console.error(icsError);
+
+    const { error: emailError } = await tryCatch(
+      resend.emails.send({
+        from: "Gastrify <mail@gastrify.aragundy.com>",
+        to: [patient.email],
+        subject: "Cita reservada",
+        react: AppointmentEmail({
+          patientName: patient.name,
+          patientEmail: patient.email,
+          appointmentDate,
+          appointmentType: appointmentData.type!,
+          appointmentLocation: appointmentData.location ?? undefined,
+          appointmentUrl: appointmentData.meetingLink ?? undefined,
+          action: "booked",
+        }),
+        attachments: icsData ? [icsData] : undefined,
+      }),
+    );
+
+    if (emailError) console.error(emailError);
+
     return {
       data: {
-        appointment: dbInsertAppointmentData[0],
+        appointment: appointmentData,
         patient: {
-          identificationNumber: patient!.identificationNumber,
-          name: patient!.name,
-          email: patient!.email,
+          identificationNumber: patient.identificationNumber,
+          name: patient.name,
+          email: patient.email,
         },
       },
       error: null,

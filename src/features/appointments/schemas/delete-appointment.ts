@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 export const deleteAppointmentSchema = z.object({
   appointmentId: z.string().min(1, {

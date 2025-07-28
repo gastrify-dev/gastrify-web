@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 import { credentialsSchema } from "@/features/auth/schemas/credentials";
 import { forgotPasswordSchema } from "@/features/auth/schemas/forgot-password";

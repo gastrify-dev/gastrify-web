@@ -1,4 +1,6 @@
-import { z } from "zod/v4";
+import { z } from "zod";
+
+import { isValidIdentificationNumber } from "@/shared/utils/is-valid-identification-number";
 
 export const updateIdentificationNumberSchema = z.object({
   identificationNumber: z
@@ -9,5 +11,8 @@ export const updateIdentificationNumberSchema = z.object({
     })
     .regex(/^[0-9]+$/, {
       message: "Identification number must contain only numbers",
+    })
+    .refine(isValidIdentificationNumber, {
+      message: "Identification number is invalid",
     }),
 });

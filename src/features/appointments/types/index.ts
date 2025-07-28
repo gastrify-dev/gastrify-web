@@ -1,4 +1,4 @@
-import type { z } from "zod/v4";
+import type { z } from "zod";
 
 import { appointment } from "@/shared/lib/drizzle/schema";
 

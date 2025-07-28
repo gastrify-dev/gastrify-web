@@ -2,6 +2,8 @@
 
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { es } from "date-fns/locale";
+import { format } from "date-fns";
 
 import { db } from "@/shared/lib/drizzle/server";
 import { appointment } from "@/shared/lib/drizzle/schema";
@@ -14,6 +16,7 @@ import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type { BookAppointmentVariables } from "@/features/appointments/types";
 import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
+import { createNotification } from "@/features/notifications/actions/create-notification";
 
 export type BookAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -142,6 +145,7 @@ export const bookAppointment = async (
 
   if (bookAppointmentDbError) {
     console.error(bookAppointmentDbError);
+
     return {
       data: null,
       error: {
@@ -151,67 +155,62 @@ export const bookAppointment = async (
     };
   }
 
-  const appt = existingAppointment[0];
-  const patientName = session.user.name || "Paciente";
-  const patientEmail = session.user.email;
-  const appointmentDate = appt.start.toLocaleString("es-ES", {
+  const appointmentData = existingAppointment[0];
+
+  // create in-app notification
+
+  const formattedDate = format(appointmentData.start, "PPPPp", { locale: es });
+
+  await createNotification({
+    userId: session.user.id,
+    title: "Cita",
+    preview: "Tu cita ha sido creada",
+    content: `La cita para el día ${formattedDate} ha sido creada exitosamente. Tipo: ${
+      appointmentData.type === "virtual" ? "Virtual" : "Presencial"
+    }.`,
+  });
+
+  // send notification email
+
+  const appointmentDate = appointmentData.start.toLocaleString("es-ES", {
     timeZone: "America/Guayaquil",
   });
-  const appointmentTypeStr = appt.type || "Consulta";
+  const displayAppointmentType =
+    appointmentData.type === "in-person" ? "Presencial" : "Virtual";
 
-  // Generar el ICS una sola vez
-  const { data: icsAttachment, error: icsError } = await tryCatch(
+  // generate ICS attachment
+  const { data: icsData, error: icsError } = await tryCatch(
     generateIcsAttachment({
-      start: appt.start,
-      end: appt.end,
-      summary: `Cita médica (${appointmentTypeStr})`,
+      start: appointmentData.start,
+      end: appointmentData.end,
+      title: `Cita médica (${displayAppointmentType})`,
       description: "Cita reservada en Gastrify",
-      location: appt.location || "",
-      status: "CONFIRMED",
-      uid: appt.id,
-      method: "REQUEST",
-      sequence: 0,
+      location: appointmentData.location ?? undefined,
+      id: appointmentData.id,
     }),
   );
-  if (icsError) {
-    console.error(
-      "[BOOK-APPOINTMENT] Error generating ICS attachment:",
-      icsError,
-    );
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An unexpected error occurred",
-      },
-    };
-  }
+
+  if (icsError) console.error(icsError);
+
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",
-      to: [patientEmail],
+      to: [session.user.email],
       subject: "Cita reservada",
       react: AppointmentEmail({
-        patientName,
-        patientEmail,
+        patientName: session.user.name,
+        patientEmail: session.user.email,
         appointmentDate,
-        appointmentType: appointmentTypeStr,
+        appointmentType: appointmentData.type!,
+        appointmentLocation: appointmentData.location ?? undefined,
+        appointmentUrl: appointmentData.meetingLink ?? undefined,
         action: "booked",
       }),
-      attachments: [icsAttachment],
+      attachments: icsData ? [icsData] : undefined,
     }),
   );
 
-  if (emailError) {
-    console.error("[BOOK-APPOINTMENT] Error sending email:", emailError);
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An unexpected error occurred",
-      },
-    };
-  }
+  if (emailError) console.error(emailError);
 
   return {
     data: null,

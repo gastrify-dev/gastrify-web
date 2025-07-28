@@ -14,7 +14,9 @@ interface Props {
   patientName: string;
   patientEmail: string;
   appointmentDate: string;
-  appointmentType: string;
+  appointmentType: "in-person" | "virtual";
+  appointmentLocation?: string;
+  appointmentUrl?: string;
   action: "booked" | "canceled";
 }
 
@@ -23,6 +25,8 @@ const AppointmentEmail = ({
   patientEmail,
   appointmentDate,
   appointmentType,
+  appointmentLocation,
+  appointmentUrl,
   action,
 }: Props) => {
   return (
@@ -48,18 +52,34 @@ const AppointmentEmail = ({
               <b>Fecha y hora:</b> {appointmentDate}
             </Text>
             <Text className="text-[14px] leading-[24px] text-black">
-              <b>Tipo:</b> {appointmentType}
+              <b>Tipo:</b>{" "}
+              {appointmentType === "in-person" ? "Presencial" : "Virtual"}
             </Text>
-            <Text className="text-[14px] leading-[24px] text-black">
-              {action === "booked"
-                ? "La cita ha sido reservada exitosamente."
-                : "La cita ha sido cancelada."}
-            </Text>
+            {appointmentType === "in-person" && appointmentLocation && (
+              <Text className="text-[14px] leading-[24px] text-black">
+                <b>Ubicación:</b> {appointmentLocation}
+              </Text>
+            )}
+            {appointmentType === "virtual" && appointmentUrl && (
+              <Text className="text-[14px] leading-[24px] text-black">
+                <b>URL de la reunión:</b> {appointmentUrl}
+              </Text>
+            )}
           </Container>
         </Body>
       </Tailwind>
     </Html>
   );
 };
+
+AppointmentEmail.PreviewProps = {
+  patientName: "David Aragundy",
+  patientEmail: "david@aragundy.com",
+  appointmentDate: "2025-01-01 10:00",
+  appointmentType: "in-person",
+  appointmentLocation: "Calle 123, Ciudad, País",
+  appointmentUrl: "https://meet.google.com/abc123",
+  action: "booked",
+} as Props;
 
 export default AppointmentEmail;

@@ -2,6 +2,8 @@
 
 import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 import { auth } from "@/shared/lib/better-auth/server";
 import { db } from "@/shared/lib/drizzle/server";
@@ -13,7 +15,8 @@ import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import type { CancelAppointmentVariables } from "@/features/appointments/types";
-import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
+
+import { createNotification } from "@/features/notifications/actions/create-notification";
 
 export type CancelAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -123,69 +126,45 @@ export const cancelAppointment = async (
     };
   }
 
-  // --- Envío de email de cancelación con ICS usando tryCatch ---
-  const appt = existingAppointment[0];
-  const patientName = session.user.name || "Paciente";
-  const patientEmail = session.user.email;
-  const appointmentDate = appt.start.toLocaleString("es-ES", {
+  const appointmentData = existingAppointment[0];
+
+  // create in-app notification
+
+  const formattedDate = format(appointmentData.start, "PPPPp", { locale: es });
+
+  await createNotification({
+    userId: session.user.id,
+    title: "Cita",
+    preview: "Tu cita ha sido cancelada",
+    content: `La cita para el día ${formattedDate} ha sido cancelada exitosamente. Tipo: ${
+      appointmentData.type === "virtual" ? "Virtual" : "Presencial"
+    }.`,
+  });
+
+  // send notification email
+
+  const appointmentDate = appointmentData.start.toLocaleString("es-ES", {
     timeZone: "America/Guayaquil",
   });
-  // Forzar tipo 'Consulta' para que el SUMMARY sea 'Cita médica (Consulta)'
-  const appointmentTypeStr = "Consulta";
 
-  // Generar el ICS primero
-  const { data: icsAttachment, error: icsError } = await tryCatch(
-    generateIcsAttachment({
-      start: appt.start,
-      end: appt.end,
-      summary: `Cita médica (${appointmentTypeStr})`,
-      description: "Cita cancelada en Gastrify",
-      location: appt.location || "",
-      status: "CANCELLED",
-      uid: appt.id,
-      method: "CANCEL",
-      sequence: 1,
-    }),
-  );
-  if (icsError) {
-    console.error(
-      "[CANCEL-APPOINTMENT] Error generating ICS attachment:",
-      icsError,
-    );
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to generate ICS attachment",
-      },
-    };
-  }
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",
-      to: [patientEmail],
+      to: [session.user.email],
       subject: "Cita cancelada",
       react: AppointmentEmail({
-        patientName,
-        patientEmail,
+        patientName: session.user.name,
+        patientEmail: session.user.email,
         appointmentDate,
-        appointmentType: appointmentTypeStr,
+        appointmentType: appointmentData.type!,
+        appointmentLocation: appointmentData.location ?? undefined,
+        appointmentUrl: appointmentData.meetingLink ?? undefined,
         action: "canceled",
       }),
-      attachments: [icsAttachment],
     }),
   );
 
-  if (emailError) {
-    console.error("[CANCEL-APPOINTMENT] Error sending email:", emailError);
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An unexpected error occurred",
-      },
-    };
-  }
+  if (emailError) console.error(emailError);
 
   return {
     data: null,

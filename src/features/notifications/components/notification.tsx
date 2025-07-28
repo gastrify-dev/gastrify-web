@@ -52,7 +52,7 @@ export const Notification = ({ id }: Props) => {
     );
 
   return (
-    <Card className="flex-1 border-none bg-transparent p-0">
+    <Card className="h-fit flex-1 border-none bg-transparent">
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{data!.title}</CardTitle>
 

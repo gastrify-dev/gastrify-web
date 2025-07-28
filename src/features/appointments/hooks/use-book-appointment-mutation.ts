@@ -107,6 +107,10 @@ export const useBookAppointmentMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ["appointment", "list", "calendar"],
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["notification", "list"],
+      });
     },
   });
 };

@@ -1,40 +1,14 @@
-import { createEvent, type EventAttributes } from "ics";
-/**
- * Descarga un archivo ICS en el navegador usando Blob y file-saver.
- * @param icsString El string ICS generado (por ejemplo, con la librería ics)
- * @param title Nombre del archivo (sin extensión)
- */
-export function downloadIcsFile(icsString: string, title: string = "evento") {
-  const blob = new Blob([icsString], { type: "text/calendar" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${title}.ics`;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 0);
-}
+import { createEvent, type EventAttributes, type DateTime } from "ics";
 
 export interface IcsEventData {
+  id: string;
   start: Date;
-  end?: Date;
-  summary: string;
-  description?: string;
+  end: Date;
+  title: string;
+  description: string;
   location?: string;
-  status?: "CONFIRMED" | "CANCELLED";
-  uid?: string;
-  method?: "REQUEST" | "CANCEL";
-  sequence?: number;
+  meetingUrl?: string;
 }
-
-/**
- * Genera un objeto de attachment ICS listo para Resend a partir de los datos de la cita.
- * @param event Datos del evento/cita
- * @returns Promise<{ filename: string; content: string; type: string; disposition: string }>
- */
 
 export async function generateIcsAttachment(event: IcsEventData): Promise<{
   filename: string;
@@ -43,70 +17,44 @@ export async function generateIcsAttachment(event: IcsEventData): Promise<{
   disposition: string;
 }> {
   return new Promise((resolve, reject) => {
-    const start: [number, number, number, number, number] = [
+    const start: DateTime = [
       event.start.getFullYear(),
       event.start.getMonth() + 1,
       event.start.getDate(),
       event.start.getHours(),
       event.start.getMinutes(),
     ];
-    let icsEvent: EventAttributes;
-    if (event.end) {
-      const end: [number, number, number, number, number] = [
-        event.end.getFullYear(),
-        event.end.getMonth() + 1,
-        event.end.getDate(),
-        event.end.getHours(),
-        event.end.getMinutes(),
-      ];
-      icsEvent = {
-        start,
-        end,
-        title: event.summary,
-        description: event.description || "",
-        location: event.location || "",
-        status: event.status || "CONFIRMED",
-        productId: "gastrify.aragundy.com",
-        ...(event.uid && { uid: event.uid }),
-        ...(typeof event.sequence === "number" && { sequence: event.sequence }),
-      };
-    } else {
-      icsEvent = {
-        start,
-        duration: { minutes: 45 },
-        title: event.summary,
-        description: event.description || "",
-        location: event.location || "",
-        status: event.status || "CONFIRMED",
-        productId: "gastrify.aragundy.com",
-        ...(event.uid && { uid: event.uid }),
-        ...(typeof event.sequence === "number" && { sequence: event.sequence }),
-      };
-    }
+
+    const end: DateTime = [
+      event.end.getFullYear(),
+      event.end.getMonth() + 1,
+      event.end.getDate(),
+      event.end.getHours(),
+      event.end.getMinutes(),
+    ];
+
+    const icsEvent: EventAttributes = {
+      start,
+      end,
+      title: event.title,
+      description: event.description,
+      location: event.location,
+      url: event.meetingUrl,
+      status: "CONFIRMED",
+      busyStatus: "BUSY",
+      productId: "gastrify.aragundy.com",
+      uid: event.id,
+      organizer: {
+        name: "Gastrify",
+        email: "mail@gastrify.aragundy.com",
+      },
+    };
+
     createEvent(icsEvent, (error, value) => {
-      if (error) {
-        reject(error);
-        return;
-      }
+      if (error) return reject(error);
 
-      let icsLines = value.split("\n");
-      icsLines = icsLines.filter((line) => !line.startsWith("METHOD:"));
-      let icsString = icsLines.join("\n");
-      if (event.method) {
-        icsString = icsString.replace(
-          "BEGIN:VCALENDAR",
-          `BEGIN:VCALENDAR\nMETHOD:${event.method}`,
-        );
-      }
+      const base64 = Buffer.from(value).toString("base64");
 
-      const base64 =
-        typeof window !== "undefined" && typeof window.btoa === "function"
-          ? window.btoa(
-              new TextEncoder()
-                .encode(icsString)
-                .reduce((data, byte) => data + String.fromCharCode(byte), ""),
-            )
-          : Buffer.from(icsString).toString("base64");
       resolve({
         filename: "cita.ics",
         content: base64,

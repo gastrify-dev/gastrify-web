@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 import { isValidIdentificationNumber } from "@/shared/utils/is-valid-identification-number";
 

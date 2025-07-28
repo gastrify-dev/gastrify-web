@@ -1,4 +1,4 @@
-import { z } from "zod/v4";
+import { z } from "zod";
 
 import { twoFactorSchema } from "@/shared/schemas/two-factor";
 import { authClient } from "@/shared/lib/better-auth/client";

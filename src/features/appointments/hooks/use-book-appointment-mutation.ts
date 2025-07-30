@@ -69,6 +69,7 @@ export const useBookAppointmentMutation = () => {
           type: variables.appointmentType,
           location: null,
           meetingLink: null,
+          zoomMeetingId: null,
           createdAt: new Date(),
         },
       );

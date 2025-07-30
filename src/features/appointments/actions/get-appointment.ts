@@ -55,6 +55,9 @@ export async function getAppointment(
         status: appointment.status,
         type: appointment.type,
         patientIdentificationNumber: user.identificationNumber,
+        zoomMeetingId: appointment.zoomMeetingId,
+        meetingLink: appointment.meetingLink,
+        location: appointment.location,
       })
       .from(appointment)
       .leftJoin(user, eq(appointment.patientId, user.id))

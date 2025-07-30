@@ -16,7 +16,6 @@ import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 import { createNotification } from "@/features/notifications/actions/create-notification";
-
 import type {
   Appointment,
   CreateAppointmentVariables,
@@ -173,6 +172,26 @@ export async function createAppointment(
 
   //all good, create the appointment
 
+  let zoomMeetingLink: string | undefined = undefined;
+  let zoomMeetingId: string | undefined = undefined;
+  if (status === "booked" && patient && type === "virtual") {
+    const { createZoomMeeting } = await import("@/shared/lib/zoom/zoom-api");
+    const { data: zoomMeeting, error: zoomError } = await tryCatch(
+      createZoomMeeting({
+        topic: `Cita médica con ${patient.name}`,
+        startTime: new Date(start).toISOString(),
+        duration: Math.ceil((end.getTime() - start.getTime()) / 60000),
+        agenda: "Cita médica virtual reservada en Gastrify",
+      }),
+    );
+    if (zoomMeeting) {
+      zoomMeetingLink = zoomMeeting.join_url;
+      zoomMeetingId = String(zoomMeeting.id);
+    } else if (zoomError) {
+      console.error("Error creando reunión Zoom:", zoomError);
+    }
+  }
+
   const { data: dbInsertAppointmentData, error: dbInsertAppointmentError } =
     await tryCatch(
       db
@@ -184,6 +203,8 @@ export async function createAppointment(
           status,
           patientId: status === "booked" && patient ? patient.id : null,
           type: status === "booked" && patient ? type : null,
+          meetingLink: zoomMeetingLink,
+          zoomMeetingId: zoomMeetingId,
         })
         .returning(),
     );

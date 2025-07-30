@@ -2,6 +2,8 @@
 
 import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 import { auth } from "@/shared/lib/better-auth/server";
 import { db } from "@/shared/lib/drizzle/server";
@@ -9,14 +11,12 @@ import { appointment, user } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
+import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
+import { resend } from "@/shared/lib/resend/server";
 
 import { deleteAppointmentSchema } from "@/features/appointments/schemas/delete-appointment";
 import type { DeleteAppointmentVariables } from "@/features/appointments/types";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { createNotification } from "@/features/notifications/actions/create-notification";
-import { resend } from "@/shared/lib/resend/server";
-import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 
 export type DeleteAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -95,6 +95,11 @@ export async function deleteAppointment(
   const appointmentData = data[0];
 
   if (appointmentData.patientId && appointmentData.status === "booked") {
+    if (appointmentData.type === "virtual" && appointmentData.zoomMeetingId) {
+      const { deleteZoomMeeting } = await import("@/shared/lib/zoom/zoom-api");
+      await tryCatch(deleteZoomMeeting(appointmentData.zoomMeetingId));
+    }
+
     const { data: patientData } = await tryCatch(
       db
         .select({

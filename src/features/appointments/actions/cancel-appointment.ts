@@ -12,10 +12,10 @@ import type { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { resend } from "@/shared/lib/resend/server";
 import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
+import { deleteZoomMeeting } from "@/shared/lib/zoom/zoom-api";
 
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import type { CancelAppointmentVariables } from "@/features/appointments/types";
-
 import { createNotification } from "@/features/notifications/actions/create-notification";
 
 export type CancelAppointmentErrorCode =
@@ -101,7 +101,17 @@ export const cancelAppointment = async (
     };
   }
 
-  //cancel the appointment
+  const appointmentData = existingAppointment[0];
+
+  if (appointmentData.type === "virtual" && appointmentData.zoomMeetingId) {
+    const { error: zoomDeleteError } = await tryCatch(
+      deleteZoomMeeting(appointmentData.zoomMeetingId),
+    );
+    if (zoomDeleteError) {
+      console.error("Error al eliminar reunión Zoom:", zoomDeleteError);
+    }
+  }
+
   const { error: cancelAppointmentDbError } = await tryCatch(
     db
       .update(appointment)
@@ -111,6 +121,7 @@ export const cancelAppointment = async (
         type: null,
         location: null,
         meetingLink: null,
+        zoomMeetingId: null,
       })
       .where(eq(appointment.id, appointmentId)),
   );
@@ -126,8 +137,6 @@ export const cancelAppointment = async (
     };
   }
 
-  const appointmentData = existingAppointment[0];
-
   // create in-app notification
 
   const formattedDate = format(appointmentData.start, "PPPPp", { locale: es });
@@ -141,12 +150,9 @@ export const cancelAppointment = async (
     }.`,
   });
 
-  // send notification email
-
   const appointmentDate = appointmentData.start.toLocaleString("es-ES", {
     timeZone: "America/Guayaquil",
   });
-
   const { error: emailError } = await tryCatch(
     resend.emails.send({
       from: "Gastrify <mail@gastrify.aragundy.com>",
@@ -163,7 +169,6 @@ export const cancelAppointment = async (
       }),
     }),
   );
-
   if (emailError) console.error(emailError);
 
   return {

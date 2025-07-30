@@ -71,7 +71,9 @@
         "patient": "Paciente",
         "patient-identification-number": "Número de cédula",
         "patient-email": "Correo electrónico",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "location-label": "Ubicación:",
+        "meeting-link-label": "Enlace de la reunión:"
       },
       "admin-incoming-appointments": {
         "error-message": "Error al obtener las citas entrantes 😢",

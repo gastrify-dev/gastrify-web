@@ -2,6 +2,7 @@
 
 import { LoaderIcon, RotateCcwIcon } from "lucide-react";
 import { formatDuration, intervalToDuration, format } from "date-fns";
+import Link from "next/link";
 
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -60,17 +61,23 @@ export function UserAppointmentCard({ appointment }: Props) {
             )}
           </TypographyP>
 
-          {appointment.location && (
+          {appointment.type === "in-person" && (
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">{t("location-label")}</span>{" "}
-              {appointment.location}
+              <span className="font-bold">{t("location-label")}</span> Clínica
+              Kennedy, Guayaquil, Guayas
             </TypographyP>
           )}
 
           {appointment.meetingLink && (
             <TypographyP className="!m-0 leading-normal">
               <span className="font-bold">{t("meeting-link-label")}</span>{" "}
-              {appointment.meetingLink}
+              <Link
+                href={appointment.meetingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {appointment.meetingLink}
+              </Link>
             </TypographyP>
           )}
         </CardDescription>

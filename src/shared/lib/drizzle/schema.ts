@@ -84,6 +84,7 @@ export const appointment = pgTable("appointment", {
   type: appointmentTypeEnum("type"),
   meetingLink: text("meeting_link"),
   location: text("location"),
+  zoomMeetingId: text("zoom_meeting_id"),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
 });
 

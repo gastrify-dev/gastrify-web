@@ -1,5 +1,7 @@
 "use server";
 
+import { createZoomMeeting } from "@/shared/lib/zoom/zoom-api";
+
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { es } from "date-fns/locale";
@@ -132,6 +134,32 @@ export const bookAppointment = async (
   }
 
   // all good, book appointment
+  let zoomMeetingLink: string | undefined = undefined;
+  let zoomMeetingId: string | undefined = undefined;
+  let locationValue: string | undefined = undefined;
+
+  if (appointmentType === "virtual") {
+    const { data: zoomMeeting, error: zoomError } = await tryCatch(
+      createZoomMeeting({
+        topic: `Cita médica virtual con ${session.user.name}`,
+        startTime: existingAppointment[0].start.toISOString(),
+        duration: 60,
+      }),
+    );
+
+    if (zoomMeeting) {
+      zoomMeetingLink = zoomMeeting.join_url;
+      zoomMeetingId = String(zoomMeeting.id);
+      locationValue = zoomMeetingLink;
+    } else {
+      console.error("Error creando reunión Zoom:", zoomError);
+      locationValue = "Clínica Kennedy, Guayaquil, Guayas";
+    }
+  } else {
+    locationValue = "Clínica Kennedy, Guayaquil, Guayas";
+  }
+
+  // all good, book appointment
   const { error: bookAppointmentDbError } = await tryCatch(
     db
       .update(appointment)
@@ -139,6 +167,9 @@ export const bookAppointment = async (
         status: "booked",
         patientId,
         type: appointmentType,
+        meetingLink: zoomMeetingLink,
+        zoomMeetingId: zoomMeetingId,
+        location: locationValue,
       })
       .where(eq(appointment.id, appointmentId)),
   );
@@ -155,12 +186,18 @@ export const bookAppointment = async (
     };
   }
 
-  const appointmentData = existingAppointment[0];
+  const { data: updatedAppointment } = await tryCatch(
+    db
+      .select()
+      .from(appointment)
+      .where(eq(appointment.id, appointmentId))
+      .limit(1),
+  );
+  const appointmentData = updatedAppointment?.[0] ?? existingAppointment[0];
 
   // create in-app notification
 
   const formattedDate = format(appointmentData.start, "PPPPp", { locale: es });
-
   await createNotification({
     userId: session.user.id,
     title: "Cita",

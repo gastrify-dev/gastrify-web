@@ -9,7 +9,9 @@ interface Props {
 
 export const usePersonalInfoMutation = ({ form }: Props) => {
   return useMutation({
-    mutationFn: async (variables: PersonalInfoVariables) => {},
+    mutationFn: async (variables: PersonalInfoVariables) => {
+      //Server action setProfileInfo
+    },
     onSuccess: (_data, variables) => {
       //TODO
       //Toast?

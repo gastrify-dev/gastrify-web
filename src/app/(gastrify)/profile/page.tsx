@@ -11,6 +11,7 @@ import { headers } from "next/headers";
 import { getUser } from "@/shared/actions/get-user";
 
 import { HealthProfileForm } from "@/features/healthProfile/components/health-profile-form";
+import { StepperProvider } from "@/features/healthProfile/context/stepper-context";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app.profile-page");
@@ -21,35 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function ProfilePage({}: {
-  params: Promise<{ identificationNumber: string }>;
-}) {
-  // const { identificationNumber } = await params;
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    console.log("No session found - user not logged in");
-    return (
-      <div className="flex flex-col gap-6">
-        <TypographyH1>Profile</TypographyH1>
-        <TypographyMuted>Please log in to view your profile</TypographyMuted>
-      </div>
-    );
-  }
-
-  const { data: userProfile, error } = await getUser({
-    id: session.user.id,
-  });
-
-  console.log(userProfile);
-
+export default async function ProfilePage() {
   return (
     <div className="flex flex-col gap-6">
       <TypographyH1>Profile</TypographyH1>
 
-      <HealthProfileForm />
+      <StepperProvider totalSteps={3}>
+        <HealthProfileForm />
+      </StepperProvider>
     </div>
   );
 }

@@ -4,8 +4,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { usePersonalInfoMutation } from "@/features/healthProfile/hooks/use-personal-info-mutation";
 import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
 import type { PersonalInfoVariables } from "@/features/healthProfile/types";
+import { useStepperContext } from "../context/stepper-context";
 
 export const usePersonalInfoForm = () => {
+  const { nextStep } = useStepperContext();
+  //Query para traer los datos
+  //Los datos pasarlos values.
+
   const form = useForm<PersonalInfoVariables>({
     resolver: zodResolver(personalInfo),
     defaultValues: {
@@ -30,7 +35,8 @@ export const usePersonalInfoForm = () => {
     form,
   });
 
-  const onSubmit = (variables: PersonalInfoVariables) => console.log(variables);
+  const onSubmit = (variables: PersonalInfoVariables) =>
+    mutate(variables, { onSuccess: () => nextStep() });
 
   const hasChildren = form.watch("hasChildren");
 
@@ -38,5 +44,6 @@ export const usePersonalInfoForm = () => {
     form,
     onSubmit,
     hasChildren,
+    trigger: form.trigger,
   };
 };

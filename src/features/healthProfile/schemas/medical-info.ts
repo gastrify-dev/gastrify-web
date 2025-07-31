@@ -10,7 +10,7 @@ export const medicalInfo = z
     }),
     hasAllergies: z.boolean(),
     allergyDetails: z.string().trim(),
-    religion: z.enum(["cristiano evangelico", "catolico", "otros"], {
+    religion: z.enum(["evangelical christian", "catholic", "other"], {
       message: "Religion is required",
     }),
     allowsTransfusions: z.boolean(),
@@ -36,7 +36,7 @@ export const medicalInfo = z
   .refine(
     (data) => (data.hasHealthInsurance ? data.healthInsuranceProvider : true),
     {
-      error: "You must specify all the name of the health insurance provider",
+      error: "You must specify the name of the health insurance provider",
       path: ["healthInsuranceProvider"],
     },
   );

@@ -15,6 +15,7 @@ export const useEmergencyContactsForm = () => {
           homePhoneNumber: "",
           celularPhoneNumber: "",
           workPhoneNumber: "",
+          email: "",
         },
       ],
     },

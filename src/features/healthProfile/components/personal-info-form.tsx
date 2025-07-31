@@ -40,12 +40,12 @@ export function PersonalInfoForm() {
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="Age"
+                    placeholder="Enter your age"
                     value={field.value}
                     onChange={(event) =>
                       event.target.value
                         ? field.onChange(Number(event.target.value))
-                        : field.onChange(0)
+                        : field.onChange("")
                     }
                     min={0}
                     max={120}
@@ -102,7 +102,6 @@ export function PersonalInfoForm() {
                       checked={field.value}
                       onCheckedChange={(bool) => {
                         field.onChange(bool);
-                        // setHasChidlren(bool);
                       }}
                     />
                   </FormControl>
@@ -128,7 +127,7 @@ export function PersonalInfoForm() {
                         onChange={(event) =>
                           event.target.value
                             ? field.onChange(Number(event.target.value))
-                            : field.onChange(0)
+                            : field.onChange("")
                         }
                         min={0}
                       />
@@ -151,7 +150,7 @@ export function PersonalInfoForm() {
                         onChange={(event) =>
                           event.target.value
                             ? field.onChange(Number(event.target.value))
-                            : field.onChange(0)
+                            : field.onChange("")
                         }
                         min={0}
                       />
@@ -348,7 +347,9 @@ export function PersonalInfoForm() {
             />
           </div>
 
-          <Button type="submit">Submit</Button>
+          <Button className="hidden" type="submit">
+            Submit
+          </Button>
         </div>
       </form>
     </Form>

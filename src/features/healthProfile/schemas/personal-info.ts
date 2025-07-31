@@ -2,11 +2,7 @@ import { z } from "zod/v4";
 
 export const personalInfo = z
   .object({
-    age: z.number(),
-    // .coerce
-    // .number<number>()
-    // .positive()
-    // .min(1, { error: "Age is required" }),
+    age: z.number("Age is required"),
     maritalStatus: z.string({
       error: "Marital Status is required",
     }),
@@ -17,8 +13,8 @@ export const personalInfo = z
       message: "Occupation is required",
     }),
     hasChildren: z.boolean(),
-    numMale: z.number(),
-    numFemale: z.number(),
+    numMale: z.number("Number of male children is required"),
+    numFemale: z.number("Number of female children is required"),
     cSections: z.boolean(),
     abortions: z.boolean(),
     placeOfResidence: z.string().trim().min(1, {
@@ -27,16 +23,9 @@ export const personalInfo = z
     city: z.string().trim().min(1, {
       message: "City is required",
     }),
-    homePhoneNumber: z
-      .string()
-      .trim()
-      .length(9, {
-        error: "Home phone number must be 9 characters long",
-      })
-      .regex(/^02\d{7}$|^03\d{7}$|^04\d{7}$|^05\d{7}$|^06\d{7}$|^07\d{7}$/, {
-        error:
-          "Home phone number must have the correct fixed line number format",
-      }),
+    homePhoneNumber: z.string().trim().regex(/^\d+$/, {
+      error: "Home phone number must contain only numbers",
+    }),
     celularPhoneNumber: z
       .string()
       .trim()
@@ -49,12 +38,9 @@ export const personalInfo = z
     workPhoneNumber: z
       .string()
       .trim()
-      .regex(
-        /(^02\d{7}$|^03\d{7}$|^04\d{7}$|^05\d{7}$|^06\d{7}$|^07\d{7}$)|(^\d{10}$)|(^$)/,
-        {
-          error: "Work phone number must be a fixed line or celular number",
-        },
-      )
+      .regex(/^\d+$/, {
+        error: "Work phone number must contain only numbers",
+      })
       .optional(),
   })
   .refine(

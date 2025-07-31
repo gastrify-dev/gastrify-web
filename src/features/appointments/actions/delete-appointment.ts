@@ -13,6 +13,7 @@ import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 import { resend } from "@/shared/lib/resend/server";
+import { deleteZoomMeeting } from "@/shared/lib/zoom/zoom-api";
 
 import { deleteAppointmentSchema } from "@/features/appointments/schemas/delete-appointment";
 import type { DeleteAppointmentVariables } from "@/features/appointments/types";
@@ -96,8 +97,12 @@ export async function deleteAppointment(
 
   if (appointmentData.patientId && appointmentData.status === "booked") {
     if (appointmentData.type === "virtual" && appointmentData.zoomMeetingId) {
-      const { deleteZoomMeeting } = await import("@/shared/lib/zoom/zoom-api");
-      await tryCatch(deleteZoomMeeting(appointmentData.zoomMeetingId));
+      const { error: zoomDeleteError } = await tryCatch(
+        deleteZoomMeeting(appointmentData.zoomMeetingId),
+      );
+      if (zoomDeleteError) {
+        console.error("Error al eliminar reunión Zoom:", zoomDeleteError);
+      }
     }
 
     const { data: patientData } = await tryCatch(
@@ -144,7 +149,10 @@ export async function deleteAppointment(
             patientEmail: patient.email,
             appointmentDate,
             appointmentType: appointmentData.type!,
-            appointmentLocation: appointmentData.location ?? undefined,
+            appointmentLocation:
+              appointmentData.type === "in-person"
+                ? "Clínica Kennedy, Guayaquil, Guayas"
+                : (appointmentData.meetingLink ?? undefined),
             appointmentUrl: appointmentData.meetingLink ?? undefined,
             action: "canceled",
           }),

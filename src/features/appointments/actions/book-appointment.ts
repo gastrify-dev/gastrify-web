@@ -222,7 +222,11 @@ export const bookAppointment = async (
       end: appointmentData.end,
       title: `Cita médica (${displayAppointmentType})`,
       description: "Cita reservada en Gastrify",
-      location: appointmentData.location ?? undefined,
+      location:
+        appointmentData.type === "virtual"
+          ? (appointmentData.meetingLink ??
+            "Clínica Kennedy, Guayaquil, Guayas")
+          : "Clínica Kennedy, Guayaquil, Guayas",
       id: appointmentData.id,
     }),
   );

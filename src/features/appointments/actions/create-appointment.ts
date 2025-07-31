@@ -254,7 +254,11 @@ export async function createAppointment(
         end: appointmentData.end,
         title: `Cita médica (${displayAppointmentType})`,
         description: "Cita reservada en Gastrify",
-        location: appointmentData.location ?? undefined,
+        location:
+          appointmentData.type === "virtual"
+            ? (appointmentData.meetingLink ??
+              "Clínica Kennedy, Guayaquil, Guayas")
+            : "Clínica Kennedy, Guayaquil, Guayas",
         id: appointmentData.id,
       }),
     );
@@ -271,7 +275,10 @@ export async function createAppointment(
           patientEmail: patient.email,
           appointmentDate,
           appointmentType: appointmentData.type!,
-          appointmentLocation: appointmentData.location ?? undefined,
+          appointmentLocation:
+            appointmentData.type === "in-person"
+              ? "Clínica Kennedy, Guayaquil, Guayas"
+              : (appointmentData.meetingLink ?? undefined),
           appointmentUrl: appointmentData.meetingLink ?? undefined,
           action: "booked",
         }),

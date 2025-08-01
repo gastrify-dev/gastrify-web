@@ -117,9 +117,11 @@ export const maritalStatusEnum = pgEnum("marital_status", [
 
 export const personalInfo = pgTable("personal_info", {
   id: text("id").primaryKey(),
-  patientId: text("patient_id").references(() => user.id, {
-    onDelete: "cascade",
-  }),
+  patientId: text("patient_id")
+    .references(() => user.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
   age: integer("age").notNull(),
   profession: text("profession").notNull(),
   occupation: text("occupation").notNull(),
@@ -131,9 +133,9 @@ export const personalInfo = pgTable("personal_info", {
   abortions: boolean("abortions").notNull().default(false),
   placeOfResidence: text("place_of_residence").notNull(),
   city: text("city").notNull(),
-  homePhoneNumber: text("home_phone_number"),
+  homePhoneNumber: text("home_phone_number").notNull(),
   celularPhoneNumber: text("celular_phone_number").notNull(),
-  workPhoneNumber: text("work_phone_number"),
+  workPhoneNumber: text("work_phone_number").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

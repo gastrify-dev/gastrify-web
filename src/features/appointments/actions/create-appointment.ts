@@ -15,15 +15,15 @@ import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 
+import { createMeeting } from "@/features/appointments/actions/create-meeting";
 import { createNotification } from "@/features/notifications/actions/create-notification";
-
 import type {
   Appointment,
   CreateAppointmentVariables,
   IncomingAppointment,
 } from "@/features/appointments/types";
 import { createAppointmentSchema } from "@/features/appointments/schemas/create-appointment";
-import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
+import { generateIcs } from "@/features/appointments/utils/generate-ics";
 
 export type CreateAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -173,6 +173,32 @@ export async function createAppointment(
 
   //all good, create the appointment
 
+  let meetingLink: string | null = null;
+
+  if (status === "booked" && patient && type === "virtual") {
+    const { data: createdMeetingData, error: createMeetingError } =
+      await createMeeting({
+        topic: `Cita médica con ${patient.name}`,
+        startTime: new Date(start).toISOString(),
+        duration: Math.ceil((end.getTime() - start.getTime()) / 60000),
+        agenda: "Cita médica virtual reservada en Gastrify",
+      });
+
+    if (createMeetingError) {
+      console.error(createMeetingError);
+
+      return {
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create meeting",
+        },
+      };
+    }
+
+    meetingLink = createdMeetingData;
+  }
+
   const { data: dbInsertAppointmentData, error: dbInsertAppointmentError } =
     await tryCatch(
       db
@@ -184,6 +210,9 @@ export async function createAppointment(
           status,
           patientId: status === "booked" && patient ? patient.id : null,
           type: status === "booked" && patient ? type : null,
+          meetingLink: type === "virtual" ? meetingLink : null,
+          location:
+            type === "in-person" ? "Clínica Kennedy, Guayaquil, Guayas" : null,
         })
         .returning(),
     );
@@ -228,12 +257,19 @@ export async function createAppointment(
 
     // generate ICS attachment
     const { data: icsData, error: icsError } = await tryCatch(
-      generateIcsAttachment({
+      generateIcs({
         start: appointmentData.start,
         end: appointmentData.end,
         title: `Cita médica (${displayAppointmentType})`,
         description: "Cita reservada en Gastrify",
-        location: appointmentData.location ?? undefined,
+        location:
+          appointmentData.type === "in-person"
+            ? (appointmentData.location ?? undefined)
+            : undefined,
+        meetingUrl:
+          appointmentData.type === "virtual"
+            ? (appointmentData.meetingLink ?? undefined)
+            : undefined,
         id: appointmentData.id,
       }),
     );
@@ -250,8 +286,14 @@ export async function createAppointment(
           patientEmail: patient.email,
           appointmentDate,
           appointmentType: appointmentData.type!,
-          appointmentLocation: appointmentData.location ?? undefined,
-          appointmentUrl: appointmentData.meetingLink ?? undefined,
+          appointmentLocation:
+            appointmentData.type === "in-person"
+              ? (appointmentData.location ?? undefined)
+              : undefined,
+          appointmentUrl:
+            appointmentData.type === "virtual"
+              ? (appointmentData.meetingLink ?? undefined)
+              : undefined,
           action: "booked",
         }),
         attachments: icsData ? [icsData] : undefined,

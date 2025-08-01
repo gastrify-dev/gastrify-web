@@ -13,10 +13,11 @@ import { resend } from "@/shared/lib/resend/server";
 import { auth } from "@/shared/lib/better-auth/server";
 import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 
+import { createMeeting } from "@/features/appointments/actions/create-meeting";
+import { createNotification } from "@/features/notifications/actions/create-notification";
 import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type { BookAppointmentVariables } from "@/features/appointments/types";
-import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
-import { createNotification } from "@/features/notifications/actions/create-notification";
+import { generateIcs } from "@/features/appointments/utils/generate-ics";
 
 export type BookAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -132,16 +133,53 @@ export const bookAppointment = async (
   }
 
   // all good, book appointment
-  const { error: bookAppointmentDbError } = await tryCatch(
-    db
-      .update(appointment)
-      .set({
-        status: "booked",
-        patientId,
-        type: appointmentType,
-      })
-      .where(eq(appointment.id, appointmentId)),
-  );
+  let meetingLink: string | null = null;
+
+  if (appointmentType === "virtual") {
+    const { data: createMeetingData, error: createMeetingError } =
+      await createMeeting({
+        topic: `Cita médica virtual con ${session.user.name}`,
+        startTime: existingAppointment[0].start.toISOString(),
+        duration: Math.ceil(
+          (existingAppointment[0].end.getTime() -
+            existingAppointment[0].start.getTime()) /
+            60000,
+        ),
+      });
+
+    if (createMeetingError) {
+      console.error(createMeetingError);
+
+      return {
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create meeting",
+        },
+      };
+    }
+
+    meetingLink = createMeetingData;
+  }
+
+  // all good, book appointment
+  const { data: bookAppointmentData, error: bookAppointmentDbError } =
+    await tryCatch(
+      db
+        .update(appointment)
+        .set({
+          status: "booked",
+          patientId,
+          type: appointmentType,
+          meetingLink: appointmentType === "virtual" ? meetingLink : null,
+          location:
+            appointmentType === "in-person"
+              ? "Clínica Kennedy, Guayaquil, Guayas"
+              : null,
+        })
+        .where(eq(appointment.id, appointmentId))
+        .returning(),
+    );
 
   if (bookAppointmentDbError) {
     console.error(bookAppointmentDbError);
@@ -155,12 +193,11 @@ export const bookAppointment = async (
     };
   }
 
-  const appointmentData = existingAppointment[0];
+  const appointmentData = bookAppointmentData[0];
 
   // create in-app notification
 
   const formattedDate = format(appointmentData.start, "PPPPp", { locale: es });
-
   await createNotification({
     userId: session.user.id,
     title: "Cita",
@@ -180,12 +217,19 @@ export const bookAppointment = async (
 
   // generate ICS attachment
   const { data: icsData, error: icsError } = await tryCatch(
-    generateIcsAttachment({
+    generateIcs({
       start: appointmentData.start,
       end: appointmentData.end,
       title: `Cita médica (${displayAppointmentType})`,
       description: "Cita reservada en Gastrify",
-      location: appointmentData.location ?? undefined,
+      location:
+        appointmentData.type === "in-person"
+          ? (appointmentData.location ?? undefined)
+          : undefined,
+      meetingUrl:
+        appointmentData.type === "virtual"
+          ? (appointmentData.meetingLink ?? undefined)
+          : undefined,
       id: appointmentData.id,
     }),
   );

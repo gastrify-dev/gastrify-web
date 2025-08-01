@@ -71,7 +71,9 @@
         "patient": "Patient",
         "patient-identification-number": "Identification number",
         "patient-email": "Email address",
-        "delete": "Delete"
+        "delete": "Delete",
+        "location-label": "Location:",
+        "meeting-link-label": "Meeting link:"
       },
       "admin-incoming-appointments": {
         "error-message": "Error getting incoming appointments 😢",

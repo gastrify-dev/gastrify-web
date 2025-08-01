@@ -15,6 +15,7 @@ import type { ActionResponse } from "@/shared/types";
 import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 
+import { createMeeting } from "@/features/appointments/actions/create-meeting";
 import { createNotification } from "@/features/notifications/actions/create-notification";
 import type {
   Appointment,
@@ -22,7 +23,7 @@ import type {
   IncomingAppointment,
 } from "@/features/appointments/types";
 import { createAppointmentSchema } from "@/features/appointments/schemas/create-appointment";
-import { generateIcsAttachment } from "@/features/appointments/utils/generate-ics";
+import { generateIcs } from "@/features/appointments/utils/generate-ics";
 
 export type CreateAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -172,24 +173,30 @@ export async function createAppointment(
 
   //all good, create the appointment
 
-  let zoomMeetingLink: string | undefined = undefined;
-  let zoomMeetingId: string | undefined = undefined;
+  let meetingLink: string | null = null;
+
   if (status === "booked" && patient && type === "virtual") {
-    const { createZoomMeeting } = await import("@/shared/lib/zoom/zoom-api");
-    const { data: zoomMeeting, error: zoomError } = await tryCatch(
-      createZoomMeeting({
+    const { data: createdMeetingData, error: createMeetingError } =
+      await createMeeting({
         topic: `Cita médica con ${patient.name}`,
         startTime: new Date(start).toISOString(),
         duration: Math.ceil((end.getTime() - start.getTime()) / 60000),
         agenda: "Cita médica virtual reservada en Gastrify",
-      }),
-    );
-    if (zoomMeeting) {
-      zoomMeetingLink = zoomMeeting.join_url;
-      zoomMeetingId = String(zoomMeeting.id);
-    } else if (zoomError) {
-      console.error("Error creando reunión Zoom:", zoomError);
+      });
+
+    if (createMeetingError) {
+      console.error(createMeetingError);
+
+      return {
+        data: null,
+        error: {
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create meeting",
+        },
+      };
     }
+
+    meetingLink = createdMeetingData;
   }
 
   const { data: dbInsertAppointmentData, error: dbInsertAppointmentError } =
@@ -203,8 +210,9 @@ export async function createAppointment(
           status,
           patientId: status === "booked" && patient ? patient.id : null,
           type: status === "booked" && patient ? type : null,
-          meetingLink: zoomMeetingLink,
-          zoomMeetingId: zoomMeetingId,
+          meetingLink: type === "virtual" ? meetingLink : null,
+          location:
+            type === "in-person" ? "Clínica Kennedy, Guayaquil, Guayas" : null,
         })
         .returning(),
     );
@@ -249,16 +257,19 @@ export async function createAppointment(
 
     // generate ICS attachment
     const { data: icsData, error: icsError } = await tryCatch(
-      generateIcsAttachment({
+      generateIcs({
         start: appointmentData.start,
         end: appointmentData.end,
         title: `Cita médica (${displayAppointmentType})`,
         description: "Cita reservada en Gastrify",
         location:
+          appointmentData.type === "in-person"
+            ? (appointmentData.location ?? undefined)
+            : undefined,
+        meetingUrl:
           appointmentData.type === "virtual"
-            ? (appointmentData.meetingLink ??
-              "Clínica Kennedy, Guayaquil, Guayas")
-            : "Clínica Kennedy, Guayaquil, Guayas",
+            ? (appointmentData.meetingLink ?? undefined)
+            : undefined,
         id: appointmentData.id,
       }),
     );
@@ -277,9 +288,12 @@ export async function createAppointment(
           appointmentType: appointmentData.type!,
           appointmentLocation:
             appointmentData.type === "in-person"
-              ? "Clínica Kennedy, Guayaquil, Guayas"
-              : (appointmentData.meetingLink ?? undefined),
-          appointmentUrl: appointmentData.meetingLink ?? undefined,
+              ? (appointmentData.location ?? undefined)
+              : undefined,
+          appointmentUrl:
+            appointmentData.type === "virtual"
+              ? (appointmentData.meetingLink ?? undefined)
+              : undefined,
           action: "booked",
         }),
         attachments: icsData ? [icsData] : undefined,

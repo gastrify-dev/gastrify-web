@@ -10,7 +10,7 @@ export interface IcsEventData {
   meetingUrl?: string;
 }
 
-export async function generateIcsAttachment(event: IcsEventData): Promise<{
+export async function generateIcs(event: IcsEventData): Promise<{
   filename: string;
   content: string;
   type: string;

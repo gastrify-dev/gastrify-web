@@ -13,8 +13,8 @@ import { isAdmin } from "@/shared/utils/is-admin";
 import { tryCatch } from "@/shared/utils/try-catch";
 import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 import { resend } from "@/shared/lib/resend/server";
-import { deleteZoomMeeting } from "@/shared/lib/zoom/zoom-api";
 
+import { deleteMeeting } from "@/features/appointments/actions/delete-meeting";
 import { deleteAppointmentSchema } from "@/features/appointments/schemas/delete-appointment";
 import type { DeleteAppointmentVariables } from "@/features/appointments/types";
 import { createNotification } from "@/features/notifications/actions/create-notification";
@@ -96,13 +96,17 @@ export async function deleteAppointment(
   const appointmentData = data[0];
 
   if (appointmentData.patientId && appointmentData.status === "booked") {
-    if (appointmentData.type === "virtual" && appointmentData.zoomMeetingId) {
-      const { error: zoomDeleteError } = await tryCatch(
-        deleteZoomMeeting(appointmentData.zoomMeetingId),
-      );
-      if (zoomDeleteError) {
-        console.error("Error al eliminar reunión Zoom:", zoomDeleteError);
-      }
+    if (appointmentData.meetingLink) {
+      const meetingId = (
+        appointmentData.meetingLink.split("/").pop() as string
+      ).split("?")[0];
+
+      const { error: zoomDeleteError } = await deleteMeeting({
+        meetingId,
+      });
+
+      if (zoomDeleteError)
+        console.error("Error deleting meeting", zoomDeleteError);
     }
 
     const { data: patientData } = await tryCatch(
@@ -149,10 +153,7 @@ export async function deleteAppointment(
             patientEmail: patient.email,
             appointmentDate,
             appointmentType: appointmentData.type!,
-            appointmentLocation:
-              appointmentData.type === "in-person"
-                ? "Clínica Kennedy, Guayaquil, Guayas"
-                : (appointmentData.meetingLink ?? undefined),
+            appointmentLocation: appointmentData.location ?? undefined,
             appointmentUrl: appointmentData.meetingLink ?? undefined,
             action: "canceled",
           }),

@@ -7,6 +7,8 @@ import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appo
 import { updateAppointmentSchema } from "@/features/appointments/schemas/update-appointment";
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import { deleteAppointmentSchema } from "@/features/appointments/schemas/delete-appointment";
+import { createMeetingSchema } from "@/features/appointments/schemas/create-meeting";
+import { deleteMeetingSchema } from "@/features/appointments/schemas/delete-meeting";
 
 export type CalendarView = "month" | "week" | "day" | "agenda";
 
@@ -49,3 +51,6 @@ export interface IncomingAppointment {
     email: string;
   };
 }
+
+export type CreateMeetingVariables = z.infer<typeof createMeetingSchema>;
+export type DeleteMeetingVariables = z.infer<typeof deleteMeetingSchema>;

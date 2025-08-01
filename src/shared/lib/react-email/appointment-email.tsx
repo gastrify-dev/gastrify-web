@@ -45,26 +45,35 @@ const AppointmentEmail = ({
             <Heading className="mx-0 my-[30px] p-0 text-center text-[24px] font-normal text-black">
               {action === "booked" ? "Cita reservada" : "Cita cancelada"}
             </Heading>
+
             <Text className="text-[14px] leading-[24px] text-black">
               <b>Paciente:</b> {patientName} ({patientEmail})
             </Text>
+
             <Text className="text-[14px] leading-[24px] text-black">
               <b>Fecha y hora:</b> {appointmentDate}
             </Text>
+
             <Text className="text-[14px] leading-[24px] text-black">
               <b>Tipo:</b>{" "}
               {appointmentType === "in-person" ? "Presencial" : "Virtual"}
             </Text>
-            {appointmentType === "in-person" && appointmentLocation && (
-              <Text className="text-[14px] leading-[24px] text-black">
-                <b>Ubicación:</b> {appointmentLocation}
-              </Text>
-            )}
-            {appointmentType === "virtual" && appointmentUrl && (
-              <Text className="text-[14px] leading-[24px] text-black">
-                <b>URL de la reunión:</b> {appointmentUrl}
-              </Text>
-            )}
+
+            {action === "booked" &&
+              appointmentType === "in-person" &&
+              appointmentLocation && (
+                <Text className="text-[14px] leading-[24px] text-black">
+                  <b>Ubicación:</b> {appointmentLocation}
+                </Text>
+              )}
+
+            {action === "booked" &&
+              appointmentType === "virtual" &&
+              appointmentUrl && (
+                <Text className="text-[14px] leading-[24px] text-black">
+                  <b>URL de la reunión:</b> {appointmentUrl}
+                </Text>
+              )}
           </Container>
         </Body>
       </Tailwind>

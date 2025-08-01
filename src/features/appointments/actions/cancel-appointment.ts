@@ -12,8 +12,8 @@ import type { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { resend } from "@/shared/lib/resend/server";
 import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
-import { deleteZoomMeeting } from "@/shared/lib/zoom/zoom-api";
 
+import { deleteMeeting } from "@/features/appointments/actions/delete-meeting";
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import type { CancelAppointmentVariables } from "@/features/appointments/types";
 import { createNotification } from "@/features/notifications/actions/create-notification";
@@ -103,12 +103,17 @@ export const cancelAppointment = async (
 
   const appointmentData = existingAppointment[0];
 
-  if (appointmentData.type === "virtual" && appointmentData.zoomMeetingId) {
-    const { error: zoomDeleteError } = await tryCatch(
-      deleteZoomMeeting(appointmentData.zoomMeetingId),
-    );
-    if (zoomDeleteError) {
-      console.error("Error al eliminar reunión Zoom:", zoomDeleteError);
+  if (appointmentData.meetingLink) {
+    const meetingId = (
+      appointmentData.meetingLink.split("/").pop() as string
+    ).split("?")[0];
+
+    const { error: deleteMeetingError } = await deleteMeeting({
+      meetingId,
+    });
+
+    if (deleteMeetingError) {
+      console.error("Error deleting meeting", deleteMeetingError);
     }
   }
 
@@ -121,7 +126,6 @@ export const cancelAppointment = async (
         type: null,
         location: null,
         meetingLink: null,
-        zoomMeetingId: null,
       })
       .where(eq(appointment.id, appointmentId)),
   );
@@ -163,8 +167,14 @@ export const cancelAppointment = async (
         patientEmail: session.user.email,
         appointmentDate,
         appointmentType: appointmentData.type!,
-        appointmentLocation: appointmentData.location ?? undefined,
-        appointmentUrl: appointmentData.meetingLink ?? undefined,
+        appointmentLocation:
+          appointmentData.type === "in-person"
+            ? (appointmentData.location ?? undefined)
+            : undefined,
+        appointmentUrl:
+          appointmentData.type === "virtual"
+            ? (appointmentData.meetingLink ?? undefined)
+            : undefined,
         action: "canceled",
       }),
     }),

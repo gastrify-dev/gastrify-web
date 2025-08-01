@@ -61,10 +61,10 @@ export function UserAppointmentCard({ appointment }: Props) {
             )}
           </TypographyP>
 
-          {appointment.type === "in-person" && (
+          {appointment.location && (
             <TypographyP className="!m-0 leading-normal">
-              <span className="font-bold">{t("location-label")}</span> Clínica
-              Kennedy, Guayaquil, Guayas
+              <span className="font-bold">{t("location-label")}</span>{" "}
+              {appointment.location}
             </TypographyP>
           )}
 

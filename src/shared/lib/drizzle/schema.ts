@@ -151,7 +151,7 @@ export const rhFactorEnum = pgEnum("rh_factor", ["+", "-"]);
 export const religionEnum = pgEnum("religion", [
   "evangelical christian",
   "catholic",
-  "others",
+  "other",
 ]);
 
 export const medicalInfo = pgTable("medical_info", {
@@ -162,15 +162,15 @@ export const medicalInfo = pgTable("medical_info", {
   bloodType: bloodTypeEnum("blood_type").notNull(),
   rhFactor: rhFactorEnum("rh_factor").notNull(),
   hasAllergies: boolean("has_allergies").notNull().default(false),
-  allergyDetails: text("allergy_details"),
+  allergyDetails: text("allergy_details").notNull(),
   religion: religionEnum("religion").notNull(),
   allowsTransfusions: boolean("allows_transfusions").notNull().default(false),
   alcohol: boolean("alcohol").notNull().default(false),
   drugs: boolean("drugs").notNull().default(false),
   hasChronicIllness: boolean("has_chronic_illness").notNull().default(false),
-  chronicIllnessDetails: text("chronic_illness_details"),
+  chronicIllnessDetails: text("chronic_illness_details").notNull(),
   hasHealthInsurance: boolean("has_health_insurance").notNull().default(false),
-  healthInsuranceProvider: text("health_insurance_provider"),
+  healthInsuranceProvider: text("health_insurance_provider").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),

@@ -3,6 +3,7 @@ import { z } from "zod/v4";
 export const emergencyContacts = z.object({
   contacts: z.array(
     z.object({
+      id: z.string(),
       name: z.string().trim().min(1, {
         error: "Name is required",
       }),

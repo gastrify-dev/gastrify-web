@@ -55,7 +55,7 @@ export function EmergencyContactsForm() {
                 >
                   <FormField
                     control={form.control}
-                    name={`contacts.${index}.name`}
+                    name={`contacts.${index}.id`}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Name</FormLabel>

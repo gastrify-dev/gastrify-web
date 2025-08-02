@@ -1,6 +1,7 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { useEmergencyContactsMutation } from "./use-emergency-contacts-mutation";
 import { emergencyContacts } from "@/features/healthProfile/schemas/emergency-contacts";
 import type { EmergencyContactsVariables } from "@/features/healthProfile/types";
 
@@ -10,6 +11,7 @@ export const useEmergencyContactsForm = () => {
     defaultValues: {
       contacts: [
         {
+          id: "",
           name: "",
           relationship: undefined,
           homePhoneNumber: "",
@@ -31,6 +33,7 @@ export const useEmergencyContactsForm = () => {
 
   const appendContact = () => {
     append({
+      id: "",
       name: "",
       relationship: "parent",
       homePhoneNumber: "",

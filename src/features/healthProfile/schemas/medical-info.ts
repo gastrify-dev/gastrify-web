@@ -17,9 +17,9 @@ export const medicalInfo = z
     alcohol: z.boolean(),
     drugs: z.boolean(),
     hasChronicIllness: z.boolean(),
-    chronicIllnessDetails: z.string().trim().optional(),
+    chronicIllnessDetails: z.string().trim(),
     hasHealthInsurance: z.boolean(),
-    healthInsuranceProvider: z.string().trim().optional(),
+    healthInsuranceProvider: z.string().trim(),
   })
   .refine((data) => (data.hasAllergies ? data.allergyDetails : true), {
     error: "You must specify the details of the allergies",

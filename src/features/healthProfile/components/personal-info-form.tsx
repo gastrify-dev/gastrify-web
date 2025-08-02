@@ -80,7 +80,11 @@ export function PersonalInfoForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Marital State</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={isLoading || isPending}
+                    >
                       <FormControl>
                         <SelectTrigger className="min-w-[150px]">
                           <SelectValue placeholder="Select a marital state" />
@@ -118,6 +122,7 @@ export function PersonalInfoForm() {
                           onCheckedChange={(bool) => {
                             field.onChange(bool);
                           }}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -145,6 +150,7 @@ export function PersonalInfoForm() {
                                 : field.onChange("")
                             }
                             min={0}
+                            disabled={isLoading || isPending}
                           />
                         </FormControl>
                         <FormMessage />
@@ -168,6 +174,7 @@ export function PersonalInfoForm() {
                                 : field.onChange("")
                             }
                             min={0}
+                            disabled={isLoading || isPending}
                           />
                         </FormControl>
                         <FormMessage />
@@ -190,6 +197,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter your profession"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormDescription>What do you?</FormDescription>
@@ -209,6 +217,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter your occupation"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormDescription>Your work occupation</FormDescription>
@@ -235,6 +244,7 @@ export function PersonalInfoForm() {
                           <Switch
                             checked={field.value}
                             onCheckedChange={field.onChange}
+                            disabled={isLoading || isPending}
                           />
                         </FormControl>
                         <p className="text-sm">Yes</p>
@@ -257,6 +267,7 @@ export function PersonalInfoForm() {
                           <Switch
                             checked={field.value}
                             onCheckedChange={field.onChange}
+                            disabled={isLoading || isPending}
                           />
                         </FormControl>
                         <p className="text-sm">Yes</p>
@@ -279,6 +290,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter your place of residence"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -297,6 +309,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter the city you live in"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -318,6 +331,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter your home phone number"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -337,6 +351,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter your celular phone number"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -356,6 +371,7 @@ export function PersonalInfoForm() {
                           placeholder="Enter your work phone number"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormMessage />

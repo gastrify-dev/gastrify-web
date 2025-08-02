@@ -13,11 +13,14 @@ import { Switch } from "@/shared/components/ui/switch";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
-
-import { useMedicalInfoForm } from "@/features/healthProfile/hooks/use-medical-info-form";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 
+import { useMedicalInfoForm } from "@/features/healthProfile/hooks/use-medical-info-form";
+import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
+
 export function MedicalInfoForm() {
+  const { step, totalSteps } = useStepperContext();
+
   const {
     form,
     onSubmit,
@@ -31,9 +34,10 @@ export function MedicalInfoForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative flex items-center gap-4">
           <Button
+            type="button"
             className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            // onClick={previousStep}
-            // disabled={step === 1}
+            // onClick={previousStep} Preguntar sobre cache
+            disabled={step === 1}
             aria-label="Previous Step"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -175,21 +179,21 @@ export function MedicalInfoForm() {
                       <RadioGroup onValueChange={field.onChange} className="">
                         <FormItem className="flex items-center gap-3">
                           <FormControl>
-                            <RadioGroupItem value="cristiano evangelico" />
+                            <RadioGroupItem value="evangelical christian" />
                           </FormControl>
                           <FormLabel>Evangelical Christian</FormLabel>
                         </FormItem>
 
                         <FormItem className="flex items-center gap-3">
                           <FormControl>
-                            <RadioGroupItem value="catolico" />
+                            <RadioGroupItem value="catholic" />
                           </FormControl>
                           <FormLabel>Catholic</FormLabel>
                         </FormItem>
 
                         <FormItem className="flex items-center gap-3">
                           <FormControl>
-                            <RadioGroupItem value="otro" />
+                            <RadioGroupItem value="other" />
                           </FormControl>
                           <FormLabel>Other</FormLabel>
                         </FormItem>
@@ -360,9 +364,9 @@ export function MedicalInfoForm() {
             </div>
           </ScrollArea>
           <Button
+            type="submit"
             className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            // onClick={nextStep}
-            // disabled={step === steps.length}
+            disabled={step === totalSteps}
             aria-label="Next Step"
           >
             <ArrowRightIcon className="h-6 w-6" />

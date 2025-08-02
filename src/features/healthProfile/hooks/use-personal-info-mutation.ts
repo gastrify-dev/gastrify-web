@@ -5,11 +5,7 @@ import type { PersonalInfoVariables } from "@/features/healthProfile/types";
 import { setPersonalInfo } from "../actions/set-personal-info";
 import { toast } from "sonner";
 
-interface Props {
-  form: UseFormReturn<PersonalInfoVariables>;
-}
-
-export const usePersonalInfoMutation = ({ form }: Props) => {
+export const usePersonalInfoMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -18,18 +14,18 @@ export const usePersonalInfoMutation = ({ form }: Props) => {
 
       if (error) return Promise.reject(error);
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       toast.success("Personal information form was submitted succesfully", {
         duration: 10_000,
       });
     },
-    onError: (error, variables) => {
+    onError: () => {
       toast.error("An error has ocurred, please try again", {
         duration: 10_000,
       });
     },
     onSettled: () => {
-      //Invalidate queries
+      queryClient.cancelQueries({ queryKey: ["personalInfo", "details"] });
     },
   });
 };

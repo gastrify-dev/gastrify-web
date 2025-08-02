@@ -9,7 +9,6 @@ import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
 import type { PersonalInfoVariables } from "@/features/healthProfile/types";
 import { useStepperContext } from "../context/stepper-context";
 import { getPersonalInfo } from "../actions/get-personal-info";
-import { useEffect } from "react";
 
 interface Props {
   patiendId: string;
@@ -53,9 +52,7 @@ export const usePersonalInfoForm = () => {
     values: personalInfoData,
   });
 
-  const { mutate, isPending } = usePersonalInfoMutation({
-    form,
-  });
+  const { mutate, isPending } = usePersonalInfoMutation();
 
   const { isDirty } = form.formState;
 

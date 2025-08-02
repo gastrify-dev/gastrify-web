@@ -6,25 +6,23 @@ import { generateId } from "better-auth";
 
 import { db } from "@/shared/lib/drizzle/server";
 import { auth } from "@/shared/lib/better-auth/server";
-import { personalInfo } from "@/shared/lib/drizzle/schema";
+import { medicalInfo } from "@/shared/lib/drizzle/schema";
 import { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 
-import { personalInfo as personalInfoSchema } from "@/features/healthProfile/schemas/personal-info";
-import { PersonalInfoVariables } from "@/features/healthProfile/types";
+import { medicalInfo as medicalInfoSchema } from "@/features/healthProfile/schemas/medical-info";
+import { MedicalInfoVariables } from "@/features/healthProfile/types";
 
-export type SetPersonalInfoErrorCode =
+export type SetMedicalInfoErrorCode =
   | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "NOT_FOUND"
   | "BAD_REQUEST"
   | "INTERNAL_SERVER_ERROR";
 
-export const setPersonalInfo = async (
-  variables: PersonalInfoVariables,
-): Promise<ActionResponse<null, SetPersonalInfoErrorCode>> => {
-  //check if user is authenticated
-
+export const setMedicalInfo = async (
+  variables: MedicalInfoVariables,
+): Promise<ActionResponse<null, SetMedicalInfoErrorCode>> => {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -39,9 +37,7 @@ export const setPersonalInfo = async (
     };
   }
 
-  //parse values
-
-  const parsedVariables = personalInfoSchema.safeParse(variables);
+  const parsedVariables = medicalInfoSchema.safeParse(variables);
 
   if (!parsedVariables.success)
     return {
@@ -52,21 +48,19 @@ export const setPersonalInfo = async (
       },
     };
 
-  const { ...personalInfoData } = parsedVariables.data;
+  const { ...medicalInfoData } = parsedVariables.data;
 
-  //check if user alredy has a form
-
-  const { data: existingPersonalInfo, error: existingPersonalInfoError } =
+  const { data: existingMedicalInfo, error: existingMedicalInfoError } =
     await tryCatch(
       db
         .select()
-        .from(personalInfo)
-        .where(eq(personalInfo.patientId, session.user.id))
+        .from(medicalInfo)
+        .where(eq(medicalInfo.patientId, session.user.id))
         .limit(1),
     );
 
-  if (existingPersonalInfoError) {
-    console.error(existingPersonalInfoError);
+  if (existingMedicalInfoError) {
+    console.error(existingMedicalInfoError);
 
     return {
       data: null,
@@ -77,23 +71,22 @@ export const setPersonalInfo = async (
     };
   }
 
-  // if it does not exists create it
-
-  if (!existingPersonalInfo || existingPersonalInfo.length === 0) {
-    const { error: dbInsertPersonalInfoError } = await tryCatch(
-      db.insert(personalInfo).values({
+  if (!existingMedicalInfo || existingMedicalInfo.length === 0) {
+    const { error: dbInsertMedicalInfoError } = await tryCatch(
+      db.insert(medicalInfo).values({
         id: generateId(32),
         patientId: session.user.id,
-        ...personalInfoData,
+        ...medicalInfoData,
       }),
     );
 
-    if (dbInsertPersonalInfoError) {
+    if (dbInsertMedicalInfoError) {
+      console.error(dbInsertMedicalInfoError);
       return {
         data: null,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to insert personal information",
+          message: "Failed to insert medical information",
         },
       };
     }
@@ -103,14 +96,11 @@ export const setPersonalInfo = async (
       error: null,
     };
   }
-
-  // if it exists update it
-
   const { error: dbUpdatePersonalInfoError } = await tryCatch(
     db
-      .update(personalInfo)
-      .set(personalInfoData)
-      .where(eq(personalInfo.patientId, session.user.id)),
+      .update(medicalInfo)
+      .set(medicalInfoData)
+      .where(eq(medicalInfo.patientId, session.user.id)),
   );
 
   if (dbUpdatePersonalInfoError) {

@@ -70,12 +70,7 @@ export const useAppSidebar = () => {
     }
 
     return baseLinks;
-  }, [
-    session?.user.identificationNumber,
-    session?.user.role,
-    t,
-    unreadNotificationsCount,
-  ]);
+  }, [session?.user.role, t, unreadNotificationsCount]);
 
   return {
     links,

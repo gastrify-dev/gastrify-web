@@ -71,13 +71,11 @@ export const setEmergencyContacts = async (
         };
       }
     } else {
-      const { id, ...contactWithoutId } = contact;
-
       const { error } = await tryCatch(
         db.insert(emergencyContacts).values({
+          ...contact,
           id: generateId(32),
           patientId: session.user.id,
-          ...contactWithoutId,
         }),
       );
 

@@ -1,18 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
-
-import { Button } from "@/shared/components/ui/button";
-import { ScrollArea } from "@/shared/components/ui/scroll-area";
-
 import { HealthProfileFormStepper } from "@/features/healthProfile/components/health-profile-form-stepper";
 import { StepItem } from "@/features/healthProfile/types";
 import { PersonalInfoForm } from "@/features/healthProfile/components/personal-info-form";
 import { MedicalInfoForm } from "@/features/healthProfile/components/medical-info-form";
-import { EmergencyContactsForm } from "./emergency-contacts-form";
-import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
-import { useStepperContext } from "../context/stepper-context";
+import { EmergencyContactsForm } from "@/features/healthProfile/components/emergency-contacts-form";
+import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 
 interface Props {
   userId: string;

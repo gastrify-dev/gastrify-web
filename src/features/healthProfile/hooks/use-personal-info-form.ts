@@ -1,14 +1,15 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+"use client";
 
+import { useForm } from "react-hook-form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@/shared/hooks/use-session";
 
 import { usePersonalInfoMutation } from "@/features/healthProfile/hooks/use-personal-info-mutation";
 import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
 import type { PersonalInfoVariables } from "@/features/healthProfile/types";
-import { useStepperContext } from "../context/stepper-context";
-import { getPersonalInfo } from "../actions/get-personal-info";
+import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
+import { getPersonalInfo } from "@/features/healthProfile/actions/get-personal-info";
 
 interface Props {
   patientId: string;

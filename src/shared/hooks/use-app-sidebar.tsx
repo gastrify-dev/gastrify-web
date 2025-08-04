@@ -50,7 +50,7 @@ export const useAppSidebar = () => {
         ),
       },
       {
-        href: `/${session?.user.identificationNumber}`,
+        href: "/profile",
         label: t("profile"),
         icon: <UserRoundIcon />,
       },

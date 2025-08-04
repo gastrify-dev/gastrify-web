@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-
-import {
-  TypographyH1,
-  TypographyMuted,
-} from "@/shared/components/ui/typography";
-import { auth } from "@/shared/lib/better-auth/server";
 import { headers } from "next/headers";
-import { getUser } from "@/shared/actions/get-user";
+import { redirect } from "next/navigation";
+
+import { TypographyH1 } from "@/shared/components/ui/typography";
+import { auth } from "@/shared/lib/better-auth/server";
 
 import { HealthProfileForm } from "@/features/healthProfile/components/health-profile-form";
 import { StepperProvider } from "@/features/healthProfile/context/stepper-context";
-import { redirect } from "next/navigation";
-import { isProfileCompleted } from "@/shared/actions/is-profile-completed";
+import PatientsTable from "@/features/healthProfile/components/patients-table";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app.profile-page");
@@ -30,6 +25,15 @@ export default async function ProfilePage() {
   });
 
   if (!session) return redirect("/sign-in");
+
+  if (session.user.role === "admin")
+    return (
+      <div className="flex flex-col gap-6">
+        <TypographyH1>Profile</TypographyH1>
+
+        <PatientsTable />
+      </div>
+    );
 
   return (
     <div className="flex flex-col gap-6">

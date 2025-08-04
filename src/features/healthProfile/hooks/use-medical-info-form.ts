@@ -1,14 +1,15 @@
+"use client";
+
 import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@/shared/hooks/use-session";
 
-import { useMedicalInfoMutation } from "./use-medical-info-mutation";
+import { useMedicalInfoMutation } from "@/features/healthProfile/hooks/use-medical-info-mutation";
 import { medicalInfo } from "@/features/healthProfile/schemas/medical-info";
 import type { MedicalInfoVariables } from "@/features/healthProfile/types";
-import { useStepperContext } from "../context/stepper-context";
-import { getMedicalInfo } from "../actions/get-medical-info";
+import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
+import { getMedicalInfo } from "@/features/healthProfile/actions/get-medical-info";
 
 interface Props {
   patientId: string;

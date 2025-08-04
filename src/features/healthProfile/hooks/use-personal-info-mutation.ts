@@ -1,9 +1,9 @@
-import { UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { PersonalInfoVariables } from "@/features/healthProfile/types";
-import { setPersonalInfo } from "../actions/set-personal-info";
-import { toast } from "sonner";
+import { setPersonalInfo } from "@/features/healthProfile/actions/set-personal-info";
 
 interface Props {
   patientId: string;
@@ -20,16 +20,16 @@ export const usePersonalInfoMutation = ({ patientId }: Props) => {
     },
     onSuccess: () => {
       toast.success("Personal information form was submitted succesfully", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
     onError: () => {
       toast.error("An error has ocurred, please try again", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
     onSettled: () => {
-      queryClient.cancelQueries({
+      queryClient.invalidateQueries({
         queryKey: ["profile", "personalInfo", "detail", patientId],
       });
     },

@@ -1,9 +1,9 @@
-import { UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { MedicalInfoVariables } from "@/features/healthProfile/types";
-import { toast } from "sonner";
-import { setMedicalInfo } from "../actions/set-medical-info";
+import { setMedicalInfo } from "@/features/healthProfile/actions/set-medical-info";
 
 interface Props {
   patientId: string;
@@ -20,18 +20,18 @@ export const useMedicalInfoMutation = ({ patientId }: Props) => {
     },
     onSuccess: () => {
       toast.success("Medical information was submitted succesfully", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
     onError: (error) => {
       console.log(error);
 
       toast.error("An error has ocurred, please try again", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
     onSettled: () => {
-      queryClient.cancelQueries({
+      queryClient.invalidateQueries({
         queryKey: ["profile", "medicalInfo", "detail", patientId],
       });
     },

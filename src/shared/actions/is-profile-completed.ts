@@ -2,14 +2,14 @@ import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
 
 import { ActionResponse } from "@/shared/types";
-import { auth } from "../lib/better-auth/server";
-import { db } from "../lib/drizzle/server";
+import { auth } from "@/shared/lib/better-auth/server";
+import { db } from "@/shared/lib/drizzle/server";
 
 import {
   personalInfo,
   medicalInfo,
   emergencyContacts,
-} from "../lib/drizzle/schema";
+} from "@/shared/lib/drizzle/schema";
 
 interface Props {
   id: string;
@@ -64,6 +64,8 @@ export const isProfileCompleted = async ({
       error: null,
     };
   } catch (error) {
+    console.error(error);
+
     return {
       data: null,
       error: {

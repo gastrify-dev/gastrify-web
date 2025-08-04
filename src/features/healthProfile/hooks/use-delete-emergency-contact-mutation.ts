@@ -18,18 +18,18 @@ export const useDeleteEmergencyContactMutation = ({ patientId }: Props) => {
     },
     onSuccess: () => {
       toast.success("Emergency contacts was deleted succesfully", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
     onError: (error) => {
       console.log(error);
 
       toast.error("An error has ocurred, please try again", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
     onSettled: () => {
-      queryClient.cancelQueries({
+      queryClient.invalidateQueries({
         queryKey: ["profile", "emergencyContacts", "detail", patientId],
       });
     },

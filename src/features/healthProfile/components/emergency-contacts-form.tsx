@@ -1,7 +1,6 @@
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -10,16 +9,14 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
-import { ArrowLeftIcon, ArrowRightIcon, CheckCheckIcon } from "lucide-react";
+import { ArrowLeftIcon, CheckCheckIcon } from "lucide-react";
 
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 import { useEmergencyContactsForm } from "@/features/healthProfile/hooks/use-emergency-contacts-form";
@@ -29,7 +26,7 @@ interface Props {
 }
 
 export function EmergencyContactsForm({ userId }: Props) {
-  const { step, totalSteps, prevStep } = useStepperContext();
+  const { step, prevStep } = useStepperContext();
 
   const {
     form,
@@ -40,6 +37,7 @@ export function EmergencyContactsForm({ userId }: Props) {
     contactsCount,
     isLoading,
     isPendingSet,
+    isPendingDelete,
   } = useEmergencyContactsForm({ patientId: userId });
 
   return (
@@ -50,7 +48,9 @@ export function EmergencyContactsForm({ userId }: Props) {
             type="button"
             className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
             onClick={prevStep}
-            disabled={step === 1 || isLoading || isPendingSet}
+            disabled={
+              step === 1 || isLoading || isPendingSet || isPendingDelete
+            }
             aria-label="Previous Step"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -75,7 +75,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                             placeholder="Enter the contact's name"
                             value={field.value}
                             onChange={field.onChange}
-                            disabled={isLoading || isPendingSet}
+                            disabled={
+                              isLoading || isPendingSet || isPendingDelete
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -93,7 +95,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
-                            disabled={isLoading || isPendingSet}
+                            disabled={
+                              isLoading || isPendingSet || isPendingDelete
+                            }
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select relationship" />
@@ -125,7 +129,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                               placeholder="Enter the contact's home phone number"
                               value={field.value}
                               onChange={field.onChange}
-                              disabled={isLoading || isPendingSet}
+                              disabled={
+                                isLoading || isPendingSet || isPendingDelete
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -145,7 +151,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                               placeholder="Enter the contact's celular phone number"
                               value={field.value}
                               onChange={field.onChange}
-                              disabled={isLoading || isPendingSet}
+                              disabled={
+                                isLoading || isPendingSet || isPendingDelete
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -165,7 +173,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                               placeholder="Enter the contact's work phone number"
                               value={field.value}
                               onChange={field.onChange}
-                              disabled={isLoading || isPendingSet}
+                              disabled={
+                                isLoading || isPendingSet || isPendingDelete
+                              }
                             />
                           </FormControl>
                           <FormMessage />
@@ -186,7 +196,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                             placeholder="Enter the contact's email"
                             value={field.value}
                             onChange={field.onChange}
-                            disabled={isLoading || isPendingSet}
+                            disabled={
+                              isLoading || isPendingSet || isPendingDelete
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -204,7 +216,9 @@ export function EmergencyContactsForm({ userId }: Props) {
                             type="hidden"
                             value={field.value}
                             onChange={field.onChange}
-                            disabled={isLoading || isPendingSet}
+                            disabled={
+                              isLoading || isPendingSet || isPendingDelete
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -216,7 +230,7 @@ export function EmergencyContactsForm({ userId }: Props) {
                     <Button
                       className="cursor-pointer"
                       type="button"
-                      disabled={isLoading || isPendingSet}
+                      disabled={isLoading || isPendingSet || isPendingDelete}
                       onClick={() => removeContact(index)}
                     >
                       Remove
@@ -229,7 +243,7 @@ export function EmergencyContactsForm({ userId }: Props) {
                 className="cursor-pointer"
                 type="button"
                 onClick={appendContact}
-                disabled={isLoading || isPendingSet}
+                disabled={isLoading || isPendingSet || isPendingDelete}
               >
                 Add Contact
               </Button>
@@ -238,7 +252,7 @@ export function EmergencyContactsForm({ userId }: Props) {
           <Button
             type="submit"
             className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            disabled={isLoading || isPendingSet}
+            disabled={isLoading || isPendingSet || isPendingDelete}
             aria-label="Next Step"
           >
             <CheckCheckIcon className="h-6 w-6" />

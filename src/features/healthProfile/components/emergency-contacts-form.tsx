@@ -21,9 +21,16 @@ import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { ArrowLeftIcon, ArrowRightIcon, CheckCheckIcon } from "lucide-react";
 
+import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 import { useEmergencyContactsForm } from "@/features/healthProfile/hooks/use-emergency-contacts-form";
 
-export function EmergencyContactsForm() {
+interface Props {
+  userId: string;
+}
+
+export function EmergencyContactsForm({ userId }: Props) {
+  const { step, totalSteps, prevStep } = useStepperContext();
+
   const {
     form,
     fields,
@@ -31,16 +38,19 @@ export function EmergencyContactsForm() {
     removeContact,
     onSubmit,
     contactsCount,
-  } = useEmergencyContactsForm();
+    isLoading,
+    isPendingSet,
+  } = useEmergencyContactsForm({ patientId: userId });
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative flex items-center gap-4">
           <Button
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            // onClick={previousStep}
-            // disabled={step === 1}
+            type="button"
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            onClick={prevStep}
+            disabled={step === 1 || isLoading || isPendingSet}
             aria-label="Previous Step"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -55,7 +65,7 @@ export function EmergencyContactsForm() {
                 >
                   <FormField
                     control={form.control}
-                    name={`contacts.${index}.id`}
+                    name={`contacts.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Name</FormLabel>
@@ -65,6 +75,7 @@ export function EmergencyContactsForm() {
                             placeholder="Enter the contact's name"
                             value={field.value}
                             onChange={field.onChange}
+                            disabled={isLoading || isPendingSet}
                           />
                         </FormControl>
                         <FormMessage />
@@ -82,6 +93,7 @@ export function EmergencyContactsForm() {
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
+                            disabled={isLoading || isPendingSet}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select relationship" />
@@ -113,6 +125,7 @@ export function EmergencyContactsForm() {
                               placeholder="Enter the contact's home phone number"
                               value={field.value}
                               onChange={field.onChange}
+                              disabled={isLoading || isPendingSet}
                             />
                           </FormControl>
                           <FormMessage />
@@ -132,6 +145,7 @@ export function EmergencyContactsForm() {
                               placeholder="Enter the contact's celular phone number"
                               value={field.value}
                               onChange={field.onChange}
+                              disabled={isLoading || isPendingSet}
                             />
                           </FormControl>
                           <FormMessage />
@@ -151,6 +165,7 @@ export function EmergencyContactsForm() {
                               placeholder="Enter the contact's work phone number"
                               value={field.value}
                               onChange={field.onChange}
+                              disabled={isLoading || isPendingSet}
                             />
                           </FormControl>
                           <FormMessage />
@@ -171,6 +186,25 @@ export function EmergencyContactsForm() {
                             placeholder="Enter the contact's email"
                             value={field.value}
                             onChange={field.onChange}
+                            disabled={isLoading || isPendingSet}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name={`contacts.${index}.id`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="hidden"
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading || isPendingSet}
                           />
                         </FormControl>
                         <FormMessage />
@@ -182,6 +216,7 @@ export function EmergencyContactsForm() {
                     <Button
                       className="cursor-pointer"
                       type="button"
+                      disabled={isLoading || isPendingSet}
                       onClick={() => removeContact(index)}
                     >
                       Remove
@@ -194,15 +229,16 @@ export function EmergencyContactsForm() {
                 className="cursor-pointer"
                 type="button"
                 onClick={appendContact}
+                disabled={isLoading || isPendingSet}
               >
                 Add Contact
               </Button>
             </div>
           </ScrollArea>
           <Button
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            // onClick={nextStep}
-            // disabled={step === steps.length}
+            type="submit"
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            disabled={isLoading || isPendingSet}
             aria-label="Next Step"
           >
             <CheckCheckIcon className="h-6 w-6" />

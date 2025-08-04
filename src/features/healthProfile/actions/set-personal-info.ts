@@ -23,8 +23,6 @@ export type SetPersonalInfoErrorCode =
 export const setPersonalInfo = async (
   variables: PersonalInfoVariables,
 ): Promise<ActionResponse<null, SetPersonalInfoErrorCode>> => {
-  //check if user is authenticated
-
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -38,8 +36,6 @@ export const setPersonalInfo = async (
       },
     };
   }
-
-  //parse values
 
   const parsedVariables = personalInfoSchema.safeParse(variables);
 

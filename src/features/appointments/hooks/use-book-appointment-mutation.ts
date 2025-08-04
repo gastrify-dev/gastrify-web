@@ -2,17 +2,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
+import {
+  optimisticAdd,
+  optimisticSet,
+  rollback,
+} from "@/shared/utils/optimistic-helpers";
+
 import { bookAppointment } from "@/features/appointments/actions/book-appointment";
 import type {
   Appointment,
   BookAppointmentVariables,
   CalendarEvent,
 } from "@/features/appointments/types";
-import {
-  optimisticAdd,
-  optimisticSet,
-  rollback,
-} from "@/features/appointments/utils/optimistic-helpers";
 
 export const useBookAppointmentMutation = () => {
   const queryClient = useQueryClient();
@@ -105,6 +106,10 @@ export const useBookAppointmentMutation = () => {
 
       queryClient.invalidateQueries({
         queryKey: ["appointment", "list", "calendar"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["notification", "list"],
       });
     },
   });

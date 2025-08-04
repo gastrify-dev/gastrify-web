@@ -18,10 +18,9 @@ type ErrorCode =
   | "NOT_FOUND"
   | "INTERNAL_SERVER_ERROR";
 
-type CreatedAppointment = Omit<
-  Appointment,
-  "createdAt" | "patientId" | "meetingLink" | "location"
-> & { patientIdentificationNumber: string | null };
+type CreatedAppointment = Omit<Appointment, "createdAt" | "patientId"> & {
+  patientIdentificationNumber: string | null;
+};
 
 export async function getAppointment(
   id: string,
@@ -55,6 +54,8 @@ export async function getAppointment(
         status: appointment.status,
         type: appointment.type,
         patientIdentificationNumber: user.identificationNumber,
+        meetingLink: appointment.meetingLink,
+        location: appointment.location,
       })
       .from(appointment)
       .leftJoin(user, eq(appointment.patientId, user.id))

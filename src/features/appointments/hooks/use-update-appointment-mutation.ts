@@ -4,6 +4,11 @@ import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
 import type { ActionError } from "@/shared/types";
+import {
+  optimisticAdd,
+  optimisticRemove,
+  optimisticUpdate,
+} from "@/shared/utils/optimistic-helpers";
 
 import {
   updateAppointment,
@@ -14,11 +19,6 @@ import type {
   CalendarEvent,
   IncomingAppointment,
 } from "@/features/appointments/types";
-import {
-  optimisticAdd,
-  optimisticRemove,
-  optimisticUpdate,
-} from "@/features/appointments/utils/optimistic-helpers";
 
 interface Props {
   form: UseFormReturn<UpdateAppointmentVariables>;

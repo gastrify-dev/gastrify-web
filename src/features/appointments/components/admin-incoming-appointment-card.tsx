@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   formatDuration,
   intervalToDuration,
@@ -45,7 +46,7 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
           )
         </CardTitle>
 
-        <CardDescription className="flex flex-col gap-6">
+        <CardDescription className="flex items-center gap-42">
           <div className="flex flex-col">
             <TypographyP className="!mt-2 leading-normal">
               <span className="font-bold">{t("start")}:</span>{" "}
@@ -66,6 +67,28 @@ export function AdminIncomingAppointmentCard({ incomingAppointment }: Props) {
                 }),
               )}
             </TypographyP>
+
+            {incomingAppointment.appointment.location && (
+              <TypographyP className="!m-0 leading-normal">
+                <span className="font-bold">{t("location-label")}</span>{" "}
+                {incomingAppointment.appointment.location}
+              </TypographyP>
+            )}
+
+            {incomingAppointment.appointment.meetingLink && (
+              <TypographyP className="!m-0 leading-normal">
+                <span className="font-bold">{t("meeting-link-label")}</span>{" "}
+                <br />
+                <Link
+                  href={incomingAppointment.appointment.meetingLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all"
+                >
+                  {incomingAppointment.appointment.meetingLink}
+                </Link>
+              </TypographyP>
+            )}
           </div>
 
           <div className="flex flex-col">

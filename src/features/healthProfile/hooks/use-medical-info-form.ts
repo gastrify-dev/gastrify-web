@@ -10,21 +10,22 @@ import type { MedicalInfoVariables } from "@/features/healthProfile/types";
 import { useStepperContext } from "../context/stepper-context";
 import { getMedicalInfo } from "../actions/get-medical-info";
 
-export const useMedicalInfoForm = () => {
+interface Props {
+  patientId: string;
+}
+
+export const useMedicalInfoForm = ({ patientId }: Props) => {
   const { nextStep } = useStepperContext();
 
-  const { data: session } = useSession();
-
-  const { data: medicalInfoData, isLoading } = useQuery({
-    enabled: !!session?.user.id,
+  const { data, isLoading } = useQuery({
+    queryKey: ["profile", "medicalInfo", "detail", patientId],
     queryFn: async () => {
-      const { data, error } = await getMedicalInfo(session!.user.id);
+      const { data, error } = await getMedicalInfo(patientId);
 
       if (error) return Promise.reject(error);
 
       return data;
     },
-    queryKey: ["medicalInfo", "details"],
   });
 
   const form = useForm<MedicalInfoVariables>({
@@ -43,10 +44,10 @@ export const useMedicalInfoForm = () => {
       hasHealthInsurance: false,
       healthInsuranceProvider: "",
     },
-    values: medicalInfoData,
+    values: data,
   });
 
-  const { mutate, isPending } = useMedicalInfoMutation();
+  const { mutate, isPending } = useMedicalInfoMutation({ patientId });
 
   const { isDirty } = form.formState;
 

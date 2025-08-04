@@ -5,7 +5,11 @@ import type { MedicalInfoVariables } from "@/features/healthProfile/types";
 import { toast } from "sonner";
 import { setMedicalInfo } from "../actions/set-medical-info";
 
-export const useMedicalInfoMutation = () => {
+interface Props {
+  patientId: string;
+}
+
+export const useMedicalInfoMutation = ({ patientId }: Props) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -15,7 +19,7 @@ export const useMedicalInfoMutation = () => {
       if (error) return Promise.reject(error);
     },
     onSuccess: () => {
-      toast.success("Medical information form was submitted succesfully", {
+      toast.success("Medical information was submitted succesfully", {
         duration: 10_000,
       });
     },
@@ -26,6 +30,10 @@ export const useMedicalInfoMutation = () => {
         duration: 10_000,
       });
     },
-    onSettled: () => {},
+    onSettled: () => {
+      queryClient.cancelQueries({
+        queryKey: ["profile", "medicalInfo", "detail", patientId],
+      });
+    },
   });
 };

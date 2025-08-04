@@ -35,9 +35,10 @@
       "meta-title": "Gastrify | Inicio",
       "meta-description": "Bienvenido a Gastrify"
     },
-    "notifications-page": {
+    "notifications-layout": {
       "meta-title": "Gastrify | Notificaciones",
-      "meta-description": "Gestiona tus notificaciones"
+      "meta-description": "Gestiona tus notificaciones",
+      "title": "Notificaciones"
     },
     "settings-layout": {
       "meta-title": "Gastrify | Configuración",
@@ -70,7 +71,9 @@
         "patient": "Paciente",
         "patient-identification-number": "Número de cédula",
         "patient-email": "Correo electrónico",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "location-label": "Ubicación:",
+        "meeting-link-label": "Enlace de la reunión:"
       },
       "admin-incoming-appointments": {
         "error-message": "Error al obtener las citas entrantes 😢",
@@ -332,6 +335,26 @@
       "use-two-factor-mutation": {
         "error-invalid-one-time-password-message": "Código de verificación inválido",
         "error-toast": "Algo salió mal al verificar el código de verificación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      }
+    },
+    "notifications": {
+      "notifications-sidebar": {
+        "error-message": "Error cargando notificaciones 😢",
+        "refetch-button": "Reintentar",
+        "empty-message": "Aún no tienes notificaciones 😢"
+      },
+      "notification": {
+        "error-message": "Error cargando notificación 😢",
+        "refetch-button": "Reintentar",
+        "delete-button": "Eliminar"
+      },
+      "use-delete-notification-mutation": {
+        "error-toast": "Algo salió mal al eliminar la notificación 😢",
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      },
+      "use-update-notification-mutation": {
+        "error-toast": "Algo salió mal al actualizar la notificación 😢",
         "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
       }
     },

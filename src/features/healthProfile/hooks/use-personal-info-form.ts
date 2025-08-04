@@ -11,24 +11,21 @@ import { useStepperContext } from "../context/stepper-context";
 import { getPersonalInfo } from "../actions/get-personal-info";
 
 interface Props {
-  patiendId: string;
+  patientId: string;
 }
 
-export const usePersonalInfoForm = () => {
+export const usePersonalInfoForm = ({ patientId }: Props) => {
   const { nextStep } = useStepperContext();
 
-  const { data: session } = useSession();
-
-  const { data: personalInfoData, isLoading } = useQuery({
-    enabled: !!session?.user.id,
+  const { data, isLoading } = useQuery({
+    queryKey: ["profile", "personalInfo", "detail", patientId],
     queryFn: async () => {
-      const { data, error } = await getPersonalInfo(session!.user.id);
+      const { data, error } = await getPersonalInfo(patientId);
 
       if (error) return Promise.reject(error);
 
       return data;
     },
-    queryKey: ["personalInfo", "details"],
   });
 
   const form = useForm<PersonalInfoVariables>({
@@ -37,7 +34,7 @@ export const usePersonalInfoForm = () => {
       age: 0,
       profession: "",
       occupation: "",
-      maritalStatus: "single",
+      maritalStatus: "married",
       hasChildren: false,
       numMale: 0,
       numFemale: 0,
@@ -49,10 +46,10 @@ export const usePersonalInfoForm = () => {
       celularPhoneNumber: "",
       workPhoneNumber: "",
     },
-    values: personalInfoData,
+    values: data,
   });
 
-  const { mutate, isPending } = usePersonalInfoMutation();
+  const { mutate, isPending } = usePersonalInfoMutation({ patientId });
 
   const { isDirty } = form.formState;
 

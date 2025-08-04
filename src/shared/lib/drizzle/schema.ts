@@ -187,16 +187,16 @@ export const relationshipEnum = pgEnum("relationship", [
   "other",
 ]);
 
-export const emergencyContact = pgTable("emergency_contact", {
+export const emergencyContacts = pgTable("emergency_contact", {
   id: text("id").primaryKey(),
   patientId: text("patient_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   relationship: relationshipEnum("relationship").notNull(),
-  homePhoneNumber: text("home_phone_number"),
+  homePhoneNumber: text("home_phone_number").notNull(),
   celularPhoneNumber: text("celular_phone_number").notNull(),
-  workPhoneNumber: text("work_phone_number"),
+  workPhoneNumber: text("work_phone_number").notNull(),
   email: text("email").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())

@@ -2,15 +2,21 @@
 
 import { headers } from "next/headers";
 import { eq } from "drizzle-orm";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 import { auth } from "@/shared/lib/better-auth/server";
 import { db } from "@/shared/lib/drizzle/server";
 import { appointment } from "@/shared/lib/drizzle/schema";
 import type { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
+import { resend } from "@/shared/lib/resend/server";
+import AppointmentEmail from "@/shared/lib/react-email/appointment-email";
 
+import { deleteMeeting } from "@/features/appointments/actions/delete-meeting";
 import { cancelAppointmentSchema } from "@/features/appointments/schemas/cancel-appointment";
 import type { CancelAppointmentVariables } from "@/features/appointments/types";
+import { createNotification } from "@/features/notifications/actions/create-notification";
 
 export type CancelAppointmentErrorCode =
   | "UNAUTHORIZED"
@@ -95,7 +101,21 @@ export const cancelAppointment = async (
     };
   }
 
-  //cancel the appointment
+  const appointmentData = existingAppointment[0];
+
+  if (appointmentData.meetingLink) {
+    const meetingId = (
+      appointmentData.meetingLink.split("/").pop() as string
+    ).split("?")[0];
+
+    const { error: deleteMeetingError } = await deleteMeeting({
+      meetingId,
+    });
+
+    if (deleteMeetingError) {
+      console.error("Error deleting meeting", deleteMeetingError);
+    }
+  }
 
   const { error: cancelAppointmentDbError } = await tryCatch(
     db
@@ -112,7 +132,6 @@ export const cancelAppointment = async (
 
   if (cancelAppointmentDbError) {
     console.error(cancelAppointmentDbError);
-
     return {
       data: null,
       error: {
@@ -121,6 +140,46 @@ export const cancelAppointment = async (
       },
     };
   }
+
+  // create in-app notification
+
+  const formattedDate = format(appointmentData.start, "PPPPp", { locale: es });
+
+  await createNotification({
+    userId: session.user.id,
+    title: "Cita",
+    preview: "Tu cita ha sido cancelada",
+    content: `La cita para el día ${formattedDate} ha sido cancelada exitosamente. Tipo: ${
+      appointmentData.type === "virtual" ? "Virtual" : "Presencial"
+    }.`,
+  });
+
+  const appointmentDate = appointmentData.start.toLocaleString("es-ES", {
+    timeZone: "America/Guayaquil",
+  });
+  const { error: emailError } = await tryCatch(
+    resend.emails.send({
+      from: "Gastrify <mail@gastrify.aragundy.com>",
+      to: [session.user.email],
+      subject: "Cita cancelada",
+      react: AppointmentEmail({
+        patientName: session.user.name,
+        patientEmail: session.user.email,
+        appointmentDate,
+        appointmentType: appointmentData.type!,
+        appointmentLocation:
+          appointmentData.type === "in-person"
+            ? (appointmentData.location ?? undefined)
+            : undefined,
+        appointmentUrl:
+          appointmentData.type === "virtual"
+            ? (appointmentData.meetingLink ?? undefined)
+            : undefined,
+        action: "canceled",
+      }),
+    }),
+  );
+  if (emailError) console.error(emailError);
 
   return {
     data: null,

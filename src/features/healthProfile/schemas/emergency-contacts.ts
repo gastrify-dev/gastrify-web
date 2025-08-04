@@ -15,8 +15,7 @@ export const emergencyContacts = z.object({
         .trim()
         .regex(/(^\d{9}$)|(^$)/, {
           error: "Home phone number must contain only numbers",
-        })
-        .optional(),
+        }),
       celularPhoneNumber: z
         .string()
         .trim()
@@ -32,10 +31,9 @@ export const emergencyContacts = z.object({
         .length(10, {
           error: "Work phone number must be 10 characters long",
         })
-        .regex(/^\d{10}$/, {
+        .regex(/^\d{10}|$|(^$)/, {
           error: "Work phone number must contain only numbers",
-        })
-        .optional(),
+        }),
       email: z.email({
         error: "Email must be a valid address",
       }),

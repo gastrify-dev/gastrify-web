@@ -5,10 +5,14 @@ import {
   SettingsIcon,
   CalendarIcon,
   BellIcon,
+  UserRoundCogIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { useSession } from "@/shared/hooks/use-session";
+
+import { NotificationBadge } from "@/features/notifications/components/notification-badge";
+import { useNotifications } from "@/features/notifications/hooks/use-notifications";
 
 export const useAppSidebar = () => {
   const t = useTranslations("shared.app-sidebar");
@@ -22,8 +26,13 @@ export const useAppSidebar = () => {
     isRefetching: isSessionRefetching,
   } = useSession();
 
-  const links = useMemo(
-    () => [
+  const { data: notifications } = useNotifications();
+
+  const unreadNotificationsCount =
+    notifications?.filter((notification) => !notification.read).length ?? 0;
+
+  const links = useMemo(() => {
+    const baseLinks = [
       { href: "/home", label: t("home"), icon: <HomeIcon /> },
       {
         href: "/appointments",
@@ -33,7 +42,12 @@ export const useAppSidebar = () => {
       {
         href: "/notifications",
         label: t("notifications"),
-        icon: <BellIcon />,
+        icon: (
+          <span className="relative">
+            <BellIcon />
+            <NotificationBadge count={unreadNotificationsCount} />
+          </span>
+        ),
       },
       {
         href: `/${session?.user.identificationNumber}`,
@@ -45,9 +59,23 @@ export const useAppSidebar = () => {
         label: t("settings"),
         icon: <SettingsIcon />,
       },
-    ],
-    [session?.user.identificationNumber, t],
-  );
+    ];
+
+    if (session?.user.role === "admin") {
+      baseLinks.splice(-1, 0, {
+        href: "/admin",
+        label: "Admin",
+        icon: <UserRoundCogIcon />,
+      });
+    }
+
+    return baseLinks;
+  }, [
+    session?.user.identificationNumber,
+    session?.user.role,
+    t,
+    unreadNotificationsCount,
+  ]);
 
   return {
     links,

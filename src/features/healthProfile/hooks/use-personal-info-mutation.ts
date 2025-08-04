@@ -5,7 +5,11 @@ import type { PersonalInfoVariables } from "@/features/healthProfile/types";
 import { setPersonalInfo } from "../actions/set-personal-info";
 import { toast } from "sonner";
 
-export const usePersonalInfoMutation = () => {
+interface Props {
+  patientId: string;
+}
+
+export const usePersonalInfoMutation = ({ patientId }: Props) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -25,7 +29,9 @@ export const usePersonalInfoMutation = () => {
       });
     },
     onSettled: () => {
-      queryClient.cancelQueries({ queryKey: ["personalInfo", "details"] });
+      queryClient.cancelQueries({
+        queryKey: ["profile", "personalInfo", "detail", patientId],
+      });
     },
   });
 };

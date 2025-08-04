@@ -1,10 +1,11 @@
 "use client";
 
-import { LoaderIcon, RotateCcwIcon } from "lucide-react";
+import { LoaderIcon, RotateCcwIcon, StethoscopeIcon } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
 import { NavLink } from "@/shared/components/nav-link";
 import { NavUser } from "@/shared/components/nav-user";
+import { TypographyLarge } from "@/shared/components/ui/typography";
 import { NavUserSkeleton } from "@/shared/components/nav-user-skeleton";
 import { useAppSidebar } from "@/shared/hooks/use-app-sidebar";
 
@@ -22,9 +23,9 @@ export const AppSidebar = () => {
 
   return (
     <div className="flex flex-col items-center gap-4 md:items-stretch">
-      <div className="bg-accent flex aspect-square flex-wrap place-content-center self-start rounded-full p-2 text-4xl font-extrabold lg:text-5xl">
-        G
-      </div>
+      <TypographyLarge className="pl-2 text-center text-4xl font-extrabold">
+        <StethoscopeIcon className="size-10" />
+      </TypographyLarge>
 
       <nav className="flex flex-col items-start gap-2 md:items-stretch">
         {links.map((link) => (

@@ -27,9 +27,13 @@ import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { usePersonalInfoForm } from "@/features/healthProfile/hooks/use-personal-info-form";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 
-export function PersonalInfoForm() {
+interface Props {
+  userId: string;
+}
+
+export function PersonalInfoForm({ userId }: Props) {
   const { form, onSubmit, hasChildren, isLoading, isPending } =
-    usePersonalInfoForm();
+    usePersonalInfoForm({ patientId: userId });
 
   const { step, prevStep, totalSteps } = useStepperContext();
 
@@ -38,9 +42,9 @@ export function PersonalInfoForm() {
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="relative flex items-center gap-4">
           <Button
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
             onClick={prevStep}
-            disabled={step === 1}
+            disabled={step === 1 || isLoading || isPending}
             aria-label="Previous Step"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -81,8 +85,8 @@ export function PersonalInfoForm() {
                   <FormItem>
                     <FormLabel>Marital State</FormLabel>
                     <Select
-                      value={field.value}
                       onValueChange={field.onChange}
+                      value={field.value}
                       disabled={isLoading || isPending}
                     >
                       <FormControl>
@@ -383,8 +387,8 @@ export function PersonalInfoForm() {
           </ScrollArea>
           <Button
             type="submit"
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            disabled={step === totalSteps}
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            disabled={step === totalSteps || isLoading || isPending}
             aria-label="Next Step"
           >
             <ArrowRightIcon className="h-6 w-6" />

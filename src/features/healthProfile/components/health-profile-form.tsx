@@ -14,6 +14,10 @@ import { EmergencyContactsForm } from "./emergency-contacts-form";
 import { usePersonalInfoForm } from "../hooks/use-personal-info-form";
 import { useStepperContext } from "../context/stepper-context";
 
+interface Props {
+  userId: string;
+}
+
 const steps: StepItem[] = [
   {
     step: 1,
@@ -32,22 +36,8 @@ const steps: StepItem[] = [
   },
 ];
 
-export function HealthProfileForm() {
+export function HealthProfileForm({ userId }: Props) {
   const { step, setStep } = useStepperContext();
-
-  const handleStepChange = (newStep: number) => {
-    setStep(newStep);
-  };
-
-  function nextStep() {
-    let newStep = Math.min(step + 1, steps.length);
-    setStep(newStep);
-  }
-
-  function previousStep() {
-    let newStep = Math.max(step - 1, 1);
-    setStep(newStep);
-  }
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 p-6">
@@ -58,29 +48,11 @@ export function HealthProfileForm() {
       />
 
       <div className="relative flex items-center gap-4">
-        {/* <Button
-          className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-          onClick={previousStep}
-          disabled={step === 1}
-          aria-label="Previous Step"
-        >
-          <ArrowLeftIcon className="h-6 w-6" />
-        </Button> */}
-
         <div className="flex-1">
-          {step === 1 && <PersonalInfoForm />}
-          {step === 2 && <MedicalInfoForm />}
-          {step === 3 && <EmergencyContactsForm />}
+          {step === 1 && <PersonalInfoForm userId={userId} />}
+          {step === 2 && <MedicalInfoForm userId={userId} />}
+          {step === 3 && <EmergencyContactsForm userId={userId} />}
         </div>
-
-        {/* <Button
-          className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-          onClick={nextStep}
-          disabled={step === steps.length}
-          aria-label="Next Step"
-        >
-          <ArrowRightIcon className="h-6 w-6" />
-        </Button> */}
       </div>
     </div>
   );

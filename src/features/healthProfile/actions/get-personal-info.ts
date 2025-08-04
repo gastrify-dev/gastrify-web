@@ -31,7 +31,7 @@ export const getPersonalInfo = async (
       data: null,
       error: {
         code: "UNAUTHORIZED",
-        message: "You must be logged in to get an appointment",
+        message: "You must be logged in to get personal information",
       },
     };
   }

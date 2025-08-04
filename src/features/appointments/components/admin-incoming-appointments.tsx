@@ -37,7 +37,7 @@ export function AdminIncomingAppointments() {
     );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       {data?.map((incomingAppointment) => (
         <AdminIncomingAppointmentCard
           key={incomingAppointment.appointment.id}

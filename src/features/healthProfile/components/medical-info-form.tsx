@@ -18,8 +18,12 @@ import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { useMedicalInfoForm } from "@/features/healthProfile/hooks/use-medical-info-form";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 
-export function MedicalInfoForm() {
-  const { step, totalSteps } = useStepperContext();
+interface Props {
+  userId: string;
+}
+
+export function MedicalInfoForm({ userId }: Props) {
+  const { step, totalSteps, prevStep } = useStepperContext();
 
   const {
     form,
@@ -27,7 +31,9 @@ export function MedicalInfoForm() {
     hasAllergies,
     hasChronicIllness,
     hasHealthInsurance,
-  } = useMedicalInfoForm();
+    isLoading,
+    isPending,
+  } = useMedicalInfoForm({ patientId: userId });
 
   return (
     <Form {...form}>
@@ -35,9 +41,9 @@ export function MedicalInfoForm() {
         <div className="relative flex items-center gap-4">
           <Button
             type="button"
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            // onClick={previousStep} Preguntar sobre cache
-            disabled={step === 1}
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            onClick={prevStep}
+            disabled={step === 1 || isLoading || isPending}
             aria-label="Previous Step"
           >
             <ArrowLeftIcon className="h-6 w-6" />
@@ -55,7 +61,9 @@ export function MedicalInfoForm() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
+                          value={field.value || ""}
                           className="flex flex-col md:flex-row"
+                          disabled={isLoading || isPending}
                         >
                           <FormItem className="flex flex-row items-center gap-3">
                             <FormControl>
@@ -100,7 +108,9 @@ export function MedicalInfoForm() {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
+                          value={field.value || ""}
                           className="flex flex-col md:flex-row"
+                          disabled={isLoading || isPending}
                         >
                           <FormItem className="flex flex-row items-center gap-3">
                             <FormControl>
@@ -137,6 +147,7 @@ export function MedicalInfoForm() {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -157,6 +168,7 @@ export function MedicalInfoForm() {
                           placeholder="Describe your allergies..."
                           className="resize-none"
                           {...field}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormDescription>
@@ -176,7 +188,11 @@ export function MedicalInfoForm() {
                   <FormItem className="space-y-3">
                     <FormLabel>Religious Creed</FormLabel>
                     <FormControl>
-                      <RadioGroup onValueChange={field.onChange} className="">
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isLoading || isPending}
+                      >
                         <FormItem className="flex items-center gap-3">
                           <FormControl>
                             <RadioGroupItem value="evangelical christian" />
@@ -221,6 +237,7 @@ export function MedicalInfoForm() {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -243,6 +260,7 @@ export function MedicalInfoForm() {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -265,6 +283,7 @@ export function MedicalInfoForm() {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -287,6 +306,7 @@ export function MedicalInfoForm() {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -307,6 +327,7 @@ export function MedicalInfoForm() {
                           placeholder="Describe your allergies..."
                           className="resize-none"
                           {...field}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormDescription>
@@ -333,6 +354,7 @@ export function MedicalInfoForm() {
                         <Switch
                           checked={field.value}
                           onCheckedChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <p className="text-sm">Yes</p>
@@ -354,6 +376,7 @@ export function MedicalInfoForm() {
                           placeholder="Enter your health insurance provider"
                           value={field.value}
                           onChange={field.onChange}
+                          disabled={isLoading || isPending}
                         />
                       </FormControl>
                       <FormMessage />
@@ -365,8 +388,8 @@ export function MedicalInfoForm() {
           </ScrollArea>
           <Button
             type="submit"
-            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            disabled={step === totalSteps}
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            disabled={step === totalSteps || isLoading || isPending}
             aria-label="Next Step"
           >
             <ArrowRightIcon className="h-6 w-6" />

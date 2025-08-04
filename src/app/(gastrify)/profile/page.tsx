@@ -12,6 +12,8 @@ import { getUser } from "@/shared/actions/get-user";
 
 import { HealthProfileForm } from "@/features/healthProfile/components/health-profile-form";
 import { StepperProvider } from "@/features/healthProfile/context/stepper-context";
+import { redirect } from "next/navigation";
+import { isProfileCompleted } from "@/shared/actions/is-profile-completed";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app.profile-page");
@@ -23,12 +25,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ProfilePage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) return redirect("/sign-in");
+
   return (
     <div className="flex flex-col gap-6">
       <TypographyH1>Profile</TypographyH1>
 
       <StepperProvider totalSteps={3}>
-        <HealthProfileForm />
+        <HealthProfileForm userId={session.user.id} />
       </StepperProvider>
     </div>
   );

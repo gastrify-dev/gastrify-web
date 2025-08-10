@@ -20,12 +20,16 @@ export const useEmergencyContactsMutation = ({ patientId }: Props) => {
     },
     onSuccess: () => {
       toast.success("Emergency contacts was submitted succesfully", {
-        duration: 10_000,
+        duration: 5_000,
       });
     },
-    onError: () => {},
+    onError: () => {
+      toast.error("There was an error submitting emergency contacts", {
+        duration: 5_000,
+      });
+    },
     onSettled: () => {
-      queryClient.cancelQueries({
+      queryClient.invalidateQueries({
         queryKey: ["profile", "emergencyContacts", "detail", patientId],
       });
     },

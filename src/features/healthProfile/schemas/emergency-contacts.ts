@@ -1,6 +1,7 @@
 import { z } from "zod/v4";
 
 export const emergencyContacts = z.object({
+  patientId: z.string(),
   contacts: z.array(
     z.object({
       id: z.string(),

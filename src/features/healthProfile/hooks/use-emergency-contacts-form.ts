@@ -1,6 +1,8 @@
 "use client";
 
 import { useForm, useFieldArray } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +18,8 @@ interface Props {
 }
 
 export const useEmergencyContactsForm = ({ patientId }: Props) => {
+  const router = useRouter();
+
   const { data, isLoading } = useQuery({
     queryKey: ["profile", "emergencyContacts", "detail", patientId],
     queryFn: async () => {
@@ -25,11 +29,13 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
 
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const form = useForm<EmergencyContactsVariables>({
     resolver: zodResolver(emergencyContacts),
     defaultValues: {
+      patientId: patientId,
       contacts: [
         {
           id: "",
@@ -59,7 +65,15 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
   const { isDirty } = form.formState;
 
   const onSubmit = (variables: EmergencyContactsVariables) => {
-    if (isDirty) setMutate(variables, { onSuccess: () => console.log("YAY") });
+    if (isDirty)
+      setMutate(variables, { onSuccess: () => router.push("/profile") });
+    else
+      toast.info("No changes made", {
+        description: "There are no changes to submit",
+        duration: 3_000,
+        closeButton: true,
+        position: "top-center",
+      });
   };
 
   const appendContact = () => {
@@ -77,8 +91,32 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
   const removeContact = (index: number) => {
     const id = form.getValues(`contacts.${index}.id`);
 
-    if (id) deleteMutate(id, { onSuccess: () => remove(index) });
-    else remove(index);
+    if (id) {
+      const toastWarning = toast.warning(
+        "Are you sure you want to delete this contact?",
+        {
+          description: "This action cannot be undone.",
+          duration: 10_000,
+          closeButton: true,
+          position: "top-center",
+          action: {
+            label: "Confirm",
+            onClick: () => {
+              if (id) {
+                deleteMutate(id, {
+                  onSuccess: () => {
+                    remove(index);
+                    toast.dismiss(toastWarning);
+                  },
+                });
+              }
+            },
+          },
+        },
+      );
+    } else {
+      remove(index);
+    }
   };
 
   const contactsCount = fields.length;

@@ -131,7 +131,7 @@ export const personalInfo = pgTable("personal_info", {
   numFemale: integer("num_female").notNull().default(0),
   cSections: boolean("c_sections").notNull().default(false),
   abortions: boolean("abortions").notNull().default(false),
-  placeOfResidence: text("place_of_residence").notNull(),
+  homeAddress: text("home_address").notNull(),
   city: text("city").notNull(),
   homePhoneNumber: text("home_phone_number").notNull(),
   celularPhoneNumber: text("celular_phone_number").notNull(),

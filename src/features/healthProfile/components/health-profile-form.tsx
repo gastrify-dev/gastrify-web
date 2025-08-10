@@ -1,6 +1,6 @@
 "use client";
 
-import { HealthProfileFormStepper } from "@/features/healthProfile/components/health-profile-form-stepper";
+import { HealthProfileFormStepper } from "@/features/healthProfile/components/health-profile-stepper";
 import { StepItem } from "@/features/healthProfile/types";
 import { PersonalInfoForm } from "@/features/healthProfile/components/personal-info-form";
 import { MedicalInfoForm } from "@/features/healthProfile/components/medical-info-form";

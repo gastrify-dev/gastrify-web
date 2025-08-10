@@ -2,6 +2,7 @@ import { z } from "zod/v4";
 
 export const medicalInfo = z
   .object({
+    patientId: z.string(),
     bloodType: z.enum(["O", "A", "AB", "B"], {
       message: "BloodType is required",
     }),

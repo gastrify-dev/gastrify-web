@@ -27,11 +27,13 @@ export const useMedicalInfoForm = ({ patientId }: Props) => {
 
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const form = useForm<MedicalInfoVariables>({
     resolver: zodResolver(medicalInfo),
     defaultValues: {
+      patientId: patientId,
       bloodType: undefined,
       rhFactor: undefined,
       religion: undefined,

@@ -1,7 +1,6 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 
@@ -10,6 +9,7 @@ import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
 import type { PersonalInfoVariables } from "@/features/healthProfile/types";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 import { getPersonalInfo } from "@/features/healthProfile/actions/get-personal-info";
+import { useEffect } from "react";
 
 interface Props {
   patientId: string;
@@ -27,21 +27,23 @@ export const usePersonalInfoForm = ({ patientId }: Props) => {
 
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const form = useForm<PersonalInfoVariables>({
     resolver: zodResolver(personalInfo),
     defaultValues: {
+      patientId: patientId,
       age: 0,
       profession: "",
       occupation: "",
-      maritalStatus: "married",
+      maritalStatus: undefined,
       hasChildren: false,
       numMale: 0,
       numFemale: 0,
       cSections: false,
       abortions: false,
-      placeOfResidence: "",
+      homeAddress: "",
       city: "",
       homePhoneNumber: "",
       celularPhoneNumber: "",

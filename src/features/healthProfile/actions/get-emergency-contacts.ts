@@ -75,6 +75,7 @@ export const getEmergencyContacts = async (
 
   return {
     data: {
+      patientId,
       contacts: data,
     },
     error: null,

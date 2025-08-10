@@ -21,6 +21,7 @@ import { Switch } from "@/shared/components/ui/switch";
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { TypographyH2, TypographyH3 } from "@/shared/components/ui/typography";
 
 import { usePersonalInfoForm } from "@/features/healthProfile/hooks/use-personal-info-form";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
@@ -37,10 +38,10 @@ export function PersonalInfoForm({ userId }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="relative flex items-center gap-4">
           <Button
-            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            className="hidden h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg lg:flex"
             onClick={prevStep}
             disabled={step === 1 || isLoading || isPending}
             aria-label="Previous Step"
@@ -49,102 +50,20 @@ export function PersonalInfoForm({ userId }: Props) {
           </Button>
 
           <ScrollArea className="h-[550px] w-full rounded-md border p-6">
-            <div className="flex flex-col gap-6 p-1">
-              <FormField
-                control={form.control}
-                name="age"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Age</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Enter your age"
-                        value={field.value}
-                        onChange={(event) =>
-                          event.target.value
-                            ? field.onChange(Number(event.target.value))
-                            : field.onChange("")
-                        }
-                        min={0}
-                        max={120}
-                        disabled={isLoading || isPending}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="maritalStatus"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Marital State</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      disabled={isLoading || isPending}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="min-w-[150px]">
-                          <SelectValue placeholder="Select a marital state" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Marital State</SelectLabel>
-                          <SelectItem value="single">Single</SelectItem>
-                          <SelectItem value="married">Married</SelectItem>
-                          <SelectItem value="separated">Separated</SelectItem>
-                          <SelectItem value="divorced">Divorced</SelectItem>
-                          <SelectItem value="widowed">Widowed</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="hasChildren"
-                render={({ field }) => (
-                  <FormItem className="">
-                    <div className="">
-                      <FormLabel>Do you have any children?</FormLabel>
-                    </div>
-                    <div className="flex flex-row items-center gap-4">
-                      <p className="text-sm">No</p>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={(bool) => {
-                            field.onChange(bool);
-                          }}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <p className="text-sm">Yes</p>
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              {hasChildren && (
-                <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
+            <div className="space-y-8">
+              <TypographyH2>Personal Information</TypographyH2>
+              <div className="space-y-6 rounded-md border p-2 md:p-6">
+                <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
                   <FormField
                     control={form.control}
-                    name="numMale"
+                    name="age"
                     render={({ field }) => (
-                      <FormItem className="flex-1/2">
-                        <FormLabel>Number of sons</FormLabel>
+                      <FormItem>
+                        <FormLabel>Age</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
-                            placeholder="Enter number of sons"
+                            placeholder="Enter your age"
                             value={field.value}
                             onChange={(event) =>
                               event.target.value
@@ -152,6 +71,7 @@ export function PersonalInfoForm({ userId }: Props) {
                                 : field.onChange("")
                             }
                             min={0}
+                            max={120}
                             disabled={isLoading || isPending}
                           />
                         </FormControl>
@@ -159,23 +79,166 @@ export function PersonalInfoForm({ userId }: Props) {
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
-                    name="numFemale"
+                    name="maritalStatus"
                     render={({ field }) => (
-                      <FormItem className="flex-1/2">
-                        <FormLabel>Number of daughters</FormLabel>
+                      <FormItem>
+                        <FormLabel>Marital State</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={isLoading || isPending}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="min-w-[150px]">
+                              <SelectValue placeholder="Select a marital state" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Marital State</SelectLabel>
+                              <SelectItem value="single">Single</SelectItem>
+                              <SelectItem value="married">Married</SelectItem>
+                              <SelectItem value="separated">
+                                Separated
+                              </SelectItem>
+                              <SelectItem value="divorced">Divorced</SelectItem>
+                              <SelectItem value="widowed">Widowed</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="homeAddress"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Home Address</FormLabel>
                         <FormControl>
                           <Input
-                            type="number"
-                            placeholder="Enter number of daughters"
+                            type="text"
+                            placeholder="Enter your home address"
                             value={field.value}
-                            onChange={(event) =>
-                              event.target.value
-                                ? field.onChange(Number(event.target.value))
-                                : field.onChange("")
-                            }
-                            min={0}
+                            onChange={field.onChange}
+                            disabled={isLoading || isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>City</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Enter your city"
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading || isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="cSections"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Have you had any Cesarean Sections?
+                        </FormLabel>
+                        <div className="flex items-center gap-4">
+                          <p>No</p>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(bool) => {
+                                field.onChange(bool);
+                              }}
+                              disabled={isLoading || isPending}
+                            />
+                          </FormControl>
+                          <p>Yes</p>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="abortions"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Have you had any Abortions?</FormLabel>
+                        <div className="flex items-center gap-4">
+                          <p>No</p>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={(bool) => {
+                                field.onChange(bool);
+                              }}
+                              disabled={isLoading || isPending}
+                            />
+                          </FormControl>
+                          <p>Yes</p>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-6 rounded-md border p-2 md:p-6">
+                <TypographyH3>Professional Information</TypographyH3>
+                <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="profession"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Profession</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Enter your profession"
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading || isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="occupation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Occupation</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Enter your occupation"
+                            value={field.value}
+                            onChange={field.onChange}
                             disabled={isLoading || isPending}
                           />
                         </FormControl>
@@ -184,208 +247,191 @@ export function PersonalInfoForm({ userId }: Props) {
                     )}
                   />
                 </div>
-              )}
-
-              <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
-                <FormField
-                  control={form.control}
-                  name="profession"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/2">
-                      <FormLabel>Profession</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter your profession"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormDescription>What do you?</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="occupation"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/2">
-                      <FormLabel>Occupation</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter your occupation"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormDescription>Your work occupation</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </div>
 
-              <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
+              <div className="space-y-6 rounded-md border p-2 md:p-6">
+                <TypographyH3>Children Information</TypographyH3>
                 <FormField
                   control={form.control}
-                  name="cSections"
+                  name="hasChildren"
                   render={({ field }) => (
-                    <FormItem className="">
-                      <div className="">
-                        <FormLabel>
-                          Have you had any Cesarean Sections?
-                        </FormLabel>
-                      </div>
-                      <div className="flex flex-row items-center gap-4">
-                        <p className="text-sm">No</p>
+                    <FormItem>
+                      <FormLabel>Do you have any children?</FormLabel>
+                      <div className="flex items-center gap-4">
+                        <p>No</p>
                         <FormControl>
                           <Switch
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={(bool) => {
+                              field.onChange(bool);
+                            }}
                             disabled={isLoading || isPending}
                           />
                         </FormControl>
-                        <p className="text-sm">Yes</p>
+                        <p>Yes</p>
                       </div>
                     </FormItem>
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="abortions"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <div className="">
-                        <FormLabel>Have you had any abortions?</FormLabel>
-                      </div>
-                      <div className="flex flex-row items-center gap-4">
-                        <p className="text-sm">No</p>
+                {hasChildren && (
+                  <div className="flex flex-col items-start gap-4 lg:flex-row lg:gap-6">
+                    <FormField
+                      control={form.control}
+                      name="numMale"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Number of sons</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Enter number of sons"
+                              value={field.value}
+                              onChange={(event) =>
+                                event.target.value
+                                  ? field.onChange(Number(event.target.value))
+                                  : field.onChange("")
+                              }
+                              min={0}
+                              disabled={isLoading || isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="numFemale"
+                      render={({ field }) => (
+                        <FormItem className="flex-1">
+                          <FormLabel>Number of daughters</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Enter number of daughters"
+                              value={field.value}
+                              onChange={(event) =>
+                                event.target.value
+                                  ? field.onChange(Number(event.target.value))
+                                  : field.onChange("")
+                              }
+                              min={0}
+                              disabled={isLoading || isPending}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-6 rounded-md border p-2 md:p-6">
+                <TypographyH3>Contact Information</TypographyH3>
+                <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
+                  <FormField
+                    control={form.control}
+                    name="homePhoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Home phone number</FormLabel>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
+                          <Input
+                            type="text"
+                            placeholder="Enter your home phone number"
+                            value={field.value}
+                            onChange={field.onChange}
                             disabled={isLoading || isPending}
                           />
                         </FormControl>
-                        <p className="text-sm">Yes</p>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
-                <FormField
-                  control={form.control}
-                  name="placeOfResidence"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/2">
-                      <FormLabel>Place of residence</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter your place of residence"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/2">
-                      <FormLabel>City</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter the city you live in"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                  <FormField
+                    control={form.control}
+                    name="celularPhoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Celular phone number</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Enter your celular phone number"
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading || isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              <div className="flex flex-col items-start gap-4 lg:flex-row lg:gap-6">
-                <FormField
-                  control={form.control}
-                  name="homePhoneNumber"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/3">
-                      <FormLabel>Home phone number</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter your home phone number"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="celularPhoneNumber"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/3">
-                      <FormLabel>Celular phone number</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter your celular phone number"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="workPhoneNumber"
-                  render={({ field }) => (
-                    <FormItem className="flex-1/3">
-                      <FormLabel>Work phone number</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="text"
-                          placeholder="Enter your work phone number"
-                          value={field.value}
-                          onChange={field.onChange}
-                          disabled={isLoading || isPending}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  <FormField
+                    control={form.control}
+                    name="workPhoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Work phone number</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            placeholder="Enter your work phone number"
+                            value={field.value}
+                            onChange={field.onChange}
+                            disabled={isLoading || isPending}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </div>
+
+            <FormField
+              control={form.control}
+              name="patientId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="hidden" value={field.value || userId} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </ScrollArea>
+
           <Button
             type="submit"
-            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            className="hidden h-12 w-12 cursor-pointer items-center justify-center rounded-full p-0 shadow-lg lg:flex"
+            disabled={step === totalSteps || isLoading || isPending}
+            aria-label="Next Step"
+          >
+            <ArrowRightIcon className="h-6 w-6" />
+          </Button>
+        </div>
+
+        <div className="flex items-center justify-between lg:hidden">
+          <Button
+            type="button"
+            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg"
+            onClick={prevStep}
+            disabled={step === 1 || isLoading || isPending}
+            aria-label="Previous Step"
+          >
+            <ArrowLeftIcon className="h-6 w-6" />
+          </Button>
+
+          <Button
+            type="submit"
+            className="flex h-12 w-12 items-center justify-center rounded-full p-0 shadow-lg"
             disabled={step === totalSteps || isLoading || isPending}
             aria-label="Next Step"
           >

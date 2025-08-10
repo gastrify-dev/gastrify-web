@@ -1,8 +1,13 @@
+import { id } from "date-fns/locale";
 import { z } from "zod/v4";
 
 export const personalInfo = z
   .object({
-    age: z.number("Age is required").refine((data) => Number(data)),
+    patientId: z.string(),
+    age: z
+      .number("Age is required")
+      .int("Age must be an integer")
+      .positive("Age must be a positive number"),
     maritalStatus: z.enum(
       ["single", "married", "divorced", "widowed", "separated"],
       {
@@ -20,8 +25,8 @@ export const personalInfo = z
     numFemale: z.number("Number of female children is required"),
     cSections: z.boolean(),
     abortions: z.boolean(),
-    placeOfResidence: z.string().trim().min(1, {
-      message: "Place of residence is required",
+    homeAddress: z.string().trim().min(1, {
+      message: "Home address is required",
     }),
     city: z.string().trim().min(1, {
       message: "City is required",

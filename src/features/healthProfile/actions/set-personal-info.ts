@@ -6,12 +6,13 @@ import { generateId } from "better-auth";
 
 import { db } from "@/shared/lib/drizzle/server";
 import { auth } from "@/shared/lib/better-auth/server";
-import { personalInfo } from "@/shared/lib/drizzle/schema";
+import { personalInfo, user } from "@/shared/lib/drizzle/schema";
 import { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 
 import { personalInfo as personalInfoSchema } from "@/features/healthProfile/schemas/personal-info";
 import { PersonalInfoVariables } from "@/features/healthProfile/types";
+import { isAdmin } from "@/shared/utils/is-admin";
 
 export type SetPersonalInfoErrorCode =
   | "UNAUTHORIZED"
@@ -48,16 +49,57 @@ export const setPersonalInfo = async (
       },
     };
 
-  const { ...personalInfoData } = parsedVariables.data;
+  const data = parsedVariables.data;
 
-  //check if user alredy has a form
+  // Check if the user is authorized to set personal information for this patient
+
+  if (data.patientId !== session.user.id && !isAdmin(session.user)) {
+    return {
+      data: null,
+      error: {
+        code: "FORBIDDEN",
+        message:
+          "You are not authorized to set personal information for this patient",
+      },
+    };
+  }
+
+  // Check if the patient exists
+
+  const { data: patientData, error: patientError } = await tryCatch(
+    db.select().from(user).where(eq(user.id, data.patientId)).limit(1),
+  );
+
+  if (patientError) {
+    console.error(patientError);
+
+    return {
+      data: null,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error checking patient existence",
+      },
+    };
+  }
+
+  if (patientData.length === 0) {
+    return {
+      data: null,
+      error: {
+        code: "NOT_FOUND",
+        message: "Patient not found",
+      },
+    };
+  }
+
+  // Check if the patient already has personal information
 
   const { data: existingPersonalInfo, error: existingPersonalInfoError } =
     await tryCatch(
       db
         .select()
         .from(personalInfo)
-        .where(eq(personalInfo.patientId, session.user.id))
+        .where(eq(personalInfo.patientId, data.patientId))
         .limit(1),
     );
 
@@ -68,28 +110,32 @@ export const setPersonalInfo = async (
       data: null,
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "An unexpected error occurred",
+        message: "Error checking existing personal information",
       },
     };
   }
 
-  // if it does not exists create it
+  // If exists, update
 
-  if (!existingPersonalInfo || existingPersonalInfo.length === 0) {
-    const { error: dbInsertPersonalInfoError } = await tryCatch(
-      db.insert(personalInfo).values({
-        id: generateId(32),
-        patientId: session.user.id,
-        ...personalInfoData,
-      }),
+  if (existingPersonalInfo && existingPersonalInfo.length > 0) {
+    const { error } = await tryCatch(
+      db
+        .update(personalInfo)
+        .set({
+          ...data,
+          updatedAt: new Date(),
+        })
+        .where(eq(personalInfo.patientId, data.patientId)),
     );
 
-    if (dbInsertPersonalInfoError) {
+    if (error) {
+      console.error(error);
+
       return {
         data: null,
         error: {
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to insert personal information",
+          message: "Failed to update personal information",
         },
       };
     }
@@ -100,23 +146,23 @@ export const setPersonalInfo = async (
     };
   }
 
-  // if it exists update it
+  // If not exists, insert
 
-  const { error: dbUpdatePersonalInfoError } = await tryCatch(
-    db
-      .update(personalInfo)
-      .set(personalInfoData)
-      .where(eq(personalInfo.patientId, session.user.id)),
+  const { error } = await tryCatch(
+    db.insert(personalInfo).values({
+      ...data,
+      id: generateId(32),
+    }),
   );
 
-  if (dbUpdatePersonalInfoError) {
-    console.error(dbUpdatePersonalInfoError);
+  if (error) {
+    console.error(error);
 
     return {
       data: null,
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to update personal information",
+        message: "Failed to insert personal information",
       },
     };
   }

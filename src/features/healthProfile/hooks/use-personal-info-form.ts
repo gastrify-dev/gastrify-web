@@ -9,7 +9,6 @@ import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
 import type { PersonalInfoVariables } from "@/features/healthProfile/types";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
 import { getPersonalInfo } from "@/features/healthProfile/actions/get-personal-info";
-import { useEffect } from "react";
 
 interface Props {
   patientId: string;

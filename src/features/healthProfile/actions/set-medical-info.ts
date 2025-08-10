@@ -1,18 +1,18 @@
 "use server";
 
 import { headers } from "next/headers";
-import { eq } from "drizzle-orm";
 import { generateId } from "better-auth";
 
 import { db } from "@/shared/lib/drizzle/server";
 import { auth } from "@/shared/lib/better-auth/server";
-import { medicalInfo, user } from "@/shared/lib/drizzle/schema";
+import { medicalInfo } from "@/shared/lib/drizzle/schema";
 import { ActionResponse } from "@/shared/types";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { isAdmin } from "@/shared/utils/is-admin";
 
 import { medicalInfo as medicalInfoSchema } from "@/features/healthProfile/schemas/medical-info";
 import { MedicalInfoVariables } from "@/features/healthProfile/types";
+import { omitKeys } from "@/features/healthProfile/utils/omit-keys";
 
 export type SetMedicalInfoErrorCode =
   | "UNAUTHORIZED"
@@ -73,7 +73,7 @@ export const setMedicalInfo = async (
     patientId: targetPatientId,
   };
 
-  const { id: _ignoreId, patientId: _ignorePid, ...updatable } = basePayload;
+  const updatable = omitKeys(basePayload, ["id", "patientId"] as const);
 
   const { error } = await tryCatch(
     db

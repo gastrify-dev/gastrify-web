@@ -3,12 +3,11 @@ import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { TypographyH1 } from "@/shared/components/ui/typography";
 import { auth } from "@/shared/lib/better-auth/server";
+import { TypographyH1 } from "@/shared/components/ui/typography";
 
 import { HealthProfileForm } from "@/features/healthProfile/components/health-profile-form";
 import { StepperProvider } from "@/features/healthProfile/context/stepper-context";
-import PatientsTable from "@/features/healthProfile/components/patients-table";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("app.profile-page");

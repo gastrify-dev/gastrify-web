@@ -69,9 +69,8 @@ export const setMedicalInfo = async (
 
   const basePayload = {
     ...data,
-    patientId: targetPatientId,
     id: generateId(32),
-    updatedAt: new Date(),
+    patientId: targetPatientId,
   };
 
   const { id: _ignoreId, patientId: _ignorePid, ...updatable } = basePayload;
@@ -82,7 +81,7 @@ export const setMedicalInfo = async (
       .values(basePayload)
       .onConflictDoUpdate({
         target: medicalInfo.patientId,
-        set: { ...updatable },
+        set: { ...updatable, updatedAt: new Date() },
       })
       .returning({ patientId: medicalInfo.patientId }),
   );

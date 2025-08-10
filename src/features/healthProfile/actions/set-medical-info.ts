@@ -50,107 +50,41 @@ export const setMedicalInfo = async (
     };
 
   const data = parsedVariables.data;
+  const targetPatientId = isAdmin(session.user)
+    ? data.patientId
+    : session.user.id;
 
   // Check if the user is authorized to set medical information for this patient
 
-  if (data.patientId !== session.user.id && !isAdmin(session.user)) {
+  if (!isAdmin(session.user) && targetPatientId !== session.user.id) {
     return {
       data: null,
       error: {
         code: "FORBIDDEN",
         message:
-          "You are not authorized to set personal information for this patient",
+          "You are not authorized to set medical information for this patient",
       },
     };
   }
 
-  // Check if patient exists
+  const basePayload = {
+    ...data,
+    patientId: targetPatientId,
+    id: generateId(32),
+    updatedAt: new Date(),
+  };
 
-  const { data: patientData, error: patientError } = await tryCatch(
-    db.select().from(user).where(eq(user.id, data.patientId)).limit(1),
-  );
-
-  if (patientError) {
-    console.error(patientError);
-
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error checking patient existence",
-      },
-    };
-  }
-
-  if (patientData.length === 0) {
-    return {
-      data: null,
-      error: {
-        code: "NOT_FOUND",
-        message: "Patient not found",
-      },
-    };
-  }
-
-  // Check if the patient already has medical information
-
-  const { data: existingMedicalInfo, error: existingError } = await tryCatch(
-    db
-      .select()
-      .from(medicalInfo)
-      .where(eq(medicalInfo.patientId, data.patientId)),
-  );
-
-  if (existingError) {
-    console.error(existingError);
-
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error checking existing personal information",
-      },
-    };
-  }
-
-  // If exists, update
-
-  if (existingMedicalInfo && existingMedicalInfo.length > 0) {
-    const { error } = await tryCatch(
-      db
-        .update(medicalInfo)
-        .set({
-          ...data,
-          updatedAt: new Date(),
-        })
-        .where(eq(medicalInfo.patientId, data.patientId)),
-    );
-
-    if (error) {
-      console.error(error);
-
-      return {
-        data: null,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error updating medical information",
-        },
-      };
-    }
-
-    return {
-      data: null,
-      error: null,
-    };
-  }
-
-  // If not exists, insert
+  const { id: _ignoreId, patientId: _ignorePid, ...updatable } = basePayload;
 
   const { error } = await tryCatch(
-    db.insert(medicalInfo).values({
-      ...data,
-      id: generateId(),
-    }),
+    db
+      .insert(medicalInfo)
+      .values(basePayload)
+      .onConflictDoUpdate({
+        target: medicalInfo.patientId,
+        set: { ...updatable },
+      })
+      .returning({ patientId: medicalInfo.patientId }),
   );
 
   if (error) {
@@ -160,13 +94,10 @@ export const setMedicalInfo = async (
       data: null,
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to insert medical information",
+        message: "Error setting medical information",
       },
     };
   }
 
-  return {
-    data: null,
-    error: null,
-  };
+  return { data: null, error: null };
 };

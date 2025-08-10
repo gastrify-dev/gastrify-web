@@ -9,7 +9,10 @@ import { useMedicalInfoMutation } from "@/features/healthProfile/hooks/use-medic
 import { medicalInfo } from "@/features/healthProfile/schemas/medical-info";
 import type { MedicalInfoVariables } from "@/features/healthProfile/types";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
-import { getMedicalInfo } from "@/features/healthProfile/actions/get-medical-info";
+import {
+  getMedicalInfo,
+  GetMedicalInfoErrorCode,
+} from "@/features/healthProfile/actions/get-medical-info";
 
 interface Props {
   patientId: string;
@@ -28,6 +31,10 @@ export const useMedicalInfoForm = ({ patientId }: Props) => {
       return data;
     },
     refetchOnWindowFocus: false,
+    retry: (failureCount, error: { code?: string }) => {
+      if (error.code === "NOT_FOUND") return false;
+      return failureCount < 3;
+    },
   });
 
   const form = useForm<MedicalInfoVariables>({

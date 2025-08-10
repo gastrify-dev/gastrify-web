@@ -7,12 +7,14 @@ import { emergencyContacts } from "@/shared/lib/drizzle/schema";
 import { auth } from "@/shared/lib/better-auth/server";
 import { tryCatch } from "@/shared/utils/try-catch";
 import { db } from "@/shared/lib/drizzle/server";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { isAdmin } from "@/shared/utils/is-admin";
 
 type ErrorCode =
   | "UNAUTHORIZED"
   | "BAD_REQUEST"
   | "NOT_FOUND"
+  | "FORBIDDEN"
   | "INTERNAL_SERVER_ERROR";
 
 export const deleteEmergencyContact = async (
@@ -27,11 +29,17 @@ export const deleteEmergencyContact = async (
     };
   }
 
+  const where = isAdmin(session.user)
+    ? eq(emergencyContacts.id, emergencyContactId)
+    : and(
+        eq(emergencyContacts.id, emergencyContactId),
+        eq(emergencyContacts.patientId, session.user.id),
+      );
+
   const { data, error } = await tryCatch(
-    db
-      .delete(emergencyContacts)
-      .where(eq(emergencyContacts.id, emergencyContactId))
-      .returning(),
+    db.delete(emergencyContacts).where(where).returning({
+      id: emergencyContacts.id,
+    }),
   );
 
   if (error) {
@@ -51,7 +59,7 @@ export const deleteEmergencyContact = async (
       data: null,
       error: {
         code: "NOT_FOUND",
-        message: "Emergency contact not found or not deleted",
+        message: "Emergency contact not found",
       },
     };
   }

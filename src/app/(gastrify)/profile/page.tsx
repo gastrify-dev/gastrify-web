@@ -26,14 +26,7 @@ export default async function ProfilePage() {
 
   if (!session) return redirect("/sign-in");
 
-  if (session.user.role === "admin")
-    return (
-      <div className="flex flex-col gap-6">
-        <TypographyH1>Profile</TypographyH1>
-
-        <PatientsTable />
-      </div>
-    );
+  if (session.user.role === "admin") return redirect("/admin");
 
   return (
     <div className="flex flex-col gap-6">

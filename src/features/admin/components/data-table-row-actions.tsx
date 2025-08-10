@@ -7,6 +7,7 @@ import {
   MoreHorizontal,
   TrashIcon,
   UserRoundPenIcon,
+  BriefcaseMedical,
 } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
@@ -32,6 +33,7 @@ export function DataTableRowActions({
   pagination,
 }: DataTableRowActionsProps) {
   const {
+    isAdmin,
     isBanned,
     isDeleteUserPending,
     isUnbarUserPending,
@@ -40,6 +42,7 @@ export function DataTableRowActions({
     handleBanUser,
     handleUpdateUser,
     handleDeleteUser,
+    handleMedicalHistory,
   } = useDataTableRowActions({ user: row.original, pagination });
 
   return (
@@ -59,6 +62,12 @@ export function DataTableRowActions({
             <UserRoundPenIcon />
             Edit
           </DropdownMenuItem>
+          {!isAdmin && (
+            <DropdownMenuItem onSelect={handleMedicalHistory}>
+              <BriefcaseMedical />
+              Medical History
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             disabled={isUnbarUserPending}
             variant={isBanned ? "default" : "destructive"}

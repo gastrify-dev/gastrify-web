@@ -1,5 +1,6 @@
 import { PaginationState } from "@tanstack/react-table";
 import { useRef } from "react";
+import { useRouter } from "next/navigation";
 
 import type { User } from "@/shared/types";
 
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export const useDataTableRowActions = ({ user, pagination }: Props) => {
+  const router = useRouter();
+
   const isBanned =
     user.banned && (user.banExpires === null || user.banExpires > new Date());
 
@@ -44,7 +47,14 @@ export const useDataTableRowActions = ({ user, pagination }: Props) => {
     });
   };
 
+  const handleMedicalHistory = () => {
+    router.push(`/profile/${user.identificationNumber}`);
+  };
+
+  const isAdmin = user.role === "admin";
+
   return {
+    isAdmin,
     isBanned,
     isDeleteUserPending,
     isUnbarUserPending,
@@ -53,5 +63,6 @@ export const useDataTableRowActions = ({ user, pagination }: Props) => {
     handleBanUser,
     handleUpdateUser,
     handleDeleteUser,
+    handleMedicalHistory,
   };
 };

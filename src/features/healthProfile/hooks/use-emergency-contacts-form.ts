@@ -30,6 +30,10 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
       return data;
     },
     refetchOnWindowFocus: false,
+    retry: (failureCount, error: { code?: string }) => {
+      if (error.code === "NOT_FOUND") return false;
+      return failureCount < 3;
+    },
   });
 
   const form = useForm<EmergencyContactsVariables>({
@@ -65,8 +69,7 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
   const { isDirty } = form.formState;
 
   const onSubmit = (variables: EmergencyContactsVariables) => {
-    if (isDirty)
-      setMutate(variables, { onSuccess: () => router.push("/profile") });
+    if (isDirty) setMutate(variables, { onSuccess: () => router.refresh() });
     else
       toast.info("No changes made", {
         description: "There are no changes to submit",

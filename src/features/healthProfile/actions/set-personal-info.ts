@@ -50,10 +50,11 @@ export const setPersonalInfo = async (
     };
 
   const data = parsedVariables.data;
+  const targetPatientId = isAdmin(session.user)
+    ? data.patientId
+    : session.user.id;
 
-  // Check if the user is authorized to set personal information for this patient
-
-  if (data.patientId !== session.user.id && !isAdmin(session.user)) {
+  if (!isAdmin(session.user) && targetPatientId !== session.user.id) {
     return {
       data: null,
       error: {
@@ -64,95 +65,23 @@ export const setPersonalInfo = async (
     };
   }
 
-  // Check if the patient exists
+  const basePayload = {
+    ...data,
+    id: generateId(32),
+    userId: targetPatientId,
+    updatedAt: new Date(),
+  };
 
-  const { data: patientData, error: patientError } = await tryCatch(
-    db.select().from(user).where(eq(user.id, data.patientId)).limit(1),
-  );
-
-  if (patientError) {
-    console.error(patientError);
-
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error checking patient existence",
-      },
-    };
-  }
-
-  if (patientData.length === 0) {
-    return {
-      data: null,
-      error: {
-        code: "NOT_FOUND",
-        message: "Patient not found",
-      },
-    };
-  }
-
-  // Check if the patient already has personal information
-
-  const { data: existingPersonalInfo, error: existingPersonalInfoError } =
-    await tryCatch(
-      db
-        .select()
-        .from(personalInfo)
-        .where(eq(personalInfo.patientId, data.patientId))
-        .limit(1),
-    );
-
-  if (existingPersonalInfoError) {
-    console.error(existingPersonalInfoError);
-
-    return {
-      data: null,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Error checking existing personal information",
-      },
-    };
-  }
-
-  // If exists, update
-
-  if (existingPersonalInfo && existingPersonalInfo.length > 0) {
-    const { error } = await tryCatch(
-      db
-        .update(personalInfo)
-        .set({
-          ...data,
-          updatedAt: new Date(),
-        })
-        .where(eq(personalInfo.patientId, data.patientId)),
-    );
-
-    if (error) {
-      console.error(error);
-
-      return {
-        data: null,
-        error: {
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update personal information",
-        },
-      };
-    }
-
-    return {
-      data: null,
-      error: null,
-    };
-  }
-
-  // If not exists, insert
+  const { id: _ignoreId, patientId: _ignorePid, ...updatable } = basePayload;
 
   const { error } = await tryCatch(
-    db.insert(personalInfo).values({
-      ...data,
-      id: generateId(32),
-    }),
+    db
+      .insert(personalInfo)
+      .values(basePayload)
+      .onConflictDoUpdate({
+        target: personalInfo.patientId,
+        set: { ...updatable },
+      }),
   );
 
   if (error) {
@@ -162,13 +91,10 @@ export const setPersonalInfo = async (
       data: null,
       error: {
         code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to insert personal information",
+        message: "Error setting medical information",
       },
     };
   }
 
-  return {
-    data: null,
-    error: null,
-  };
+  return { data: null, error: null };
 };

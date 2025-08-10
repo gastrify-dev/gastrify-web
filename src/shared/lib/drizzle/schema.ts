@@ -121,7 +121,8 @@ export const personalInfo = pgTable("personal_info", {
     .references(() => user.id, {
       onDelete: "cascade",
     })
-    .notNull(),
+    .notNull()
+    .unique(),
   age: integer("age").notNull(),
   profession: text("profession").notNull(),
   occupation: text("occupation").notNull(),
@@ -158,7 +159,8 @@ export const medicalInfo = pgTable("medical_info", {
   id: text("id").primaryKey(),
   patientId: text("patient_id")
     .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
+    .references(() => user.id, { onDelete: "cascade" })
+    .unique(),
   bloodType: bloodTypeEnum("blood_type").notNull(),
   rhFactor: rhFactorEnum("rh_factor").notNull(),
   hasAllergies: boolean("has_allergies").notNull().default(false),

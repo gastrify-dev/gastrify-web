@@ -50,16 +50,19 @@ export const useAppSidebar = () => {
         ),
       },
       {
-        href: "/profile",
-        label: t("profile"),
-        icon: <UserRoundIcon />,
-      },
-      {
         href: "/settings",
         label: t("settings"),
         icon: <SettingsIcon />,
       },
     ];
+
+    if (session?.user.role === "user") {
+      baseLinks.splice(-1, 0, {
+        href: "/profile",
+        label: t("profile"),
+        icon: <UserRoundIcon />,
+      });
+    }
 
     if (session?.user.role === "admin") {
       baseLinks.splice(-1, 0, {

@@ -18,12 +18,14 @@ import { createNotification } from "@/features/notifications/actions/create-noti
 import { bookAppointmentSchema } from "@/features/appointments/schemas/book-appointment";
 import type { BookAppointmentVariables } from "@/features/appointments/types";
 import { generateIcs } from "@/features/appointments/utils/generate-ics";
+import { isProfileCompleted } from "@/shared/actions/profile-completed";
 
 export type BookAppointmentErrorCode =
   | "UNAUTHORIZED"
   | "FORBIDDEN"
   | "BAD_REQUEST"
   | "NOT_FOUND"
+  | "PROFILE_INCOMPLETE"
   | "ALREADY_BOOKED"
   | "PAST_APPOINTMENT"
   | "INTERNAL_SERVER_ERROR";
@@ -71,6 +73,33 @@ export const bookAppointment = async (
       error: {
         code: "FORBIDDEN",
         message: "You can only book your own appointments",
+      },
+    };
+  }
+
+  // check profile completion status
+  const { data: isCompleted, error: profileCompletedError } =
+    await isProfileCompleted({ id: patientId });
+
+  if (profileCompletedError) {
+    return {
+      data: null,
+      error: {
+        code:
+          profileCompletedError.code === "UNAUTHORIZED"
+            ? "UNAUTHORIZED"
+            : "INTERNAL_SERVER_ERROR",
+        message: profileCompletedError.message,
+      },
+    };
+  }
+
+  if (!isCompleted) {
+    return {
+      data: null,
+      error: {
+        code: "PROFILE_INCOMPLETE",
+        message: "Profile incomplete",
       },
     };
   }

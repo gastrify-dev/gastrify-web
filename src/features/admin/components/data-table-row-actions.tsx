@@ -1,5 +1,6 @@
 "use client";
 
+// third party
 import { PaginationState, Row } from "@tanstack/react-table";
 import {
   BanIcon,
@@ -9,7 +10,9 @@ import {
   UserRoundPenIcon,
   BriefcaseMedical,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
+// shared
 import { Button } from "@/shared/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +22,7 @@ import {
 } from "@/shared/components/ui/dropdown-menu";
 import type { User } from "@/shared/types";
 
+// features
 import { BanUserDrawer } from "@/features/admin/components/ban-user-drawer";
 import { UpdateUserDrawer } from "@/features/admin/components/update-user-drawer";
 import { useDataTableRowActions } from "@/features/admin/hooks/use-data-table-row-actions";
@@ -32,6 +36,7 @@ export function DataTableRowActions({
   row,
   pagination,
 }: DataTableRowActionsProps) {
+  const t = useTranslations("features.admin.data-table-row-actions");
   const {
     isAdmin,
     isBanned,
@@ -54,18 +59,18 @@ export function DataTableRowActions({
             className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
           >
             <MoreHorizontal />
-            <span className="sr-only">Open menu</span>
+            <span className="sr-only">{t("open-menu-sr")}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[160px]">
           <DropdownMenuItem onSelect={handleUpdateUser}>
             <UserRoundPenIcon />
-            Edit
+            {t("edit")}
           </DropdownMenuItem>
           {!isAdmin && (
             <DropdownMenuItem onSelect={handleMedicalHistory}>
               <BriefcaseMedical />
-              Medical History
+              {t("medical-history")}
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
@@ -78,7 +83,7 @@ export function DataTableRowActions({
             ) : (
               <BanIcon />
             )}
-            {isBanned ? "Unban" : "Ban"}
+            {isBanned ? t("unban") : t("ban")}
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={isDeleteUserPending}
@@ -90,7 +95,7 @@ export function DataTableRowActions({
             ) : (
               <TrashIcon />
             )}
-            Delete
+            {t("delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -30,7 +30,7 @@ interface Props {
 }
 
 export function PersonalInfoForm({ userId }: Props) {
-  const { form, onSubmit, hasChildren, isLoading, isPending } =
+  const { form, onSubmit, hasChildren, isLoading, isPending, t } =
     usePersonalInfoForm({ patientId: userId });
 
   const { step, prevStep, totalSteps } = useStepperContext();
@@ -48,9 +48,9 @@ export function PersonalInfoForm({ userId }: Props) {
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
 
-          <ScrollArea className="h-[550px] w-full rounded-md border p-6">
+          <ScrollArea className="h-[calc(100vh-18rem)] max-h-full w-full rounded-md border p-6">
             <div className="space-y-8">
-              <TypographyH2>Personal Information</TypographyH2>
+              <TypographyH2>{t("title")}</TypographyH2>
               <div className="space-y-6 rounded-md border p-2 md:p-6">
                 <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
                   <FormField
@@ -58,11 +58,11 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="age"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Age</FormLabel>
+                        <FormLabel>{t("age-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
-                            placeholder="Enter your age"
+                            placeholder={t("age-placeholder")}
                             value={field.value}
                             onChange={(event) =>
                               event.target.value
@@ -84,7 +84,7 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="maritalStatus"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Marital State</FormLabel>
+                        <FormLabel>{t("marital-status-label")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -92,19 +92,31 @@ export function PersonalInfoForm({ userId }: Props) {
                         >
                           <FormControl>
                             <SelectTrigger className="min-w-[150px]">
-                              <SelectValue placeholder="Select a marital state" />
+                              <SelectValue
+                                placeholder={t("marital-status-placeholder")}
+                              />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectLabel>Marital State</SelectLabel>
-                              <SelectItem value="single">Single</SelectItem>
-                              <SelectItem value="married">Married</SelectItem>
-                              <SelectItem value="separated">
-                                Separated
+                              <SelectLabel>
+                                {t("marital-status-label")}
+                              </SelectLabel>
+                              <SelectItem value="single">
+                                {t("marital-status-single")}
                               </SelectItem>
-                              <SelectItem value="divorced">Divorced</SelectItem>
-                              <SelectItem value="widowed">Widowed</SelectItem>
+                              <SelectItem value="married">
+                                {t("marital-status-married")}
+                              </SelectItem>
+                              <SelectItem value="separated">
+                                {t("marital-status-separated")}
+                              </SelectItem>
+                              <SelectItem value="divorced">
+                                {t("marital-status-divorced")}
+                              </SelectItem>
+                              <SelectItem value="widowed">
+                                {t("marital-status-widowed")}
+                              </SelectItem>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -118,11 +130,11 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="homeAddress"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Home Address</FormLabel>
+                        <FormLabel>{t("home-address-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your home address"
+                            placeholder={t("home-address-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}
@@ -138,11 +150,11 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>City</FormLabel>
+                        <FormLabel>{t("city-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your city"
+                            placeholder={t("city-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}
@@ -158,11 +170,9 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="cSections"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Have you had any Cesarean Sections?
-                        </FormLabel>
+                        <FormLabel>{t("c-sections-label")}</FormLabel>
                         <div className="flex items-center gap-4">
-                          <p>No</p>
+                          <p>{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -172,7 +182,7 @@ export function PersonalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p>Yes</p>
+                          <p>{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -183,9 +193,9 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="abortions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Have you had any Abortions?</FormLabel>
+                        <FormLabel>{t("abortions-label")}</FormLabel>
                         <div className="flex items-center gap-4">
-                          <p>No</p>
+                          <p>{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -195,7 +205,7 @@ export function PersonalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p>Yes</p>
+                          <p>{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -204,18 +214,18 @@ export function PersonalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-2 md:p-6">
-                <TypographyH3>Professional Information</TypographyH3>
+                <TypographyH3>{t("professional-info-title")}</TypographyH3>
                 <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="profession"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Profession</FormLabel>
+                        <FormLabel>{t("profession-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your profession"
+                            placeholder={t("profession-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}
@@ -231,11 +241,11 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="occupation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Occupation</FormLabel>
+                        <FormLabel>{t("occupation-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your occupation"
+                            placeholder={t("occupation-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}
@@ -249,15 +259,15 @@ export function PersonalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-2 md:p-6">
-                <TypographyH3>Children Information</TypographyH3>
+                <TypographyH3>{t("children-info-title")}</TypographyH3>
                 <FormField
                   control={form.control}
                   name="hasChildren"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Do you have any children?</FormLabel>
+                      <FormLabel>{t("has-children-label")}</FormLabel>
                       <div className="flex items-center gap-4">
-                        <p>No</p>
+                        <p>{t("no")}</p>
                         <FormControl>
                           <Switch
                             checked={field.value}
@@ -267,7 +277,7 @@ export function PersonalInfoForm({ userId }: Props) {
                             disabled={isLoading || isPending}
                           />
                         </FormControl>
-                        <p>Yes</p>
+                        <p>{t("yes")}</p>
                       </div>
                     </FormItem>
                   )}
@@ -280,11 +290,11 @@ export function PersonalInfoForm({ userId }: Props) {
                       name="numMale"
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Number of sons</FormLabel>
+                          <FormLabel>{t("num-sons-label")}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
-                              placeholder="Enter number of sons"
+                              placeholder={t("num-sons-placeholder")}
                               value={field.value}
                               onChange={(event) =>
                                 event.target.value
@@ -305,11 +315,11 @@ export function PersonalInfoForm({ userId }: Props) {
                       name="numFemale"
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Number of daughters</FormLabel>
+                          <FormLabel>{t("num-daughters-label")}</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
-                              placeholder="Enter number of daughters"
+                              placeholder={t("num-daughters-placeholder")}
                               value={field.value}
                               onChange={(event) =>
                                 event.target.value
@@ -329,18 +339,18 @@ export function PersonalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-2 md:p-6">
-                <TypographyH3>Contact Information</TypographyH3>
+                <TypographyH3>{t("contact-info-title")}</TypographyH3>
                 <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
                   <FormField
                     control={form.control}
                     name="homePhoneNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Home phone number</FormLabel>
+                        <FormLabel>{t("home-phone-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your home phone number"
+                            placeholder={t("home-phone-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}
@@ -353,14 +363,14 @@ export function PersonalInfoForm({ userId }: Props) {
 
                   <FormField
                     control={form.control}
-                    name="celularPhoneNumber"
+                    name="mobilePhoneNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Celular phone number</FormLabel>
+                        <FormLabel>{t("mobile-phone-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your celular phone number"
+                            placeholder={t("mobile-phone-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}
@@ -376,11 +386,11 @@ export function PersonalInfoForm({ userId }: Props) {
                     name="workPhoneNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Work phone number</FormLabel>
+                        <FormLabel>{t("work-phone-label")}</FormLabel>
                         <FormControl>
                           <Input
                             type="text"
-                            placeholder="Enter your work phone number"
+                            placeholder={t("work-phone-placeholder")}
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading || isPending}

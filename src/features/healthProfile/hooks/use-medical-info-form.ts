@@ -1,9 +1,9 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 
 import { useMedicalInfoMutation } from "@/features/healthProfile/hooks/use-medical-info-mutation";
 import { medicalInfo } from "@/features/healthProfile/schemas/medical-info";
@@ -17,6 +17,7 @@ interface Props {
 
 export const useMedicalInfoForm = ({ patientId }: Props) => {
   const { nextStep } = useStepperContext();
+  const t = useTranslations("features.health-profile.medical-info-form");
 
   const { data, isLoading } = useQuery({
     queryKey: ["profile", "medicalInfo", "detail", patientId],
@@ -75,5 +76,6 @@ export const useMedicalInfoForm = ({ patientId }: Props) => {
     hasHealthInsurance,
     isPending,
     isLoading,
+    t,
   };
 };

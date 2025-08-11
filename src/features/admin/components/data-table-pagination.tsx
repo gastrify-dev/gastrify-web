@@ -1,4 +1,5 @@
 import { Table } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 import {
   ChevronLeft,
   ChevronRight,
@@ -22,11 +23,12 @@ interface DataTablePaginationProps {
 }
 
 export function DataTablePagination({ table }: DataTablePaginationProps) {
+  const t = useTranslations("features.admin.data-table-pagination");
   return (
     <div className="flex items-center justify-end px-2">
       <div className="flex items-center space-x-6 lg:space-x-8">
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
+          <p className="text-sm font-medium">{t("rows-per-page")}</p>
           <Select
             value={table.getState().pagination.pageSize.toString()}
             onValueChange={(value) => {
@@ -45,12 +47,14 @@ export function DataTablePagination({ table }: DataTablePaginationProps) {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+        <div className="flex w-[150px] items-center justify-center text-sm font-medium">
           {table.getPageCount() === 0 ? (
             <Skeleton className="ml-1 size-5 rounded-full" />
           ) : (
-            table.getPageCount()
+            t("page-of", {
+              page: table.getState().pagination.pageIndex + 1,
+              count: table.getPageCount(),
+            })
           )}
         </div>
         <div className="flex items-center space-x-2">
@@ -60,7 +64,7 @@ export function DataTablePagination({ table }: DataTablePaginationProps) {
             onClick={() => table.firstPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to first page</span>
+            <span className="sr-only">{t("sr-first")}</span>
             <ChevronsLeft />
           </Button>
           <Button
@@ -69,7 +73,7 @@ export function DataTablePagination({ table }: DataTablePaginationProps) {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <span className="sr-only">Go to previous page</span>
+            <span className="sr-only">{t("sr-prev")}</span>
             <ChevronLeft />
           </Button>
           <Button
@@ -78,7 +82,7 @@ export function DataTablePagination({ table }: DataTablePaginationProps) {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to next page</span>
+            <span className="sr-only">{t("sr-next")}</span>
             <ChevronRight />
           </Button>
           <Button
@@ -87,7 +91,7 @@ export function DataTablePagination({ table }: DataTablePaginationProps) {
             onClick={() => table.lastPage()}
             disabled={!table.getCanNextPage()}
           >
-            <span className="sr-only">Go to last page</span>
+            <span className="sr-only">{t("sr-last")}</span>
             <ChevronsRight />
           </Button>
         </div>

@@ -39,6 +39,7 @@ export function EmergencyContactsForm({ userId }: Props) {
     isLoading,
     isPendingSet,
     isPendingDelete,
+    t,
   } = useEmergencyContactsForm({ patientId: userId });
 
   return (
@@ -57,8 +58,8 @@ export function EmergencyContactsForm({ userId }: Props) {
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
 
-          <ScrollArea className="h-[550px] w-full rounded-md border p-6">
-            <TypographyH2>Emergency Contacts</TypographyH2>
+          <ScrollArea className="h-[calc(100vh-18rem)] max-h-full w-full rounded-md border p-6">
+            <TypographyH2>{t("title")}</TypographyH2>
 
             <div className="my-4 flex flex-col gap-6 p-1">
               {fields.map((field, index) => (
@@ -72,11 +73,11 @@ export function EmergencyContactsForm({ userId }: Props) {
                       name={`contacts.${index}.name`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel>{t("name-label")}</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              placeholder="Enter the contact's name"
+                              placeholder={t("name-placeholder")}
                               value={field.value}
                               onChange={field.onChange}
                               disabled={
@@ -94,7 +95,7 @@ export function EmergencyContactsForm({ userId }: Props) {
                       name={`contacts.${index}.relationship`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Relationship</FormLabel>
+                          <FormLabel>{t("relationship-label")}</FormLabel>
                           <FormControl>
                             <Select
                               onValueChange={field.onChange}
@@ -104,14 +105,26 @@ export function EmergencyContactsForm({ userId }: Props) {
                               }
                             >
                               <SelectTrigger className="min-w-[150px]">
-                                <SelectValue placeholder="Select relationship" />
+                                <SelectValue
+                                  placeholder={t("relationship-placeholder")}
+                                />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="parent">Parent</SelectItem>
-                                <SelectItem value="sibling">Sibling</SelectItem>
-                                <SelectItem value="spouse">Spouse</SelectItem>
-                                <SelectItem value="friend">Friend</SelectItem>
-                                <SelectItem value="other">Other</SelectItem>
+                                <SelectItem value="parent">
+                                  {t("relationship-parent")}
+                                </SelectItem>
+                                <SelectItem value="sibling">
+                                  {t("relationship-sibling")}
+                                </SelectItem>
+                                <SelectItem value="spouse">
+                                  {t("relationship-spouse")}
+                                </SelectItem>
+                                <SelectItem value="friend">
+                                  {t("relationship-friend")}
+                                </SelectItem>
+                                <SelectItem value="other">
+                                  {t("relationship-other")}
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           </FormControl>
@@ -127,11 +140,11 @@ export function EmergencyContactsForm({ userId }: Props) {
                       name={`contacts.${index}.homePhoneNumber`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Home phone number</FormLabel>
+                          <FormLabel>{t("home-phone-label")}</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              placeholder="Enter the contact's home phone number"
+                              placeholder={t("home-phone-placeholder")}
                               value={field.value}
                               onChange={field.onChange}
                               disabled={
@@ -146,14 +159,14 @@ export function EmergencyContactsForm({ userId }: Props) {
 
                     <FormField
                       control={form.control}
-                      name={`contacts.${index}.celularPhoneNumber`}
+                      name={`contacts.${index}.mobilePhoneNumber`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Celular phone number</FormLabel>
+                          <FormLabel>{t("mobile-phone-label")}</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              placeholder="Enter the contact's celular phone number"
+                              placeholder={t("mobile-phone-placeholder")}
                               value={field.value}
                               onChange={field.onChange}
                               disabled={
@@ -171,11 +184,11 @@ export function EmergencyContactsForm({ userId }: Props) {
                       name={`contacts.${index}.workPhoneNumber`}
                       render={({ field }) => (
                         <FormItem className="flex-1">
-                          <FormLabel>Work phone number</FormLabel>
+                          <FormLabel>{t("work-phone-label")}</FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              placeholder="Enter the contact's work phone number"
+                              placeholder={t("work-phone-placeholder")}
                               value={field.value}
                               onChange={field.onChange}
                               disabled={
@@ -231,7 +244,7 @@ export function EmergencyContactsForm({ userId }: Props) {
                       disabled={isLoading || isPendingSet || isPendingDelete}
                       onClick={() => removeContact(index)}
                     >
-                      Remove
+                      {t("remove-button")}
                     </Button>
                   )}
                 </div>
@@ -243,7 +256,7 @@ export function EmergencyContactsForm({ userId }: Props) {
                 onClick={appendContact}
                 disabled={isLoading || isPendingSet || isPendingDelete}
               >
-                Add Contact
+                {t("add-contact-button")}
               </Button>
             </div>
 

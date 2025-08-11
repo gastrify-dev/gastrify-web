@@ -25,11 +25,18 @@
     },
     "profile-page": {
       "meta-title": "Gastrify | Profile",
-      "meta-description": "Your account profile"
+      "meta-description": "Your account profile",
+      "title": "Profile"
     },
     "appointments-page": {
       "meta-title": "Gastrify | Appointments",
       "meta-description": "Manage your appointments"
+    },
+    "admin-page": {
+      "meta-title": "Gastrify | Admin",
+      "meta-description": "Admin panel",
+      "title": "Admin",
+      "description": "Manage users, roles, and permissions across your application. 🌴"
     },
     "home-page": {
       "meta-title": "Gastrify | Home",
@@ -182,8 +189,13 @@
         "all-day": "All day"
       },
       "use-book-appointment-mutation": {
+        "loading-toast": "Booking appointment...",
+        "success-toast": "Appointment booked successfully 🎉",
         "error-toast": "Something went wrong booking the appointment 😢",
-        "error-toast-description": "Please try again later"
+        "error-toast-description": "Please try again later",
+        "profile-incomplete-title": "Complete your profile",
+        "profile-incomplete-description": "You need to complete your health profile before booking an appointment.",
+        "go-to-profile": "Go to profile"
       },
       "use-cancel-appointment-mutation": {
         "error-toast": "Something went wrong canceling the appointment 😢",
@@ -206,6 +218,140 @@
         "error-user-not-found-message": "User not found, please try with a different identification number.",
         "error-toast": "Something went wrong updating the appointment 😢",
         "error-toast-description": "Please try again later"
+      }
+    },
+    "admin": {
+      "data-table": {
+        "error-message": "Something went wrong 😢",
+        "refetch-button": "Try again",
+        "empty-message": "No users found in this page. 😢 <br /> Try changing the filters or going to the next page"
+      },
+      "data-table-pagination": {
+        "rows-per-page": "Rows per page",
+        "sr-first": "Go to first page",
+        "sr-prev": "Go to previous page",
+        "sr-next": "Go to next page",
+        "sr-last": "Go to last page",
+        "page-of": "Page {page} of {count}"
+      },
+      "columns": {
+        "identification-number": "Identification number",
+        "name": "Name",
+        "email": "Email",
+        "email-not-verified": "Email not verified",
+        "role": "Role",
+        "created-at": "Created At",
+        "updated-at": "Updated At",
+        "banned-badge": "banned",
+        "ban-reason-label": "Reason",
+        "ban-expires-label": "Expires",
+        "never": "Never"
+      },
+      "data-table-row-actions": {
+        "open-menu-sr": "Open menu",
+        "edit": "Edit",
+        "medical-history": "Medical History",
+        "ban": "Ban",
+        "unban": "Unban",
+        "delete": "Delete"
+      }
+    },
+    "health-profile": {
+      "health-profile-form": {
+        "step-personal-info-title": "Personal Information",
+        "step-personal-info-description": "About you",
+        "step-medical-info-title": "Medical History",
+        "step-medical-info-description": "About your health",
+        "step-emergency-contacts-title": "Emergency Contacts",
+        "step-emergency-contacts-description": "Who to call in a emergency"
+      },
+      "personal-info-form": {
+        "title": "Personal Information",
+        "age-label": "Age",
+        "age-placeholder": "Enter your age",
+        "marital-status-label": "Marital State",
+        "marital-status-placeholder": "Select a marital state",
+        "marital-status-single": "Single",
+        "marital-status-married": "Married",
+        "marital-status-separated": "Separated",
+        "marital-status-divorced": "Divorced",
+        "marital-status-widowed": "Widowed",
+        "home-address-label": "Home Address",
+        "home-address-placeholder": "Enter your home address",
+        "city-label": "City",
+        "city-placeholder": "Enter your city",
+        "c-sections-label": "Have you had any Cesarean Sections?",
+        "abortions-label": "Have you had any Abortions?",
+        "yes": "Yes",
+        "no": "No",
+        "professional-info-title": "Professional Information",
+        "profession-label": "Profession",
+        "profession-placeholder": "Enter your profession",
+        "occupation-label": "Occupation",
+        "occupation-placeholder": "Enter your occupation",
+        "children-info-title": "Children Information",
+        "has-children-label": "Do you have any children?",
+        "num-sons-label": "Number of sons",
+        "num-sons-placeholder": "Enter number of sons",
+        "num-daughters-label": "Number of daughters",
+        "num-daughters-placeholder": "Enter number of daughters",
+        "contact-info-title": "Contact Information",
+        "home-phone-label": "Home phone number",
+        "home-phone-placeholder": "Enter your home phone number",
+        "mobile-phone-label": "Mobile phone number",
+        "mobile-phone-placeholder": "Enter your mobile phone number",
+        "work-phone-label": "Work phone number",
+        "work-phone-placeholder": "Enter your work phone number"
+      },
+      "medical-info-form": {
+        "title": "Medical Information",
+        "blood-group-title": "Blood Group",
+        "abo-type-label": "ABO type",
+        "beliefs-title": "Beliefs & transfusions",
+        "religious-creed-label": "Religious creed",
+        "religion-evangelical": "Evangelical Christian",
+        "religion-catholic": "Catholic",
+        "religion-other": "Other",
+        "allows-transfusions-label": "If a blood transfusion is needed, does your creed allow it?",
+        "yes": "Yes",
+        "no": "No",
+        "allergies-title": "Allergies",
+        "has-allergies-label": "Do you have any allergies?",
+        "allergy-details-label": "Allergy details",
+        "allergy-details-placeholder": "Describe your allergies and any medication you take...",
+        "allergy-details-description": "Include triggers, severity, and current treatments if any.",
+        "lifestyle-title": "Lifestyle",
+        "alcohol-label": "Alcohol",
+        "drugs-label": "Drugs",
+        "chronic-conditions-title": "Chronic Conditions",
+        "has-chronic-illness-label": "Do you have any chronic illnesses?",
+        "chronic-illness-details-label": "Chronic illness details",
+        "chronic-illness-details-placeholder": "List your conditions and current medications...",
+        "chronic-illness-details-description": "Include diagnosis names, dates, and treatments if possible.",
+        "health-insurance-title": "Health Insurance",
+        "has-health-insurance-label": "Do you have health insurance?",
+        "health-insurance-provider-label": "Health insurance provider",
+        "health-insurance-provider-placeholder": "Enter your health insurance provider"
+      },
+      "emergency-contacts-form": {
+        "title": "Emergency Contacts",
+        "name-label": "Name",
+        "name-placeholder": "Enter the contact's name",
+        "relationship-label": "Relationship",
+        "relationship-placeholder": "Select relationship",
+        "relationship-parent": "Parent",
+        "relationship-sibling": "Sibling",
+        "relationship-spouse": "Spouse",
+        "relationship-friend": "Friend",
+        "relationship-other": "Other",
+        "home-phone-label": "Home phone number",
+        "home-phone-placeholder": "Enter the contact's home phone number",
+        "mobile-phone-label": "Mobile phone number",
+        "mobile-phone-placeholder": "Enter the contact's mobile phone number",
+        "work-phone-label": "Work phone number",
+        "work-phone-placeholder": "Enter the contact's work phone number",
+        "remove-button": "Remove",
+        "add-contact-button": "Add Contact"
       }
     },
     "auth": {

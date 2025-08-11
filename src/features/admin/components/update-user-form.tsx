@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/shared/components/ui/button";
+import { DrawerClose } from "@/shared/components/ui/drawer";
 import {
   Form,
   FormControl,
@@ -30,7 +31,6 @@ import type { User } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 
 import { useUpdateUserForm } from "@/features/admin/hooks/use-update-user-form";
-import { DrawerClose } from "@/shared/components/ui/drawer";
 
 interface Props extends React.ComponentProps<"div"> {
   user: User;

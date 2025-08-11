@@ -3,9 +3,9 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 
 import { useEmergencyContactsMutation } from "./use-emergency-contacts-mutation";
 import { emergencyContacts } from "@/features/healthProfile/schemas/emergency-contacts";
@@ -19,6 +19,7 @@ interface Props {
 
 export const useEmergencyContactsForm = ({ patientId }: Props) => {
   const router = useRouter();
+  const t = useTranslations("features.health-profile.emergency-contacts-form");
 
   const { data, isLoading } = useQuery({
     queryKey: ["profile", "emergencyContacts", "detail", patientId],
@@ -46,7 +47,7 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
           name: "",
           relationship: undefined,
           homePhoneNumber: "",
-          celularPhoneNumber: "",
+          mobilePhoneNumber: "",
           workPhoneNumber: "",
           email: "",
         },
@@ -85,7 +86,7 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
       name: "",
       relationship: "parent",
       homePhoneNumber: "",
-      celularPhoneNumber: "",
+      mobilePhoneNumber: "",
       workPhoneNumber: "",
       email: "",
     });
@@ -134,5 +135,6 @@ export const useEmergencyContactsForm = ({ patientId }: Props) => {
     isLoading,
     isPendingSet,
     isPendingDelete,
+    t,
   };
 };

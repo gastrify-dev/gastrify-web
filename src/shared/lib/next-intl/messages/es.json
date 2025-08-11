@@ -25,11 +25,18 @@
     },
     "profile-page": {
       "meta-title": "Gastrify | Perfil",
-      "meta-description": "Perfil de tu cuenta"
+      "meta-description": "Perfil de tu cuenta",
+      "title": "Perfil"
     },
     "appointments-page": {
       "meta-title": "Gastrify | Citas",
       "meta-description": "Gestiona tus citas"
+    },
+    "admin-page": {
+      "meta-title": "Gastrify | Admin",
+      "meta-description": "Panel de administración",
+      "title": "Admin",
+      "description": "Gestiona usuarios, roles y permisos de tu aplicación. 🌴"
     },
     "home-page": {
       "meta-title": "Gastrify | Inicio",
@@ -182,8 +189,13 @@
         "all-day": "Todo el día"
       },
       "use-book-appointment-mutation": {
+        "loading-toast": "Reservando cita...",
+        "success-toast": "Cita reservada correctamente 🎉",
         "error-toast": "Algo salió mal al reservar la cita 😢",
-        "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+        "error-toast-description": "Por favor, inténtalo de nuevo más tarde",
+        "profile-incomplete-title": "Completa tu perfil",
+        "profile-incomplete-description": "Debes completar tu perfil de salud antes de reservar una cita.",
+        "go-to-profile": "Ir al perfil"
       },
       "use-cancel-appointment-mutation": {
         "error-toast": "Algo salió mal al cancelar la cita 😢",
@@ -206,6 +218,140 @@
         "error-user-not-found-message": "Usuario no encontrado, por favor, intenta con un número de cédula diferente.",
         "error-toast": "Algo salió mal al actualizar la cita 😢",
         "error-toast-description": "Por favor, inténtalo de nuevo más tarde"
+      }
+    },
+    "admin": {
+      "data-table": {
+        "error-message": "Algo salió mal 😢",
+        "refetch-button": "Reintentar",
+        "empty-message": "No se encontraron usuarios en esta página. 😢 <br /> Intenta cambiar los filtros o ir a la siguiente página"
+      },
+      "data-table-pagination": {
+        "rows-per-page": "Filas por página",
+        "sr-first": "Ir a la primera página",
+        "sr-prev": "Ir a la página anterior",
+        "sr-next": "Ir a la siguiente página",
+        "sr-last": "Ir a la última página",
+        "page-of": "Página {page} de {count}"
+      },
+      "columns": {
+        "identification-number": "Número de cédula",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "email-not-verified": "Correo no verificado",
+        "role": "Rol",
+        "created-at": "Creado en",
+        "updated-at": "Actualizado en",
+        "banned-badge": "baneado",
+        "ban-reason-label": "Razón",
+        "ban-expires-label": "Expira",
+        "never": "Nunca"
+      },
+      "data-table-row-actions": {
+        "open-menu-sr": "Abrir menú",
+        "edit": "Editar",
+        "medical-history": "Historial médico",
+        "ban": "Banear",
+        "unban": "Desbanear",
+        "delete": "Eliminar"
+      }
+    },
+    "health-profile": {
+      "health-profile-form": {
+        "step-personal-info-title": "Información personal",
+        "step-personal-info-description": "Sobre ti",
+        "step-medical-info-title": "Historial médico",
+        "step-medical-info-description": "Sobre tu salud",
+        "step-emergency-contacts-title": "Contactos de emergencia",
+        "step-emergency-contacts-description": "A quién llamar en una emergencia"
+      },
+      "personal-info-form": {
+        "title": "Información personal",
+        "age-label": "Edad",
+        "age-placeholder": "Ingresa tu edad",
+        "marital-status-label": "Estado civil",
+        "marital-status-placeholder": "Selecciona un estado civil",
+        "marital-status-single": "Soltero(a)",
+        "marital-status-married": "Casado(a)",
+        "marital-status-separated": "Separado(a)",
+        "marital-status-divorced": "Divorciado(a)",
+        "marital-status-widowed": "Viudo(a)",
+        "home-address-label": "Dirección de domicilio",
+        "home-address-placeholder": "Ingresa tu dirección",
+        "city-label": "Ciudad",
+        "city-placeholder": "Ingresa tu ciudad",
+        "c-sections-label": "¿Has tenido cesáreas?",
+        "abortions-label": "¿Has tenido abortos?",
+        "yes": "Sí",
+        "no": "No",
+        "professional-info-title": "Información profesional",
+        "profession-label": "Profesión",
+        "profession-placeholder": "Ingresa tu profesión",
+        "occupation-label": "Ocupación",
+        "occupation-placeholder": "Ingresa tu ocupación",
+        "children-info-title": "Información de hijos",
+        "has-children-label": "¿Tienes hijos?",
+        "num-sons-label": "Número de hijos",
+        "num-sons-placeholder": "Ingresa el número de hijos",
+        "num-daughters-label": "Número de hijas",
+        "num-daughters-placeholder": "Ingresa el número de hijas",
+        "contact-info-title": "Información de contacto",
+        "home-phone-label": "Teléfono de domicilio",
+        "home-phone-placeholder": "Ingresa tu teléfono de domicilio",
+        "mobile-phone-label": "Teléfono móvil",
+        "mobile-phone-placeholder": "Ingresa tu teléfono móvil",
+        "work-phone-label": "Teléfono de trabajo",
+        "work-phone-placeholder": "Ingresa tu teléfono de trabajo"
+      },
+      "medical-info-form": {
+        "title": "Información médica",
+        "blood-group-title": "Grupo sanguíneo",
+        "abo-type-label": "Tipo ABO",
+        "beliefs-title": "Creencias y transfusiones",
+        "religious-creed-label": "Creencia religiosa",
+        "religion-evangelical": "Cristiano evangélico",
+        "religion-catholic": "Católico",
+        "religion-other": "Otro",
+        "allows-transfusions-label": "Si se necesita una transfusión de sangre, ¿tu creencia lo permite?",
+        "yes": "Sí",
+        "no": "No",
+        "allergies-title": "Alergias",
+        "has-allergies-label": "¿Tienes alguna alergia?",
+        "allergy-details-label": "Detalles de alergias",
+        "allergy-details-placeholder": "Describe tus alergias y cualquier medicamento que tomes...",
+        "allergy-details-description": "Incluye desencadenantes, gravedad y tratamientos actuales si los hay.",
+        "lifestyle-title": "Estilo de vida",
+        "alcohol-label": "Alcohol",
+        "drugs-label": "Drogas",
+        "chronic-conditions-title": "Condiciones crónicas",
+        "has-chronic-illness-label": "¿Tienes enfermedades crónicas?",
+        "chronic-illness-details-label": "Detalles de enfermedades crónicas",
+        "chronic-illness-details-placeholder": "Lista tus condiciones y medicamentos actuales...",
+        "chronic-illness-details-description": "Incluye nombres de diagnósticos, fechas y tratamientos si es posible.",
+        "health-insurance-title": "Seguro de salud",
+        "has-health-insurance-label": "¿Tienes seguro de salud?",
+        "health-insurance-provider-label": "Proveedor de seguro de salud",
+        "health-insurance-provider-placeholder": "Ingresa tu proveedor de seguro de salud"
+      },
+      "emergency-contacts-form": {
+        "title": "Contactos de emergencia",
+        "name-label": "Nombre",
+        "name-placeholder": "Ingresa el nombre del contacto",
+        "relationship-label": "Relación",
+        "relationship-placeholder": "Selecciona la relación",
+        "relationship-parent": "Padre/Madre",
+        "relationship-sibling": "Hermano(a)",
+        "relationship-spouse": "Esposo(a)",
+        "relationship-friend": "Amigo(a)",
+        "relationship-other": "Otro",
+        "home-phone-label": "Teléfono de domicilio",
+        "home-phone-placeholder": "Ingresa el teléfono de domicilio del contacto",
+        "mobile-phone-label": "Teléfono móvil",
+        "mobile-phone-placeholder": "Ingresa el teléfono móvil del contacto",
+        "work-phone-label": "Teléfono de trabajo",
+        "work-phone-placeholder": "Ingresa el teléfono de trabajo del contacto",
+        "remove-button": "Eliminar",
+        "add-contact-button": "Agregar contacto"
       }
     },
     "auth": {

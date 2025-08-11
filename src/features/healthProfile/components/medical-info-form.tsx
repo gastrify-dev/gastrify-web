@@ -1,3 +1,5 @@
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+
 import {
   Form,
   FormControl,
@@ -13,11 +15,10 @@ import { Switch } from "@/shared/components/ui/switch";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { TypographyH2, TypographyH3 } from "@/shared/components/ui/typography";
 
 import { useMedicalInfoForm } from "@/features/healthProfile/hooks/use-medical-info-form";
 import { useStepperContext } from "@/features/healthProfile/context/stepper-context";
-import { TypographyH2, TypographyH3 } from "@/shared/components/ui/typography";
 
 interface Props {
   userId: string;
@@ -34,6 +35,7 @@ export function MedicalInfoForm({ userId }: Props) {
     hasHealthInsurance,
     isLoading,
     isPending,
+    t,
   } = useMedicalInfoForm({ patientId: userId });
 
   return (
@@ -50,19 +52,19 @@ export function MedicalInfoForm({ userId }: Props) {
             <ArrowLeftIcon className="h-6 w-6" />
           </Button>
 
-          <ScrollArea className="h-[550px] w-full rounded-md border p-6">
-            <TypographyH2 className="mb-4">Medical Information</TypographyH2>
+          <ScrollArea className="h-[calc(100vh-18rem)] max-h-full w-full rounded-md border p-6">
+            <TypographyH2 className="mb-4">{t("title")}</TypographyH2>
 
             <div className="space-y-8">
               <div className="space-y-6 rounded-md border p-3 md:p-6">
-                <TypographyH3>Blood Group</TypographyH3>
+                <TypographyH3>{t("blood-group-title")}</TypographyH3>
                 <div className="grid items-start gap-6 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="bloodType"
                     render={({ field }) => (
                       <FormItem className="space-y-2">
-                        <FormLabel>ABO type</FormLabel>
+                        <FormLabel>{t("abo-type-label")}</FormLabel>
                         <FormControl>
                           <RadioGroup
                             onValueChange={field.onChange}
@@ -140,14 +142,14 @@ export function MedicalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-3 md:p-6">
-                <TypographyH3>Beliefs & transfusions</TypographyH3>
+                <TypographyH3>{t("beliefs-title")}</TypographyH3>
                 <div className="grid items-start gap-6 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="religion"
                     render={({ field }) => (
                       <FormItem className="space-y-3">
-                        <FormLabel>Religious creed</FormLabel>
+                        <FormLabel>{t("religious-creed-label")}</FormLabel>
                         <FormControl>
                           <RadioGroup
                             onValueChange={field.onChange}
@@ -158,21 +160,21 @@ export function MedicalInfoForm({ userId }: Props) {
                               <FormControl>
                                 <RadioGroupItem value="evangelical christian" />
                               </FormControl>
-                              <FormLabel>Evangelical Christian</FormLabel>
+                              <FormLabel>{t("religion-evangelical")}</FormLabel>
                             </FormItem>
 
                             <FormItem className="flex items-center gap-3">
                               <FormControl>
                                 <RadioGroupItem value="catholic" />
                               </FormControl>
-                              <FormLabel>Catholic</FormLabel>
+                              <FormLabel>{t("religion-catholic")}</FormLabel>
                             </FormItem>
 
                             <FormItem className="flex items-center gap-3">
                               <FormControl>
                                 <RadioGroupItem value="other" />
                               </FormControl>
-                              <FormLabel>Other</FormLabel>
+                              <FormLabel>{t("religion-other")}</FormLabel>
                             </FormItem>
                           </RadioGroup>
                         </FormControl>
@@ -187,11 +189,10 @@ export function MedicalInfoForm({ userId }: Props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="block">
-                          If a blood transfusion is needed, does your creed
-                          allow it?
+                          {t("allows-transfusions-label")}
                         </FormLabel>
                         <div className="mt-2 flex flex-row items-center gap-4">
-                          <p className="text-sm">No</p>
+                          <p className="text-sm">{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -199,7 +200,7 @@ export function MedicalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p className="text-sm">Yes</p>
+                          <p className="text-sm">{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -208,7 +209,7 @@ export function MedicalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-3 md:p-6">
-                <TypographyH3>Allergies</TypographyH3>
+                <TypographyH3>{t("allergies-title")}</TypographyH3>
                 <div className="mt-4 space-y-6">
                   <FormField
                     control={form.control}
@@ -216,10 +217,10 @@ export function MedicalInfoForm({ userId }: Props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="block">
-                          Do you have any allergies?
+                          {t("has-allergies-label")}
                         </FormLabel>
                         <div className="mt-2 flex flex-row items-center gap-4">
-                          <p className="text-sm">No</p>
+                          <p className="text-sm">{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -227,7 +228,7 @@ export function MedicalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p className="text-sm">Yes</p>
+                          <p className="text-sm">{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -239,18 +240,17 @@ export function MedicalInfoForm({ userId }: Props) {
                       name="allergyDetails"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Allergy details</FormLabel>
+                          <FormLabel>{t("allergy-details-label")}</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Describe your allergies and any medication you take..."
+                              placeholder={t("allergy-details-placeholder")}
                               className="resize-none"
                               {...field}
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
                           <FormDescription>
-                            Include triggers, severity, and current treatments
-                            if any.
+                            {t("allergy-details-description")}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -261,16 +261,18 @@ export function MedicalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-2 md:p-6">
-                <TypographyH3>Lifestyle</TypographyH3>
+                <TypographyH3>{t("lifestyle-title")}</TypographyH3>
                 <div className="mt-4 grid gap-6 md:grid-cols-2">
                   <FormField
                     control={form.control}
                     name="alcohol"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="block">Alcohol</FormLabel>
+                        <FormLabel className="block">
+                          {t("alcohol-label")}
+                        </FormLabel>
                         <div className="mt-2 flex flex-row items-center gap-4">
-                          <p className="text-sm">No</p>
+                          <p className="text-sm">{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -278,7 +280,7 @@ export function MedicalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p className="text-sm">Yes</p>
+                          <p className="text-sm">{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -289,9 +291,11 @@ export function MedicalInfoForm({ userId }: Props) {
                     name="drugs"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="block">Drugs</FormLabel>
+                        <FormLabel className="block">
+                          {t("drugs-label")}
+                        </FormLabel>
                         <div className="mt-2 flex flex-row items-center gap-4">
-                          <p className="text-sm">No</p>
+                          <p className="text-sm">{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -299,7 +303,7 @@ export function MedicalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p className="text-sm">Yes</p>
+                          <p className="text-sm">{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -308,7 +312,7 @@ export function MedicalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-2 md:p-6">
-                <TypographyH3>Chronic Conditions</TypographyH3>
+                <TypographyH3>{t("chronic-conditions-title")}</TypographyH3>
                 <div className="mt-4 space-y-6">
                   <FormField
                     control={form.control}
@@ -316,10 +320,10 @@ export function MedicalInfoForm({ userId }: Props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="block">
-                          Do you have any chronic illnesses?
+                          {t("has-chronic-illness-label")}
                         </FormLabel>
                         <div className="mt-2 flex flex-row items-center gap-4">
-                          <p className="text-sm">No</p>
+                          <p className="text-sm">{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -327,7 +331,7 @@ export function MedicalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p className="text-sm">Yes</p>
+                          <p className="text-sm">{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -339,18 +343,21 @@ export function MedicalInfoForm({ userId }: Props) {
                       name="chronicIllnessDetails"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Chronic illness details</FormLabel>
+                          <FormLabel>
+                            {t("chronic-illness-details-label")}
+                          </FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="List your conditions and current medications..."
+                              placeholder={t(
+                                "chronic-illness-details-placeholder",
+                              )}
                               className="resize-none"
                               {...field}
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
                           <FormDescription>
-                            Include diagnosis names, dates, and treatments if
-                            possible.
+                            {t("chronic-illness-details-description")}
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -361,7 +368,7 @@ export function MedicalInfoForm({ userId }: Props) {
               </div>
 
               <div className="space-y-6 rounded-md border p-2 md:p-6">
-                <TypographyH3>Health Insurance</TypographyH3>
+                <TypographyH3>{t("health-insurance-title")}</TypographyH3>
                 <div className="mt-4 space-y-6">
                   <FormField
                     control={form.control}
@@ -369,10 +376,10 @@ export function MedicalInfoForm({ userId }: Props) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="block">
-                          Do you have health insurance?
+                          {t("has-health-insurance-label")}
                         </FormLabel>
                         <div className="mt-2 flex flex-row items-center gap-4">
-                          <p className="text-sm">No</p>
+                          <p className="text-sm">{t("no")}</p>
                           <FormControl>
                             <Switch
                               checked={field.value}
@@ -380,7 +387,7 @@ export function MedicalInfoForm({ userId }: Props) {
                               disabled={isLoading || isPending}
                             />
                           </FormControl>
-                          <p className="text-sm">Yes</p>
+                          <p className="text-sm">{t("yes")}</p>
                         </div>
                       </FormItem>
                     )}
@@ -392,11 +399,15 @@ export function MedicalInfoForm({ userId }: Props) {
                       name="healthInsuranceProvider"
                       render={({ field }) => (
                         <FormItem className="md:max-w-md">
-                          <FormLabel>Health insurance provider</FormLabel>
+                          <FormLabel>
+                            {t("health-insurance-provider-label")}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type="text"
-                              placeholder="Enter your health insurance provider"
+                              placeholder={t(
+                                "health-insurance-provider-placeholder",
+                              )}
                               value={field.value || ""}
                               onChange={field.onChange}
                               disabled={isLoading || isPending}

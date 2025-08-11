@@ -3,6 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 
 import { usePersonalInfoMutation } from "@/features/healthProfile/hooks/use-personal-info-mutation";
 import { personalInfo } from "@/features/healthProfile/schemas/personal-info";
@@ -16,6 +17,7 @@ interface Props {
 
 export const usePersonalInfoForm = ({ patientId }: Props) => {
   const { nextStep } = useStepperContext();
+  const t = useTranslations("features.health-profile.personal-info-form");
 
   const { data, isLoading } = useQuery({
     queryKey: ["profile", "personalInfo", "detail", patientId],
@@ -49,7 +51,7 @@ export const usePersonalInfoForm = ({ patientId }: Props) => {
       homeAddress: "",
       city: "",
       homePhoneNumber: "",
-      celularPhoneNumber: "",
+      mobilePhoneNumber: "",
       workPhoneNumber: "",
     },
     values: data,
@@ -72,5 +74,6 @@ export const usePersonalInfoForm = ({ patientId }: Props) => {
     hasChildren,
     isLoading,
     isPending,
+    t,
   };
 };

@@ -135,7 +135,7 @@ export const personalInfo = pgTable("personal_info", {
   homeAddress: text("home_address").notNull(),
   city: text("city").notNull(),
   homePhoneNumber: text("home_phone_number").notNull(),
-  celularPhoneNumber: text("celular_phone_number").notNull(),
+  mobilePhoneNumber: text("mobile_phone_number").notNull(),
   workPhoneNumber: text("work_phone_number").notNull(),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
@@ -197,7 +197,7 @@ export const emergencyContacts = pgTable("emergency_contact", {
   name: text("name").notNull(),
   relationship: relationshipEnum("relationship").notNull(),
   homePhoneNumber: text("home_phone_number").notNull(),
-  celularPhoneNumber: text("celular_phone_number").notNull(),
+  mobilePhoneNumber: text("mobile_phone_number").notNull(),
   workPhoneNumber: text("work_phone_number").notNull(),
   email: text("email").notNull(),
   createdAt: timestamp("created_at")

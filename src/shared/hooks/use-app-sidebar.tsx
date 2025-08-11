@@ -50,16 +50,19 @@ export const useAppSidebar = () => {
         ),
       },
       {
-        href: `/${session?.user.identificationNumber}`,
-        label: t("profile"),
-        icon: <UserRoundIcon />,
-      },
-      {
         href: "/settings",
         label: t("settings"),
         icon: <SettingsIcon />,
       },
     ];
+
+    if (session?.user.role === "user") {
+      baseLinks.splice(-1, 0, {
+        href: "/profile",
+        label: t("profile"),
+        icon: <UserRoundIcon />,
+      });
+    }
 
     if (session?.user.role === "admin") {
       baseLinks.splice(-1, 0, {
@@ -70,12 +73,7 @@ export const useAppSidebar = () => {
     }
 
     return baseLinks;
-  }, [
-    session?.user.identificationNumber,
-    session?.user.role,
-    t,
-    unreadNotificationsCount,
-  ]);
+  }, [session?.user.role, t, unreadNotificationsCount]);
 
   return {
     links,

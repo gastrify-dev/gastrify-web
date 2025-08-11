@@ -29,6 +29,7 @@ export function DataTable() {
     refetch,
     isRefetching,
     pagination,
+    t,
   } = useDataTable();
 
   return (
@@ -75,7 +76,7 @@ export function DataTable() {
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      Something went wrong 😢
+                      {t("error-message")}
                       <Button
                         variant="outline"
                         onClick={() => refetch()}
@@ -85,7 +86,7 @@ export function DataTable() {
                         {isRefetching && (
                           <LoaderIcon className="animate-spin" />
                         )}
-                        Try again
+                        {t("refetch-button")}
                       </Button>
                     </div>
                   </TableCell>
@@ -113,8 +114,9 @@ export function DataTable() {
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No users found in this page. 😢 <br /> Try changing the
-                    filters or going to the next page
+                    {t.rich("empty-message", {
+                      br: () => <br />,
+                    })}
                   </TableCell>
                 </TableRow>
               )}

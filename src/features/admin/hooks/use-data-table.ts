@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useTranslations } from "next-intl";
 
 import { authClient } from "@/shared/lib/better-auth/client";
 import type { User } from "@/shared/types";
@@ -19,6 +20,8 @@ import type { User } from "@/shared/types";
 import { columns } from "@/features/admin/components/columns";
 
 export const useDataTable = () => {
+  const t = useTranslations("features.admin.data-table");
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
     banned: false,
     emailVerified: false,
@@ -83,5 +86,6 @@ export const useDataTable = () => {
     refetch,
     isRefetching,
     pagination,
+    t,
   };
 };

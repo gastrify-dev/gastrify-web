@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  pgEnum,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -98,4 +105,105 @@ export const notification = pgTable("notification", {
   read: boolean("read").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const maritalStatusEnum = pgEnum("marital_status", [
+  "single",
+  "married",
+  "divorced",
+  "widowed",
+  "separated",
+]);
+
+export const personalInfo = pgTable("personal_info", {
+  id: text("id").primaryKey(),
+  patientId: text("patient_id")
+    .references(() => user.id, {
+      onDelete: "cascade",
+    })
+    .notNull()
+    .unique(),
+  age: integer("age").notNull(),
+  profession: text("profession").notNull(),
+  occupation: text("occupation").notNull(),
+  maritalStatus: maritalStatusEnum("marital_status").notNull(),
+  hasChildren: boolean("has_children").notNull().default(false),
+  numMale: integer("num_male").notNull().default(0),
+  numFemale: integer("num_female").notNull().default(0),
+  cSections: boolean("c_sections").notNull().default(false),
+  abortions: boolean("abortions").notNull().default(false),
+  homeAddress: text("home_address").notNull(),
+  city: text("city").notNull(),
+  homePhoneNumber: text("home_phone_number").notNull(),
+  mobilePhoneNumber: text("mobile_phone_number").notNull(),
+  workPhoneNumber: text("work_phone_number").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const bloodTypeEnum = pgEnum("blood_type", ["O", "A", "AB", "B"]);
+
+export const rhFactorEnum = pgEnum("rh_factor", ["+", "-"]);
+
+export const religionEnum = pgEnum("religion", [
+  "evangelical christian",
+  "catholic",
+  "other",
+]);
+
+export const medicalInfo = pgTable("medical_info", {
+  id: text("id").primaryKey(),
+  patientId: text("patient_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" })
+    .unique(),
+  bloodType: bloodTypeEnum("blood_type").notNull(),
+  rhFactor: rhFactorEnum("rh_factor").notNull(),
+  hasAllergies: boolean("has_allergies").notNull().default(false),
+  allergyDetails: text("allergy_details").notNull(),
+  religion: religionEnum("religion").notNull(),
+  allowsTransfusions: boolean("allows_transfusions").notNull().default(false),
+  alcohol: boolean("alcohol").notNull().default(false),
+  drugs: boolean("drugs").notNull().default(false),
+  hasChronicIllness: boolean("has_chronic_illness").notNull().default(false),
+  chronicIllnessDetails: text("chronic_illness_details").notNull(),
+  hasHealthInsurance: boolean("has_health_insurance").notNull().default(false),
+  healthInsuranceProvider: text("health_insurance_provider").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const relationshipEnum = pgEnum("relationship", [
+  "parent",
+  "sibling",
+  "spouse",
+  "friend",
+  "other",
+]);
+
+export const emergencyContacts = pgTable("emergency_contact", {
+  id: text("id").primaryKey(),
+  patientId: text("patient_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  relationship: relationshipEnum("relationship").notNull(),
+  homePhoneNumber: text("home_phone_number").notNull(),
+  mobilePhoneNumber: text("mobile_phone_number").notNull(),
+  workPhoneNumber: text("work_phone_number").notNull(),
+  email: text("email").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });

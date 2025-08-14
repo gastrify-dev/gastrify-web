@@ -8,7 +8,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:cucumber": "cucumber-js --config cucumber.json"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -63,6 +64,7 @@
     "zod": "^4.0.17"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.1.0",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.54.2",
     "@react-email/preview-server": "^4.2.8",
